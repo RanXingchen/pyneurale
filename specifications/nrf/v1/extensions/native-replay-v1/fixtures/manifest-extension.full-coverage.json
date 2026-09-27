@@ -1,0 +1,170 @@
+{
+  "extension_version": 1,
+  "plan_fingerprint": "a1e1c674965634a8cda3348bfd00a2d2577b21d2ab29870d6f310843dec8fa28",
+  "native_schema": {
+    "schema_id": 7,
+    "signals": [
+      {
+        "id": 1,
+        "clock_domain": 1,
+        "n_channels": 4,
+        "nominal_block_samples": 8,
+        "max_block_samples": 16,
+        "fs": {
+          "numerator": 1000,
+          "denominator": 1
+        },
+        "dtype": "INT16",
+        "layout": "SAMPLE_MAJOR",
+        "device_tick_tracking": "SAMPLE_COUNTER",
+        "kind": "SAMPLED",
+        "physical_unit": "VOLTS",
+        "channel_set_id": 0,
+        "calibration_id": 0,
+        "reference_id": 0,
+        "feature_set_id": 0,
+        "observation_timing": "NOT_APPLICABLE",
+        "fixed_block_bytes": 0,
+        "max_block_bytes": 128
+      },
+      {
+        "id": 2,
+        "clock_domain": 1,
+        "n_channels": 2,
+        "nominal_block_samples": 2,
+        "max_block_samples": 4,
+        "fs": {
+          "numerator": 100,
+          "denominator": 1
+        },
+        "dtype": "FLOAT32",
+        "layout": "SAMPLE_MAJOR",
+        "device_tick_tracking": "UNAVAILABLE",
+        "kind": "SAMPLED",
+        "physical_unit": "DIMENSIONLESS",
+        "channel_set_id": 0,
+        "calibration_id": 0,
+        "reference_id": 0,
+        "feature_set_id": 0,
+        "observation_timing": "NOT_APPLICABLE",
+        "fixed_block_bytes": 0,
+        "max_block_bytes": 32
+      }
+    ],
+    "feature_sets": [],
+    "units": []
+  },
+  "coverage": "full",
+  "planned_signal_ids": [
+    1,
+    2
+  ],
+  "recorded_signal_ids": [
+    1,
+    2
+  ],
+  "streams": [
+    {
+      "native_signal_id": 1,
+      "stream_id": "neural",
+      "kind": "neural",
+      "timing": "explicit",
+      "block_index": true,
+      "name": "neural",
+      "unit": [
+        "V",
+        "V",
+        "V",
+        "V"
+      ],
+      "channel_names": [
+        "neural-0",
+        "neural-1",
+        "neural-2",
+        "neural-3"
+      ],
+      "feature_names": [],
+      "segment_start_index": 0,
+      "segment_start_time_ns": 0,
+      "algorithm_name": "",
+      "algorithm_version": "",
+      "window_length_ns": 0,
+      "shift_ns": 0,
+      "source_stream_ids": []
+    },
+    {
+      "native_signal_id": 2,
+      "stream_id": "emg",
+      "kind": "behavioral",
+      "timing": "explicit",
+      "block_index": true,
+      "name": "emg",
+      "unit": [
+        "1",
+        "1"
+      ],
+      "channel_names": [
+        "emg-0",
+        "emg-1"
+      ],
+      "feature_names": [],
+      "segment_start_index": 0,
+      "segment_start_time_ns": 0,
+      "algorithm_name": "",
+      "algorithm_version": "",
+      "window_length_ns": 0,
+      "shift_ns": 0,
+      "source_stream_ids": []
+    }
+  ],
+  "ledgers": {
+    "native_frames": "native-frames-v1",
+    "native_signal_blocks": "native-signal-blocks-v1",
+    "native_discontinuities": "native-discontinuities-v1",
+    "native_signal_gaps": "native-signal-gaps-v1",
+    "session_accounting": "session-accounting-v1"
+  },
+  "replay_capabilities": {
+    "exact_frames": {
+      "available": true,
+      "reason": null
+    },
+    "recorded_projection": {
+      "available": true,
+      "reason": null
+    },
+    "stream_frames": {
+      "available": true,
+      "reason": null
+    }
+  },
+  "session": {
+    "session_id": "018f4f30-6f9d-736-8c61-3f96cf5c5a40",
+    "created_at": "2026-08-01T00:00:00Z",
+    "writer_name": "pyneurale",
+    "writer_version": "1"
+  },
+  "resource_bounds": {
+    "frame_queue_capacity": 256,
+    "control_queue_capacity": 1024,
+    "control_chunk_length": 16,
+    "checkpoint_interval": 32,
+    "overflow_policy": "fault",
+    "streams": [
+      {
+        "stream_id": "neural",
+        "capacity": 4096,
+        "chunk_length": 1024,
+        "block_index_chunk_length": 256
+      },
+      {
+        "stream_id": "emg",
+        "capacity": 1024,
+        "chunk_length": 1024,
+        "block_index_chunk_length": 256
+      }
+    ]
+  },
+  "session_metadata": {},
+  "metadata": {}
+}

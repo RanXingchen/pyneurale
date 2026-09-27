@@ -1,0 +1,690 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pyneurale.org/specifications/nrf/v1/manifest.schema.json",
+  "title": "NRF v1 manifest",
+  "type": "object",
+  "required": [
+    "format",
+    "version",
+    "session",
+    "writer",
+    "checksum",
+    "canonical_json",
+    "default_endianness",
+    "codecs",
+    "clocks",
+    "units",
+    "channels",
+    "electrodes",
+    "schemas",
+    "streams",
+    "feature_sets",
+    "record_schemas",
+    "commit"
+  ],
+  "properties": {
+    "format": { "const": "nrf" },
+    "version": { "$ref": "#/$defs/version" },
+    "session": { "$ref": "#/$defs/session" },
+    "writer": { "$ref": "#/$defs/writer" },
+    "checksum": { "const": "sha256" },
+    "canonical_json": { "const": "rfc8785" },
+    "default_endianness": { "enum": ["little", "big"] },
+    "codecs": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/codec" }
+    },
+    "clocks": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/clock" },
+      "minItems": 1
+    },
+    "units": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/unit" }
+    },
+    "channels": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/channel" }
+    },
+    "electrodes": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/electrode" }
+    },
+    "schemas": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/schemaDescriptor" }
+    },
+    "streams": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/streamDescriptor" }
+    },
+    "feature_sets": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/featureSetDescriptor" }
+    },
+    "record_schemas": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/recordSchema" }
+    },
+    "commit": { "$ref": "#/$defs/commitState" },
+    "metadata": { "$ref": "#/$defs/jsonObject" },
+    "extensions": { "$ref": "#/$defs/jsonObject" }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "safeInteger": {
+      "type": "integer",
+      "minimum": -9007199254740991,
+      "maximum": 9007199254740991
+    },
+    "nonNegativeSafeInteger": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "positiveSafeInteger": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9007199254740991
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:[-_.][a-z0-9]+)*$"
+    },
+    "uuid": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "utcDateTime": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^(?!0000)\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01])T([01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(\\.\\d+)?Z$"
+    },
+    "relativePath": {
+      "type": "string",
+      "pattern": "^(?!(?:con|prn|aux|nul|com[1-9]|lpt[1-9])(?:\\.|/|$))(?![a-z0-9._-]*\\.(?:/|$))(?!\\.{1,2}(?:/|$))[a-z0-9._-]+(?:/(?!(?:con|prn|aux|nul|com[1-9]|lpt[1-9])(?:\\.|/|$))(?![a-z0-9._-]*\\.(?:/|$))(?!\\.{1,2}(?:/|$))[a-z0-9._-]+)*$"
+    },
+    "physicalDataPath": {
+      "allOf": [
+        { "$ref": "#/$defs/relativePath" },
+        { "pattern": "^(?:streams|records)/" }
+      ]
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "version": {
+      "type": "object",
+      "required": ["major", "minor"],
+      "properties": {
+        "major": { "const": 1 },
+        "minor": { "$ref": "#/$defs/nonNegativeSafeInteger" }
+      },
+      "additionalProperties": false
+    },
+    "session": {
+      "type": "object",
+      "required": ["id", "created_at"],
+      "properties": {
+        "id": { "$ref": "#/$defs/uuid" },
+        "created_at": { "$ref": "#/$defs/utcDateTime" },
+        "subject": { "$ref": "#/$defs/jsonObject" },
+        "experiment": { "$ref": "#/$defs/jsonObject" },
+        "metadata": { "$ref": "#/$defs/jsonObject" },
+        "extensions": { "$ref": "#/$defs/jsonObject" }
+      },
+      "additionalProperties": false
+    },
+    "writer": {
+      "type": "object",
+      "required": ["name", "version"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "version": { "type": "string", "minLength": 1 },
+        "implementation": { "type": "string", "minLength": 1 },
+        "extensions": { "$ref": "#/$defs/jsonObject" }
+      },
+      "additionalProperties": false
+    },
+    "rationalRate": {
+      "type": "object",
+      "required": ["numerator", "denominator"],
+      "properties": {
+        "numerator": { "$ref": "#/$defs/positiveSafeInteger" },
+        "denominator": { "$ref": "#/$defs/positiveSafeInteger" }
+      },
+      "additionalProperties": false
+    },
+    "codec": {
+      "type": "object",
+      "required": ["id", "name", "configuration"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "name": {
+          "enum": [
+            "bytes",
+            "vlen-utf8",
+            "blosc",
+            "gzip",
+            "zstd",
+            "crc32c",
+            "sharding_indexed"
+          ]
+        },
+        "configuration": { "$ref": "#/$defs/jsonObject" },
+        "extensions": { "$ref": "#/$defs/jsonObject" }
+      },
+      "additionalProperties": false
+    },
+    "clock": {
+      "type": "object",
+      "required": ["id", "type", "offset_ns", "drift_ppb"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "native_id": { "$ref": "#/$defs/nonNegativeSafeInteger" },
+        "name": { "type": "string", "minLength": 1 },
+        "type": {
+          "enum": ["host_monotonic", "device_counter", "utc", "external", "derived"]
+        },
+        "rate": { "$ref": "#/$defs/rationalRate" },
+        "epoch": { "type": "string", "minLength": 1 },
+        "offset_ns": { "$ref": "#/$defs/safeInteger" },
+        "drift_ppb": { "$ref": "#/$defs/safeInteger" },
+        "synchronization_domain": { "$ref": "#/$defs/id" },
+        "synchronization_source_clock_id": { "$ref": "#/$defs/id" },
+        "metadata": { "$ref": "#/$defs/jsonObject" },
+        "extensions": { "$ref": "#/$defs/jsonObject" }
+      },
+      "additionalProperties": false
+    },
+    "unit": {
+      "type": "object",
+      "required": ["id", "symbol"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "native_id": { "$ref": "#/$defs/nonNegativeSafeInteger" },
+        "symbol": { "type": "string", "minLength": 1 },
+        "description": { "type": "string" },
+        "extensions": { "$ref": "#/$defs/jsonObject" }
+      },
+      "additionalProperties": false
+    },
+    "channel": {
+      "type": "object",
+      "required": ["id", "name", "index", "type", "unit_id", "valid", "bad"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "native_id": { "$ref": "#/$defs/nonNegativeSafeInteger" },
+        "name": { "type": "string", "minLength": 1 },
+        "index": { "$ref": "#/$defs/nonNegativeSafeInteger" },
+        "type": { "type": "string", "minLength": 1 },
+        "unit_id": { "$ref": "#/$defs/id" },
+        "valid": { "type": "boolean" },
+        "bad": { "type": "boolean" },
+        "electrode_id": { "$ref": "#/$defs/id" },
+        "contact": { "$ref": "#/$defs/nonNegativeSafeInteger" },
+        "position": {
+          "type": "array",
+          "prefixItems": [
+            { "type": "number" },
+            { "type": "number" },
+            { "type": "number" }
+          ],
+          "items": false
+        },
+        "metadata": { "$ref": "#/$defs/jsonObject" },
+        "extensions": { "$ref": "#/$defs/jsonObject" }
+      },
+      "additionalProperties": false
+    },
+    "electrode": {
+      "type": "object",
+      "required": ["id", "name", "type", "contact_ids", "channel_ids"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "name": { "type": "string", "minLength": 1 },
+        "type": { "type": "string", "minLength": 1 },
+        "contact_ids": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/nonNegativeSafeInteger" },
+          "uniqueItems": true
+        },
+        "channel_ids": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/id" },
+          "uniqueItems": true
+        },
+        "shape": {
+          "type": "array",
+          "prefixItems": [
+            { "$ref": "#/$defs/positiveSafeInteger" },
+            { "$ref": "#/$defs/positiveSafeInteger" }
+          ],
+          "items": false
+        },
+        "spacing": {
+          "type": "array",
+          "prefixItems": [{ "type": "number" }, { "type": "number" }],
+          "items": false
+        },
+        "spacing_unit_id": { "$ref": "#/$defs/id" },
+        "metadata": { "$ref": "#/$defs/jsonObject" },
+        "extensions": { "$ref": "#/$defs/jsonObject" }
+      },
+      "additionalProperties": false
+    },
+    "schemaDescriptor": {
+      "type": "object",
+      "required": ["id", "stream_ids"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "native_id": { "$ref": "#/$defs/nonNegativeSafeInteger" },
+        "stream_ids": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/id" },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "extensions": { "$ref": "#/$defs/jsonObject" }
+      },
+      "additionalProperties": false
+    },
+    "zarrArray": {
+      "type": "object",
+      "required": ["path", "zarr_format", "shape", "chunk_shape", "codec_ids"],
+      "properties": {
+        "path": { "$ref": "#/$defs/physicalDataPath" },
+        "zarr_format": { "const": 3 },
+        "shape": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/nonNegativeSafeInteger" },
+          "minItems": 1
+        },
+        "chunk_shape": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/positiveSafeInteger" },
+          "minItems": 1
+        },
+        "codec_ids": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/id" },
+          "minItems": 1
+        },
+        "fill_value": {},
+        "extensions": { "$ref": "#/$defs/jsonObject" }
+      },
+      "additionalProperties": false
+    },
+    "regularTiming": {
+      "type": "object",
+      "required": ["mode", "rate", "timestamp_reference"],
+      "properties": {
+        "mode": { "const": "regular" },
+        "rate": { "$ref": "#/$defs/rationalRate" },
+        "timestamp_reference": {
+          "enum": ["sample", "window_center", "event", "spike_peak"]
+        },
+        "segment_start_time_ns": { "$ref": "#/$defs/safeInteger" },
+        "segment_start_index": { "$ref": "#/$defs/nonNegativeSafeInteger" },
+        "extensions": { "$ref": "#/$defs/jsonObject" }
+      },
+      "additionalProperties": false
+    },
+    "explicitTiming": {
+      "type": "object",
+      "required": [
+        "mode",
+        "timestamps",
+        "timestamp_dtype",
+        "timestamp_unit",
+        "timestamp_reference"
+      ],
+      "properties": {
+        "mode": { "const": "explicit" },
+        "timestamps": { "$ref": "#/$defs/zarrArray" },
+        "timestamp_dtype": { "const": "int64" },
+        "timestamp_unit": { "const": "ns" },
+        "timestamp_reference": {
+          "enum": ["sample", "window_center", "event", "spike_peak"]
+        },
+        "extensions": { "$ref": "#/$defs/jsonObject" }
+      },
+      "additionalProperties": false
+    },
+    "segmentPolicy": {
+      "type": "object",
+      "required": ["mode", "discontinuity_record_schema_id"],
+      "properties": {
+        "mode": { "const": "explicit" },
+        "initial_segment_id": { "$ref": "#/$defs/id" },
+        "discontinuity_record_schema_id": { "$ref": "#/$defs/id" },
+        "extensions": { "$ref": "#/$defs/jsonObject" }
+      },
+      "additionalProperties": false
+    },
+    "streamDescriptor": {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "kind",
+        "schema_id",
+        "dtype",
+        "endianness",
+        "axes",
+        "data",
+        "timing",
+        "clock_id",
+        "source_stream_ids",
+        "channel_ids",
+        "unit_ids",
+        "segment_policy",
+        "committed_extent"
+      ],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "native_id": { "$ref": "#/$defs/nonNegativeSafeInteger" },
+        "name": { "type": "string", "minLength": 1 },
+        "kind": { "enum": ["neural", "behavioral", "feature", "spike"] },
+        "schema_id": { "$ref": "#/$defs/id" },
+        "dtype": {
+          "enum": [
+            "int16",
+            "int32",
+            "int64",
+            "uint8",
+            "uint32",
+            "uint64",
+            "float32",
+            "float64",
+            "bool",
+            "utf8"
+          ]
+        },
+        "endianness": { "enum": ["little", "big", "not_applicable"] },
+        "axes": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "data": { "$ref": "#/$defs/zarrArray" },
+        "timing": {
+          "oneOf": [
+            { "$ref": "#/$defs/regularTiming" },
+            { "$ref": "#/$defs/explicitTiming" }
+          ]
+        },
+        "clock_id": { "$ref": "#/$defs/id" },
+        "source_stream_ids": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/id" },
+          "uniqueItems": true
+        },
+        "channel_ids": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/id" },
+          "uniqueItems": true
+        },
+        "unit_ids": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/id" },
+          "uniqueItems": false
+        },
+        "feature_set_id": { "$ref": "#/$defs/id" },
+        "segment_policy": { "$ref": "#/$defs/segmentPolicy" },
+        "committed_extent": { "$ref": "#/$defs/nonNegativeSafeInteger" },
+        "metadata": { "$ref": "#/$defs/jsonObject" },
+        "extensions": { "$ref": "#/$defs/jsonObject" }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "kind": { "const": "neural" } },
+            "required": ["kind"]
+          },
+          "then": {
+            "properties": {
+              "axes": { "const": ["sample", "channel"] }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": { "kind": { "const": "behavioral" } },
+            "required": ["kind"]
+          },
+          "then": {
+            "properties": {
+              "axes": { "const": ["sample", "channel"] }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": { "kind": { "const": "feature" } },
+            "required": ["kind"]
+          },
+          "then": {
+            "required": ["feature_set_id"],
+            "properties": {
+              "axes": { "const": ["observation", "feature"] },
+              "timing": {
+                "properties": {
+                  "timestamp_reference": { "const": "window_center" }
+                }
+              }
+            }
+          },
+          "else": {
+            "not": { "required": ["feature_set_id"] }
+          }
+        },
+        {
+          "if": {
+            "properties": { "kind": { "const": "spike" } },
+            "required": ["kind"]
+          },
+          "then": {
+            "properties": {
+              "axes": { "const": ["spike", "sample", "channel"] }
+            }
+          }
+        }
+      ],
+      "additionalProperties": false
+    },
+    "featureSetDescriptor": {
+      "type": "object",
+      "required": [
+        "id",
+        "feature_names",
+        "unit_ids",
+        "source_stream_id",
+        "algorithm",
+        "window_length_ns",
+        "shift_ns",
+        "timestamp_reference"
+      ],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "native_id": { "$ref": "#/$defs/nonNegativeSafeInteger" },
+        "feature_names": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "unit_ids": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/id" },
+          "minItems": 1
+        },
+        "source_stream_id": { "$ref": "#/$defs/id" },
+        "algorithm": {
+          "type": "object",
+          "required": ["name", "version"],
+          "properties": {
+            "name": { "type": "string", "minLength": 1 },
+            "version": { "type": "string", "minLength": 1 },
+            "parameters": { "$ref": "#/$defs/jsonObject" }
+          },
+          "additionalProperties": false
+        },
+        "window_length_ns": { "$ref": "#/$defs/positiveSafeInteger" },
+        "shift_ns": { "$ref": "#/$defs/positiveSafeInteger" },
+        "timestamp_reference": { "const": "window_center" },
+        "extensions": { "$ref": "#/$defs/jsonObject" }
+      },
+      "additionalProperties": false
+    },
+    "recordField": {
+      "type": "object",
+      "required": ["name", "dtype", "endianness", "nullable", "array_path", "codec_ids"],
+      "properties": {
+        "name": { "$ref": "#/$defs/id" },
+        "dtype": {
+          "enum": [
+            "int16",
+            "int32",
+            "int64",
+            "uint8",
+            "uint32",
+            "uint64",
+            "float32",
+            "float64",
+            "bool",
+            "utf8"
+          ]
+        },
+        "nullable": { "type": "boolean" },
+        "endianness": { "enum": ["little", "big", "not_applicable"] },
+        "array_path": { "$ref": "#/$defs/physicalDataPath" },
+        "validity_path": { "$ref": "#/$defs/physicalDataPath" },
+        "codec_ids": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/id" },
+          "minItems": 1
+        },
+        "shape": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/positiveSafeInteger" }
+        },
+        "unit_id": { "$ref": "#/$defs/id" },
+        "reference": {
+          "enum": [
+            "clock",
+            "stream",
+            "segment",
+            "event",
+            "trial",
+            "fault",
+            "channel",
+            "feature_set",
+            "transaction"
+          ]
+        },
+        "extensions": { "$ref": "#/$defs/jsonObject" }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "nullable": { "const": true } },
+            "required": ["nullable"]
+          },
+          "then": { "required": ["validity_path"] },
+          "else": { "not": { "required": ["validity_path"] } }
+        }
+      ],
+      "additionalProperties": false
+    },
+    "recordSchema": {
+      "type": "object",
+      "required": [
+        "id",
+        "kind",
+        "path",
+        "clock_id",
+        "primary_key",
+        "fields",
+        "chunk_length",
+        "committed_extent"
+      ],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "kind": {
+          "enum": [
+            "events",
+            "trials",
+            "experiment_state",
+            "commands",
+            "task_variables",
+            "labels",
+            "targets",
+            "assistance",
+            "drops",
+            "faults",
+            "session_termination",
+            "discontinuities",
+            "native_frames",
+            "native_signal_blocks",
+            "native_discontinuities",
+            "native_signal_gaps",
+            "session_accounting"
+          ]
+        },
+        "path": { "$ref": "#/$defs/physicalDataPath" },
+        "clock_id": { "$ref": "#/$defs/id" },
+        "primary_key": { "$ref": "#/$defs/id" },
+        "fields": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/recordField" },
+          "minItems": 1
+        },
+        "chunk_length": { "$ref": "#/$defs/positiveSafeInteger" },
+        "committed_extent": { "$ref": "#/$defs/nonNegativeSafeInteger" },
+        "extensions": { "$ref": "#/$defs/jsonObject" }
+      },
+      "additionalProperties": false
+    },
+    "commitState": {
+      "type": "object",
+      "required": [
+        "journal_sequence",
+        "last_transaction_id",
+        "last_checkpoint_id",
+        "committed_extents",
+        "sealed_targets"
+      ],
+      "properties": {
+        "journal_sequence": { "$ref": "#/$defs/nonNegativeSafeInteger" },
+        "last_transaction_id": {
+          "type": ["string", "null"],
+          "pattern": "^tx-[0-9]{16}$"
+        },
+        "last_checkpoint_id": {
+          "type": ["string", "null"],
+          "pattern": "^checkpoint-[0-9]{16}$"
+        },
+        "committed_extents": {
+          "type": "object",
+          "propertyNames": { "$ref": "#/$defs/relativePath" },
+          "additionalProperties": { "$ref": "#/$defs/nonNegativeSafeInteger" }
+        },
+        "sealed_targets": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/relativePath" },
+          "uniqueItems": true
+        },
+        "extensions": { "$ref": "#/$defs/jsonObject" }
+      },
+      "additionalProperties": false
+    },
+    "jsonObject": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  }
+}

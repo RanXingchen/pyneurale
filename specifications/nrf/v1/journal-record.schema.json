@@ -1,0 +1,359 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pyneurale.org/specifications/nrf/v1/journal-record.schema.json",
+  "title": "NRF v1 journal record",
+  "oneOf": [
+    { "$ref": "#/$defs/prepare" },
+    { "$ref": "#/$defs/commit" },
+    { "$ref": "#/$defs/checkpointRecord" },
+    { "$ref": "#/$defs/termination" }
+  ],
+  "$defs": {
+    "safeInteger": {
+      "type": "integer",
+      "minimum": -9007199254740991,
+      "maximum": 9007199254740991
+    },
+    "nonNegativeSafeInteger": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "positiveSafeInteger": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9007199254740991
+    },
+    "transactionId": {
+      "type": "string",
+      "pattern": "^tx-[0-9]{16}$"
+    },
+    "checkpointId": {
+      "type": "string",
+      "pattern": "^checkpoint-[0-9]{16}$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "relativePath": {
+      "type": "string",
+      "pattern": "^(?!(?:con|prn|aux|nul|com[1-9]|lpt[1-9])(?:\\.|/|$))(?![a-z0-9._-]*\\.(?:/|$))(?!\\.{1,2}(?:/|$))[a-z0-9._-]+(?:/(?!(?:con|prn|aux|nul|com[1-9]|lpt[1-9])(?:\\.|/|$))(?![a-z0-9._-]*\\.(?:/|$))(?!\\.{1,2}(?:/|$))[a-z0-9._-]+)*$"
+    },
+    "stagedPath": {
+      "allOf": [
+        { "$ref": "#/$defs/relativePath" },
+        {
+          "pattern": "^\\.staging/tx-[0-9]{16}/.+$",
+          "description": "Replay additionally requires .staging/<prepare.transaction_id>/<object.path> exactly."
+        }
+      ]
+    },
+    "indexPath": {
+      "allOf": [
+        { "$ref": "#/$defs/relativePath" },
+        {
+          "pattern": "^indexes/[a-z][a-z0-9]*(?:[-_.][a-z0-9]+)*/[a-z0-9._-]+(?:/[a-z0-9._-]+)*$"
+        }
+      ]
+    },
+    "base": {
+      "type": "object",
+      "required": ["sequence", "record_checksum"],
+      "properties": {
+        "sequence": { "$ref": "#/$defs/positiveSafeInteger" },
+        "record_checksum": { "$ref": "#/$defs/sha256" },
+        "extensions": { "type": "object", "additionalProperties": true }
+      }
+    },
+    "objectWrite": {
+      "type": "object",
+      "required": [
+        "path",
+        "staged_path",
+        "byte_length",
+        "sha256",
+        "disposition",
+        "content_kind",
+        "target_path",
+        "array_path",
+        "logical_role"
+      ],
+      "properties": {
+        "path": { "$ref": "#/$defs/relativePath" },
+        "staged_path": { "$ref": "#/$defs/stagedPath" },
+        "byte_length": { "$ref": "#/$defs/nonNegativeSafeInteger" },
+        "sha256": { "$ref": "#/$defs/sha256" },
+        "disposition": { "const": "create" },
+        "content_kind": { "enum": ["zarr_metadata", "zarr_chunk", "index"] },
+        "target_path": { "$ref": "#/$defs/relativePath" },
+        "array_path": { "$ref": "#/$defs/relativePath" },
+        "logical_role": {
+          "enum": [
+            "array_chunk",
+            "record_column_chunk",
+            "record_validity_chunk",
+            "metadata_snapshot",
+            "index"
+          ]
+        },
+        "chunk_coordinate": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/nonNegativeSafeInteger" },
+          "minItems": 1
+        },
+        "record_schema_id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9]*(?:[-_.][a-z0-9]+)*$"
+        },
+        "column_name": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9]*(?:[-_.][a-z0-9]+)*$"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "logical_role": {
+                "enum": [
+                  "array_chunk",
+                  "record_column_chunk",
+                  "record_validity_chunk"
+                ]
+              }
+            },
+            "required": ["logical_role"]
+          },
+          "then": {
+            "required": ["chunk_coordinate"],
+            "properties": {
+              "content_kind": { "const": "zarr_chunk" }
+            }
+          },
+          "else": {
+            "not": { "required": ["chunk_coordinate"] }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "logical_role": {
+                "enum": ["record_column_chunk", "record_validity_chunk"]
+              }
+            },
+            "required": ["logical_role"]
+          },
+          "then": {
+            "required": ["record_schema_id", "column_name"]
+          },
+          "else": {
+            "not": {
+              "anyOf": [
+                { "required": ["record_schema_id"] },
+                { "required": ["column_name"] }
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "logical_role": { "const": "metadata_snapshot" }
+            },
+            "required": ["logical_role"]
+          },
+          "then": {
+            "properties": {
+              "content_kind": { "const": "zarr_metadata" }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "logical_role": { "const": "index" }
+            },
+            "required": ["logical_role"]
+          },
+          "then": {
+            "properties": {
+              "content_kind": { "const": "index" },
+              "path": { "$ref": "#/$defs/indexPath" }
+            }
+          }
+        }
+      ],
+      "additionalProperties": false
+    },
+    "extentTransition": {
+      "type": "object",
+      "required": [
+        "target_path",
+        "target_kind",
+        "before",
+        "after",
+        "chunk_length",
+        "seals_target",
+        "required_array_paths",
+        "object_paths"
+      ],
+      "properties": {
+        "target_path": { "$ref": "#/$defs/relativePath" },
+        "target_kind": { "enum": ["array", "record_set"] },
+        "record_schema_id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9]*(?:[-_.][a-z0-9]+)*$"
+        },
+        "before": { "$ref": "#/$defs/nonNegativeSafeInteger" },
+        "after": { "$ref": "#/$defs/nonNegativeSafeInteger" },
+        "chunk_length": { "$ref": "#/$defs/positiveSafeInteger" },
+        "seals_target": { "type": "boolean" },
+        "required_array_paths": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/relativePath" },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "object_paths": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/relativePath" },
+          "uniqueItems": true
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "target_kind": { "const": "record_set" }
+            },
+            "required": ["target_kind"]
+          },
+          "then": {
+            "required": ["record_schema_id"]
+          },
+          "else": {
+            "not": { "required": ["record_schema_id"] }
+          }
+        }
+      ],
+      "additionalProperties": false
+    },
+    "prepare": {
+      "allOf": [
+        { "$ref": "#/$defs/base" },
+        {
+          "type": "object",
+          "required": [
+            "kind",
+            "transaction_id",
+            "previous_committed_transaction_id",
+            "objects",
+            "extents"
+          ],
+          "properties": {
+            "kind": { "const": "prepare" },
+            "transaction_id": { "$ref": "#/$defs/transactionId" },
+            "previous_committed_transaction_id": {
+              "type": ["string", "null"],
+              "pattern": "^tx-[0-9]{16}$"
+            },
+            "objects": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/objectWrite" }
+            },
+            "extents": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/extentTransition" },
+              "minItems": 1
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "commit": {
+      "allOf": [
+        { "$ref": "#/$defs/base" },
+        {
+          "type": "object",
+          "required": ["kind", "transaction_id", "prepare_sequence"],
+          "properties": {
+            "kind": { "const": "commit" },
+            "transaction_id": { "$ref": "#/$defs/transactionId" },
+            "prepare_sequence": { "$ref": "#/$defs/positiveSafeInteger" }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "checkpointRecord": {
+      "allOf": [
+        { "$ref": "#/$defs/base" },
+        {
+          "type": "object",
+          "required": ["kind", "checkpoint_id", "checkpoint_path", "checkpoint_sha256"],
+          "properties": {
+            "kind": { "const": "checkpoint" },
+            "checkpoint_id": { "$ref": "#/$defs/checkpointId" },
+            "checkpoint_path": { "$ref": "#/$defs/relativePath" },
+            "checkpoint_sha256": { "$ref": "#/$defs/sha256" }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "termination": {
+      "allOf": [
+        { "$ref": "#/$defs/base" },
+        {
+          "type": "object",
+          "required": [
+            "kind",
+            "termination_record_id",
+            "termination_kind",
+            "time_ns",
+            "reason",
+            "fault_id",
+            "last_transaction_id"
+          ],
+          "properties": {
+            "kind": { "const": "termination" },
+            "termination_record_id": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9-_.]+$"
+            },
+            "termination_kind": { "enum": ["normal", "aborted", "faulted"] },
+            "time_ns": { "$ref": "#/$defs/safeInteger" },
+            "reason": { "type": "string", "minLength": 1 },
+            "last_transaction_id": {
+              "type": "string",
+              "pattern": "^tx-[0-9]{16}$"
+            },
+            "fault_id": {
+              "type": ["string", "null"],
+              "pattern": "^[a-z][a-z0-9-_.]+$"
+            }
+          },
+          "allOf": [
+            {
+              "if": {
+                "properties": { "termination_kind": { "const": "normal" } },
+                "required": ["termination_kind"]
+              },
+              "then": { "properties": { "fault_id": { "type": "null" } } }
+            },
+            {
+              "if": {
+                "properties": { "termination_kind": { "const": "faulted" } },
+                "required": ["termination_kind"]
+              },
+              "then": { "properties": { "fault_id": { "type": "string" } } }
+            }
+          ]
+        }
+      ],
+      "unevaluatedProperties": false
+    }
+  }
+}

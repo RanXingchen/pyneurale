@@ -1,0 +1,11 @@
+cmake_minimum_required(VERSION 3.24)
+project(neurale_example_callback LANGUAGES CXX)
+find_package(Python REQUIRED COMPONENTS Interpreter)
+find_package(Threads REQUIRED)
+execute_process(COMMAND "${Python_EXECUTABLE}" -c "from neurale.devices.provider import get_include; print(get_include())"
+    OUTPUT_VARIABLE DEVICE_SDK OUTPUT_STRIP_TRAILING_WHITESPACE COMMAND_ERROR_IS_FATAL ANY)
+add_library(provider SHARED native/provider.cpp)
+target_include_directories(provider PRIVATE "${DEVICE_SDK}")
+target_compile_features(provider PRIVATE cxx_std_17)
+target_link_libraries(provider PRIVATE Threads::Threads)
+install(TARGETS provider LIBRARY DESTINATION neurale_example_callback RUNTIME DESTINATION neurale_example_callback)

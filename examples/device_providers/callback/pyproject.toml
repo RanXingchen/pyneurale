@@ -1,0 +1,15 @@
+[build-system]
+requires = ["scikit-build-core>=0.10", "pyneurale"]
+build-backend = "scikit_build_core.build"
+
+[project]
+name = "neurale-example-callback"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = ["pyneurale"]
+
+[project.entry-points."neurale.devices"]
+"example.callback" = "neurale_example_callback:provider"
+
+[tool.scikit-build]
+wheel.packages = ["src/neurale_example_callback"]

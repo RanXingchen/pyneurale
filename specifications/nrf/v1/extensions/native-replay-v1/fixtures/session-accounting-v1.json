@@ -1,0 +1,292 @@
+{
+  "id": "session-accounting-v1",
+  "kind": "session_accounting",
+  "path": "records/session_accounting/session-accounting-v1",
+  "primary_key": "accounting_id",
+  "clock_id": "session.clock",
+  "chunk_length": 1,
+  "committed_extent": 0,
+  "fields": [
+    {
+      "name": "accounting_id",
+      "dtype": "utf8",
+      "endianness": "not_applicable",
+      "nullable": false,
+      "array_path": "records/session_accounting/session-accounting-v1/columns/accounting_id",
+      "codec_ids": [
+        "utf8-vlen"
+      ]
+    },
+    {
+      "name": "accounting_origin",
+      "dtype": "utf8",
+      "endianness": "not_applicable",
+      "nullable": false,
+      "array_path": "records/session_accounting/session-accounting-v1/columns/accounting_origin",
+      "codec_ids": [
+        "utf8-vlen"
+      ]
+    },
+    {
+      "name": "termination_origin",
+      "dtype": "utf8",
+      "endianness": "not_applicable",
+      "nullable": false,
+      "array_path": "records/session_accounting/session-accounting-v1/columns/termination_origin",
+      "codec_ids": [
+        "utf8-vlen"
+      ]
+    },
+    {
+      "name": "producer_acceptance_known",
+      "dtype": "bool",
+      "endianness": "not_applicable",
+      "nullable": false,
+      "array_path": "records/session_accounting/session-accounting-v1/columns/producer_acceptance_known",
+      "codec_ids": [
+        "bytes-le"
+      ]
+    },
+    {
+      "name": "runtime_accepted",
+      "dtype": "uint64",
+      "endianness": "little",
+      "nullable": false,
+      "array_path": "records/session_accounting/session-accounting-v1/columns/runtime_accepted",
+      "codec_ids": [
+        "bytes-le"
+      ]
+    },
+    {
+      "name": "recorder_accepted",
+      "dtype": "uint64",
+      "endianness": "little",
+      "nullable": false,
+      "array_path": "records/session_accounting/session-accounting-v1/columns/recorder_accepted",
+      "codec_ids": [
+        "bytes-le"
+      ]
+    },
+    {
+      "name": "spool_committed",
+      "dtype": "uint64",
+      "endianness": "little",
+      "nullable": true,
+      "array_path": "records/session_accounting/session-accounting-v1/columns/spool_committed",
+      "codec_ids": [
+        "bytes-le"
+      ],
+      "validity_path": "records/session_accounting/session-accounting-v1/validity/spool_committed"
+    },
+    {
+      "name": "nrf_committed",
+      "dtype": "uint64",
+      "endianness": "little",
+      "nullable": false,
+      "array_path": "records/session_accounting/session-accounting-v1/columns/nrf_committed",
+      "codec_ids": [
+        "bytes-le"
+      ]
+    },
+    {
+      "name": "rejected_before_runtime_acceptance",
+      "dtype": "uint64",
+      "endianness": "little",
+      "nullable": false,
+      "array_path": "records/session_accounting/session-accounting-v1/columns/rejected_before_runtime_acceptance",
+      "codec_ids": [
+        "bytes-le"
+      ]
+    },
+    {
+      "name": "failed_between_runtime_and_recorder",
+      "dtype": "uint64",
+      "endianness": "little",
+      "nullable": false,
+      "array_path": "records/session_accounting/session-accounting-v1/columns/failed_between_runtime_and_recorder",
+      "codec_ids": [
+        "bytes-le"
+      ]
+    },
+    {
+      "name": "lost_between_recorder_and_spool",
+      "dtype": "uint64",
+      "endianness": "little",
+      "nullable": true,
+      "array_path": "records/session_accounting/session-accounting-v1/columns/lost_between_recorder_and_spool",
+      "codec_ids": [
+        "bytes-le"
+      ],
+      "validity_path": "records/session_accounting/session-accounting-v1/validity/lost_between_recorder_and_spool"
+    },
+    {
+      "name": "lost_during_finalization",
+      "dtype": "uint64",
+      "endianness": "little",
+      "nullable": false,
+      "array_path": "records/session_accounting/session-accounting-v1/columns/lost_during_finalization",
+      "codec_ids": [
+        "bytes-le"
+      ]
+    },
+    {
+      "name": "control_offered",
+      "dtype": "uint64",
+      "endianness": "little",
+      "nullable": true,
+      "array_path": "records/session_accounting/session-accounting-v1/columns/control_offered",
+      "codec_ids": [
+        "bytes-le"
+      ],
+      "validity_path": "records/session_accounting/session-accounting-v1/validity/control_offered"
+    },
+    {
+      "name": "control_accepted",
+      "dtype": "uint64",
+      "endianness": "little",
+      "nullable": false,
+      "array_path": "records/session_accounting/session-accounting-v1/columns/control_accepted",
+      "codec_ids": [
+        "bytes-le"
+      ]
+    },
+    {
+      "name": "control_spool_committed",
+      "dtype": "uint64",
+      "endianness": "little",
+      "nullable": true,
+      "array_path": "records/session_accounting/session-accounting-v1/columns/control_spool_committed",
+      "codec_ids": [
+        "bytes-le"
+      ],
+      "validity_path": "records/session_accounting/session-accounting-v1/validity/control_spool_committed"
+    },
+    {
+      "name": "control_nrf_committed",
+      "dtype": "uint64",
+      "endianness": "little",
+      "nullable": false,
+      "array_path": "records/session_accounting/session-accounting-v1/columns/control_nrf_committed",
+      "codec_ids": [
+        "bytes-le"
+      ]
+    },
+    {
+      "name": "control_rejected",
+      "dtype": "uint64",
+      "endianness": "little",
+      "nullable": false,
+      "array_path": "records/session_accounting/session-accounting-v1/columns/control_rejected",
+      "codec_ids": [
+        "bytes-le"
+      ]
+    },
+    {
+      "name": "lost_between_control_acceptance_and_spool",
+      "dtype": "uint64",
+      "endianness": "little",
+      "nullable": true,
+      "array_path": "records/session_accounting/session-accounting-v1/columns/lost_between_control_acceptance_and_spool",
+      "codec_ids": [
+        "bytes-le"
+      ],
+      "validity_path": "records/session_accounting/session-accounting-v1/validity/lost_between_control_acceptance_and_spool"
+    },
+    {
+      "name": "control_lost_during_finalization",
+      "dtype": "uint64",
+      "endianness": "little",
+      "nullable": false,
+      "array_path": "records/session_accounting/session-accounting-v1/columns/control_lost_during_finalization",
+      "codec_ids": [
+        "bytes-le"
+      ]
+    },
+    {
+      "name": "data_first_lost_ordinal",
+      "dtype": "uint64",
+      "endianness": "little",
+      "nullable": true,
+      "array_path": "records/session_accounting/session-accounting-v1/columns/data_first_lost_ordinal",
+      "codec_ids": [
+        "bytes-le"
+      ],
+      "validity_path": "records/session_accounting/session-accounting-v1/validity/data_first_lost_ordinal"
+    },
+    {
+      "name": "data_first_rejected_message_kind",
+      "dtype": "utf8",
+      "endianness": "not_applicable",
+      "nullable": true,
+      "array_path": "records/session_accounting/session-accounting-v1/columns/data_first_rejected_message_kind",
+      "codec_ids": [
+        "utf8-vlen"
+      ],
+      "validity_path": "records/session_accounting/session-accounting-v1/validity/data_first_rejected_message_kind"
+    },
+    {
+      "name": "data_first_rejected_frame_sequence",
+      "dtype": "uint64",
+      "endianness": "little",
+      "nullable": true,
+      "array_path": "records/session_accounting/session-accounting-v1/columns/data_first_rejected_frame_sequence",
+      "codec_ids": [
+        "bytes-le"
+      ],
+      "validity_path": "records/session_accounting/session-accounting-v1/validity/data_first_rejected_frame_sequence"
+    },
+    {
+      "name": "control_first_lost_ordinal",
+      "dtype": "uint64",
+      "endianness": "little",
+      "nullable": true,
+      "array_path": "records/session_accounting/session-accounting-v1/columns/control_first_lost_ordinal",
+      "codec_ids": [
+        "bytes-le"
+      ],
+      "validity_path": "records/session_accounting/session-accounting-v1/validity/control_first_lost_ordinal"
+    },
+    {
+      "name": "control_first_rejected_kind",
+      "dtype": "utf8",
+      "endianness": "not_applicable",
+      "nullable": true,
+      "array_path": "records/session_accounting/session-accounting-v1/columns/control_first_rejected_kind",
+      "codec_ids": [
+        "utf8-vlen"
+      ],
+      "validity_path": "records/session_accounting/session-accounting-v1/validity/control_first_rejected_kind"
+    },
+    {
+      "name": "control_first_rejected_identity",
+      "dtype": "utf8",
+      "endianness": "not_applicable",
+      "nullable": true,
+      "array_path": "records/session_accounting/session-accounting-v1/columns/control_first_rejected_identity",
+      "codec_ids": [
+        "utf8-vlen"
+      ],
+      "validity_path": "records/session_accounting/session-accounting-v1/validity/control_first_rejected_identity"
+    },
+    {
+      "name": "data_rejected_after_close",
+      "dtype": "uint64",
+      "endianness": "little",
+      "nullable": false,
+      "array_path": "records/session_accounting/session-accounting-v1/columns/data_rejected_after_close",
+      "codec_ids": [
+        "bytes-le"
+      ]
+    },
+    {
+      "name": "control_rejected_after_close",
+      "dtype": "uint64",
+      "endianness": "little",
+      "nullable": false,
+      "array_path": "records/session_accounting/session-accounting-v1/columns/control_rejected_after_close",
+      "codec_ids": [
+        "bytes-le"
+      ]
+    }
+  ]
+}

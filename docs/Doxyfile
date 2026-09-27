@@ -1,0 +1,36 @@
+PROJECT_NAME           = "PyNeurale"
+PROJECT_BRIEF          = "C++ API reference for PyNeurale"
+
+OUTPUT_DIRECTORY       = docs/_build/doxygen
+INPUT                  = cpp/include
+FILE_PATTERNS          = *.h *.hh *.hpp *.hxx *.c *.cc *.cpp *.cxx
+RECURSIVE              = YES
+EXCLUDE_PATTERNS       = */_build/* */third_party/* */vendor/*
+
+STRIP_FROM_PATH        = cpp
+FULL_PATH_NAMES        = YES
+EXTRACT_ALL            = NO
+EXTRACT_PRIVATE        = NO
+EXTRACT_STATIC         = NO
+HIDE_UNDOC_MEMBERS     = YES
+HIDE_UNDOC_CLASSES     = YES
+
+GENERATE_HTML          = NO
+GENERATE_LATEX         = NO
+GENERATE_XML           = YES
+XML_OUTPUT             = xml
+XML_PROGRAMLISTING     = NO
+
+ENABLE_PREPROCESSING   = YES
+MACRO_EXPANSION        = YES
+SEARCH_INCLUDES        = YES
+INCLUDE_PATH           = cpp/include
+
+QUIET                  = YES
+WARNINGS               = YES
+WARN_IF_UNDOCUMENTED   = YES
+WARN_IF_DOC_ERROR      = YES
+WARN_AS_ERROR          = YES
+WARN_LOGFILE           = docs/_build/doxygen/warnings.log
+
+HAVE_DOT               = NO

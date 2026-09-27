@@ -1,0 +1,133 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pyneurale.org/specifications/nrf/v1/recovery-report.schema.json",
+  "title": "NRF v1 recovery report",
+  "type": "object",
+  "required": [
+    "format",
+    "version",
+    "recovery_id",
+    "created_at",
+    "base_checkpoint_id",
+    "last_valid_journal_sequence",
+    "last_committed_transaction_id",
+    "committed_extents",
+    "sealed_targets",
+    "retained_transaction_ids",
+    "ignored_transaction_ids",
+    "ignored_records",
+    "missing_objects",
+    "corrupt_objects",
+    "quarantined_paths",
+    "rebuilt_indexes",
+    "committed_data_modified",
+    "record_checksum"
+  ],
+  "properties": {
+    "format": { "const": "nrf-recovery-report" },
+    "version": {
+      "type": "object",
+      "required": ["major", "minor"],
+      "properties": {
+        "major": { "const": 1 },
+        "minor": { "$ref": "#/$defs/nonNegativeSafeInteger" }
+      },
+      "additionalProperties": false
+    },
+    "recovery_id": { "type": "string", "pattern": "^[a-z][a-z0-9-_.]+$" },
+    "created_at": { "type": "string", "format": "date-time", "pattern": "^(?!0000)\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01])T([01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(\\.\\d+)?Z$" },
+    "base_checkpoint_id": {
+      "type": ["string", "null"],
+      "pattern": "^checkpoint-[0-9]{16}$"
+    },
+    "last_valid_journal_sequence": { "$ref": "#/$defs/nonNegativeSafeInteger" },
+    "last_committed_transaction_id": {
+      "type": ["string", "null"],
+      "pattern": "^tx-[0-9]{16}$"
+    },
+    "committed_extents": {
+      "type": "object",
+      "propertyNames": { "$ref": "#/$defs/relativePath" },
+      "additionalProperties": { "$ref": "#/$defs/nonNegativeSafeInteger" }
+    },
+    "sealed_targets": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/relativePath" },
+      "uniqueItems": true
+    },
+    "retained_transaction_ids": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^tx-[0-9]{16}$" },
+      "uniqueItems": true
+    },
+    "ignored_transaction_ids": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^tx-[0-9]{16}$" },
+      "uniqueItems": true
+    },
+    "ignored_records": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["sequence", "reason"],
+        "properties": {
+          "sequence": { "$ref": "#/$defs/positiveSafeInteger" },
+          "reason": {
+            "enum": [
+              "partial_line",
+              "bad_record_checksum",
+              "uncommitted_prepare",
+              "malformed_order"
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "missing_objects": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/relativePath" },
+      "uniqueItems": true
+    },
+    "corrupt_objects": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/relativePath" },
+      "uniqueItems": true
+    },
+    "quarantined_paths": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/relativePath" },
+      "uniqueItems": true
+    },
+    "rebuilt_indexes": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/relativePath" },
+      "uniqueItems": true
+    },
+    "committed_data_modified": { "const": false },
+    "record_checksum": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "extensions": { "type": "object", "additionalProperties": true }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "safeInteger": {
+      "type": "integer",
+      "minimum": -9007199254740991,
+      "maximum": 9007199254740991
+    },
+    "nonNegativeSafeInteger": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "positiveSafeInteger": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9007199254740991
+    },
+    "relativePath": {
+      "type": "string",
+      "pattern": "^(?!(?:con|prn|aux|nul|com[1-9]|lpt[1-9])(?:\\.|/|$))(?![a-z0-9._-]*\\.(?:/|$))(?!\\.{1,2}(?:/|$))[a-z0-9._-]+(?:/(?!(?:con|prn|aux|nul|com[1-9]|lpt[1-9])(?:\\.|/|$))(?![a-z0-9._-]*\\.(?:/|$))(?!\\.{1,2}(?:/|$))[a-z0-9._-]+)*$"
+    }
+  }
+}

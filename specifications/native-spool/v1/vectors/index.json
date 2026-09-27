@@ -1,0 +1,1631 @@
+{
+  "format": "neurale-native-spool",
+  "version_major": 1,
+  "version_minor": 1,
+  "checksum": "crc32c",
+  "generator": "specifications/native-spool/v1/tools/generate_vectors.py",
+  "vectors": [
+    {
+      "name": "valid-empty",
+      "file": "valid-empty.spool",
+      "description": "A prepared spool holding no committed record.",
+      "bytes": 376,
+      "sha256": "005e4adab31c6f1f504045f00d77a93521755a3ef114821084434dfcbc0cc57e",
+      "expect": {
+        "status": "ok",
+        "committed_prefix_end": 376,
+        "committed_transactions": 0,
+        "last_transaction_id": 0,
+        "data_items": 0,
+        "control_items": 0,
+        "session_end_present": false,
+        "capture_outcome": null,
+        "requested_terminal_intent": null,
+        "primary_fault_committed": null,
+        "terminal_reason": null,
+        "durability_policy": "transaction_sync",
+        "durable_extent_bytes": 376,
+        "finalizable": true,
+        "codes": []
+      }
+    },
+    {
+      "name": "valid-minimal",
+      "file": "valid-minimal.spool",
+      "description": "One committed data transaction, no session end.",
+      "bytes": 776,
+      "sha256": "fdcb35ad7c7cf0495abd6a9264fb3a9911111bb7cd766ff705e91ac0e7588a72",
+      "expect": {
+        "status": "ok",
+        "committed_prefix_end": 776,
+        "committed_transactions": 1,
+        "last_transaction_id": 1,
+        "data_items": 2,
+        "control_items": 1,
+        "session_end_present": false,
+        "capture_outcome": null,
+        "requested_terminal_intent": null,
+        "primary_fault_committed": null,
+        "terminal_reason": null,
+        "durability_policy": "transaction_sync",
+        "durable_extent_bytes": 776,
+        "finalizable": true,
+        "codes": []
+      }
+    },
+    {
+      "name": "valid-complete",
+      "file": "valid-complete.spool",
+      "description": "Data, a checkpoint, and a clean session end.",
+      "bytes": 1376,
+      "sha256": "a4608f6df1642de387c209ebac1eeb6c8a272b3dd1223d56893672122e0606f4",
+      "expect": {
+        "status": "ok",
+        "committed_prefix_end": 1376,
+        "committed_transactions": 3,
+        "last_transaction_id": 3,
+        "data_items": 2,
+        "control_items": 1,
+        "session_end_present": true,
+        "capture_outcome": "normal",
+        "requested_terminal_intent": "normal",
+        "primary_fault_committed": false,
+        "terminal_reason": "",
+        "durability_policy": "transaction_sync",
+        "durable_extent_bytes": 1376,
+        "finalizable": true,
+        "codes": []
+      }
+    },
+    {
+      "name": "valid-checkpoint-sync",
+      "file": "valid-checkpoint-sync.spool",
+      "description": "The same session under checkpoint sync: the durable extent stops at the checkpoint.",
+      "bytes": 1376,
+      "sha256": "2b5ea2b2d8ed852dfc51f196463f924283ca8a5525631aa43639c64813173e6b",
+      "expect": {
+        "status": "ok",
+        "committed_prefix_end": 1376,
+        "committed_transactions": 3,
+        "last_transaction_id": 3,
+        "data_items": 2,
+        "control_items": 1,
+        "session_end_present": true,
+        "capture_outcome": "normal",
+        "requested_terminal_intent": "normal",
+        "primary_fault_committed": false,
+        "terminal_reason": "",
+        "durability_policy": "checkpoint_sync",
+        "durable_extent_bytes": 776,
+        "finalizable": true,
+        "codes": []
+      }
+    },
+    {
+      "name": "valid-buffered",
+      "file": "valid-buffered.spool",
+      "description": "The same session under buffered writes: nothing is claimed as durable.",
+      "bytes": 1376,
+      "sha256": "9dde09c9cf9ee9dbe071a4b7ee909ba806f6a220590ee01dd357ec27e7f2e984",
+      "expect": {
+        "status": "ok",
+        "committed_prefix_end": 1376,
+        "committed_transactions": 3,
+        "last_transaction_id": 3,
+        "data_items": 2,
+        "control_items": 1,
+        "session_end_present": true,
+        "capture_outcome": "normal",
+        "requested_terminal_intent": "normal",
+        "primary_fault_committed": false,
+        "terminal_reason": "",
+        "durability_policy": "buffered",
+        "durable_extent_bytes": 376,
+        "finalizable": true,
+        "codes": []
+      }
+    },
+    {
+      "name": "valid-unknown-minor",
+      "file": "valid-unknown-minor.spool",
+      "description": "A future minor version using only defined record kinds; readable.",
+      "bytes": 1376,
+      "sha256": "c155dea1efd551b4cb2be0d540c299e9d98b8357975446cb4b66f6da4c516688",
+      "expect": {
+        "status": "ok",
+        "committed_prefix_end": 1376,
+        "committed_transactions": 3,
+        "last_transaction_id": 3,
+        "data_items": 2,
+        "control_items": 1,
+        "session_end_present": true,
+        "capture_outcome": "normal",
+        "requested_terminal_intent": "normal",
+        "primary_fault_committed": false,
+        "terminal_reason": "",
+        "durability_policy": "transaction_sync",
+        "durable_extent_bytes": 1376,
+        "finalizable": true,
+        "codes": []
+      }
+    },
+    {
+      "name": "valid-aborted-with-losses",
+      "file": "valid-aborted-with-losses.spool",
+      "description": "A legally incomplete session: the counters and first positions record the losses.",
+      "bytes": 1224,
+      "sha256": "71f45fd53abb2ce934925a4f2077aee5d54299029997b53042cd9e09ac92ae36",
+      "expect": {
+        "status": "ok",
+        "committed_prefix_end": 1224,
+        "committed_transactions": 2,
+        "last_transaction_id": 2,
+        "data_items": 2,
+        "control_items": 1,
+        "session_end_present": true,
+        "capture_outcome": "aborted",
+        "requested_terminal_intent": "aborted",
+        "primary_fault_committed": false,
+        "terminal_reason": "operator abort",
+        "durability_policy": "transaction_sync",
+        "durable_extent_bytes": 1224,
+        "finalizable": true,
+        "codes": []
+      }
+    },
+    {
+      "name": "valid-fault-record",
+      "file": "valid-fault-record.spool",
+      "description": "A faulted capture with a committed fault record.",
+      "bytes": 1368,
+      "sha256": "52e5d72de833aa86266dc87048a6faaf359b7c37de7dab80551fedc824628399",
+      "expect": {
+        "status": "ok",
+        "committed_prefix_end": 1368,
+        "committed_transactions": 3,
+        "last_transaction_id": 3,
+        "data_items": 2,
+        "control_items": 1,
+        "session_end_present": true,
+        "capture_outcome": "faulted",
+        "requested_terminal_intent": "fault",
+        "primary_fault_committed": true,
+        "terminal_reason": "recorder fault",
+        "durability_policy": "transaction_sync",
+        "durable_extent_bytes": 1368,
+        "finalizable": true,
+        "codes": []
+      }
+    },
+    {
+      "name": "valid-aborted-then-faulted",
+      "file": "valid-aborted-then-faulted.spool",
+      "description": "An abort escalated to faulted by a recorder fault during the drain: request and outcome differ.",
+      "bytes": 1368,
+      "sha256": "f7d8008ed51a927d2a1f49a362a6e7ede01c15c934808c3a5f400c43f75655fe",
+      "expect": {
+        "status": "ok",
+        "committed_prefix_end": 1368,
+        "committed_transactions": 3,
+        "last_transaction_id": 3,
+        "data_items": 2,
+        "control_items": 1,
+        "session_end_present": true,
+        "capture_outcome": "faulted",
+        "requested_terminal_intent": "aborted",
+        "primary_fault_committed": true,
+        "terminal_reason": "abort then fault",
+        "durability_policy": "transaction_sync",
+        "durable_extent_bytes": 1368,
+        "finalizable": true,
+        "codes": []
+      }
+    },
+    {
+      "name": "torn-inside-body",
+      "file": "torn-inside-body.spool",
+      "description": "The last transaction was cut in half by a crash.",
+      "bytes": 1152,
+      "sha256": "5376d32e4cdc668cf30986cd172efbf246b6556bbc8d5c894fa844873642654b",
+      "expect": {
+        "status": "torn_tail",
+        "committed_prefix_end": 928,
+        "committed_transactions": 2,
+        "last_transaction_id": 2,
+        "data_items": 2,
+        "control_items": 1,
+        "session_end_present": false,
+        "capture_outcome": null,
+        "requested_terminal_intent": null,
+        "primary_fault_committed": null,
+        "terminal_reason": null,
+        "durability_policy": "transaction_sync",
+        "durable_extent_bytes": 928,
+        "finalizable": true,
+        "codes": [
+          "SPOOL-010"
+        ]
+      }
+    },
+    {
+      "name": "torn-missing-trailer",
+      "file": "torn-missing-trailer.spool",
+      "description": "Records landed; the commit trailer did not.",
+      "bytes": 1328,
+      "sha256": "7b391907fece9cb110985f2a8a067065247aa8e56cc0a8c208ac85353ce33865",
+      "expect": {
+        "status": "torn_tail",
+        "committed_prefix_end": 928,
+        "committed_transactions": 2,
+        "last_transaction_id": 2,
+        "data_items": 2,
+        "control_items": 1,
+        "session_end_present": false,
+        "capture_outcome": null,
+        "requested_terminal_intent": null,
+        "primary_fault_committed": null,
+        "terminal_reason": null,
+        "durability_policy": "transaction_sync",
+        "durable_extent_bytes": 928,
+        "finalizable": true,
+        "codes": [
+          "SPOOL-010"
+        ]
+      }
+    },
+    {
+      "name": "torn-inside-record-header",
+      "file": "torn-inside-record-header.spool",
+      "description": "The file ends part way through a record header.",
+      "bytes": 988,
+      "sha256": "88df15b11f8b143319c7940cb89c0717ec9010aca02c49b03ee983b3235ef2c9",
+      "expect": {
+        "status": "torn_tail",
+        "committed_prefix_end": 928,
+        "committed_transactions": 2,
+        "last_transaction_id": 2,
+        "data_items": 2,
+        "control_items": 1,
+        "session_end_present": false,
+        "capture_outcome": null,
+        "requested_terminal_intent": null,
+        "primary_fault_committed": null,
+        "terminal_reason": null,
+        "durability_policy": "transaction_sync",
+        "durable_extent_bytes": 928,
+        "finalizable": true,
+        "codes": [
+          "SPOOL-010"
+        ]
+      }
+    },
+    {
+      "name": "torn-superblock",
+      "file": "torn-superblock.spool",
+      "description": "The file is shorter than the fixed superblock.",
+      "bytes": 100,
+      "sha256": "5b33d5b85b21287fe6a6bf1e2f7288a5ed3b158566f9f91fd67bea014856364a",
+      "expect": {
+        "status": "rejected",
+        "committed_prefix_end": 0,
+        "committed_transactions": 0,
+        "last_transaction_id": 0,
+        "data_items": 0,
+        "control_items": 0,
+        "session_end_present": false,
+        "capture_outcome": null,
+        "requested_terminal_intent": null,
+        "primary_fault_committed": null,
+        "terminal_reason": null,
+        "durability_policy": null,
+        "durable_extent_bytes": 0,
+        "finalizable": false,
+        "codes": [
+          "SPOOL-004"
+        ]
+      }
+    },
+    {
+      "name": "torn-plan-document",
+      "file": "torn-plan-document.spool",
+      "description": "The superblock survived; the plan document did not.",
+      "bytes": 264,
+      "sha256": "1afa2dc3cf21281b758798f2f24626a3ee5c44a04c196a9f12b845c260f0ca77",
+      "expect": {
+        "status": "rejected",
+        "committed_prefix_end": 0,
+        "committed_transactions": 0,
+        "last_transaction_id": 0,
+        "data_items": 0,
+        "control_items": 0,
+        "session_end_present": false,
+        "capture_outcome": null,
+        "requested_terminal_intent": null,
+        "primary_fault_committed": null,
+        "terminal_reason": null,
+        "durability_policy": null,
+        "durable_extent_bytes": 0,
+        "finalizable": false,
+        "codes": [
+          "SPOOL-004"
+        ]
+      }
+    },
+    {
+      "name": "corrupt-magic",
+      "file": "corrupt-magic.spool",
+      "description": "The file does not begin with the spool magic.",
+      "bytes": 1376,
+      "sha256": "9eb3063d2aa88bb16902732db3970edd8340f4693e95f13968b9a5c32ae8d200",
+      "expect": {
+        "status": "rejected",
+        "committed_prefix_end": 0,
+        "committed_transactions": 0,
+        "last_transaction_id": 0,
+        "data_items": 0,
+        "control_items": 0,
+        "session_end_present": false,
+        "capture_outcome": null,
+        "requested_terminal_intent": null,
+        "primary_fault_committed": null,
+        "terminal_reason": null,
+        "durability_policy": null,
+        "durable_extent_bytes": 0,
+        "finalizable": false,
+        "codes": [
+          "SPOOL-001"
+        ]
+      }
+    },
+    {
+      "name": "corrupt-superblock-checksum",
+      "file": "corrupt-superblock-checksum.spool",
+      "description": "A flipped superblock byte, detected by the superblock checksum.",
+      "bytes": 1376,
+      "sha256": "b0ce40692506c9da479188fb26b6a548630545c7eb769d553d7e2153818e55fe",
+      "expect": {
+        "status": "rejected",
+        "committed_prefix_end": 0,
+        "committed_transactions": 0,
+        "last_transaction_id": 0,
+        "data_items": 0,
+        "control_items": 0,
+        "session_end_present": false,
+        "capture_outcome": null,
+        "requested_terminal_intent": null,
+        "primary_fault_committed": null,
+        "terminal_reason": null,
+        "durability_policy": null,
+        "durable_extent_bytes": 0,
+        "finalizable": false,
+        "codes": [
+          "SPOOL-003"
+        ]
+      }
+    },
+    {
+      "name": "corrupt-plan-document",
+      "file": "corrupt-plan-document.spool",
+      "description": "The stored plan no longer hashes to the recorded plan fingerprint.",
+      "bytes": 1376,
+      "sha256": "44f24e0e40a9cd859c0e38ae225a32f20903fd0c2656e373cbb13c2597104365",
+      "expect": {
+        "status": "rejected",
+        "committed_prefix_end": 0,
+        "committed_transactions": 0,
+        "last_transaction_id": 0,
+        "data_items": 0,
+        "control_items": 0,
+        "session_end_present": false,
+        "capture_outcome": null,
+        "requested_terminal_intent": null,
+        "primary_fault_committed": null,
+        "terminal_reason": null,
+        "durability_policy": null,
+        "durable_extent_bytes": 0,
+        "finalizable": false,
+        "codes": [
+          "SPOOL-005"
+        ]
+      }
+    },
+    {
+      "name": "nonzero-plan-padding",
+      "file": "nonzero-plan-padding.spool",
+      "description": "A nonzero byte in the unchecksummed gap behind the plan document.",
+      "bytes": 1376,
+      "sha256": "1aa6017e4bce491e96790516eb717a0e9b11aee914814be2684056e5f415f9cb",
+      "expect": {
+        "status": "rejected",
+        "committed_prefix_end": 0,
+        "committed_transactions": 0,
+        "last_transaction_id": 0,
+        "data_items": 0,
+        "control_items": 0,
+        "session_end_present": false,
+        "capture_outcome": null,
+        "requested_terminal_intent": null,
+        "primary_fault_committed": null,
+        "terminal_reason": null,
+        "durability_policy": null,
+        "durable_extent_bytes": 0,
+        "finalizable": false,
+        "codes": [
+          "SPOOL-019"
+        ]
+      }
+    },
+    {
+      "name": "unknown-major-version",
+      "file": "unknown-major-version.spool",
+      "description": "A container major version this reader refuses.",
+      "bytes": 1376,
+      "sha256": "ba87de7edfb3087fc4c030bc83672fe98c74a37c21df3596391a82463e722f1e",
+      "expect": {
+        "status": "rejected",
+        "committed_prefix_end": 0,
+        "committed_transactions": 0,
+        "last_transaction_id": 0,
+        "data_items": 0,
+        "control_items": 0,
+        "session_end_present": false,
+        "capture_outcome": null,
+        "requested_terminal_intent": null,
+        "primary_fault_committed": null,
+        "terminal_reason": null,
+        "durability_policy": null,
+        "durable_extent_bytes": 0,
+        "finalizable": false,
+        "codes": [
+          "SPOOL-002"
+        ]
+      }
+    },
+    {
+      "name": "undefined-superblock-field",
+      "file": "undefined-superblock-field.spool",
+      "description": "A checksum algorithm identifier version 1 does not define.",
+      "bytes": 1376,
+      "sha256": "14f23ecdc12203671f87fc36cc574a2c6fe6e4ab79fcf1fb5ebd4ca229e0303f",
+      "expect": {
+        "status": "rejected",
+        "committed_prefix_end": 0,
+        "committed_transactions": 0,
+        "last_transaction_id": 0,
+        "data_items": 0,
+        "control_items": 0,
+        "session_end_present": false,
+        "capture_outcome": null,
+        "requested_terminal_intent": null,
+        "primary_fault_committed": null,
+        "terminal_reason": null,
+        "durability_policy": null,
+        "durable_extent_bytes": 0,
+        "finalizable": false,
+        "codes": [
+          "SPOOL-006"
+        ]
+      }
+    },
+    {
+      "name": "corrupt-record-payload",
+      "file": "corrupt-record-payload.spool",
+      "description": "A flipped payload byte, detected by the record checksum.",
+      "bytes": 1376,
+      "sha256": "1f428a8ae3f8934e01ef850162198ed8357d837fe0ba6043ba065bb963c116f1",
+      "expect": {
+        "status": "corrupt_tail",
+        "committed_prefix_end": 376,
+        "committed_transactions": 0,
+        "last_transaction_id": 0,
+        "data_items": 0,
+        "control_items": 0,
+        "session_end_present": false,
+        "capture_outcome": null,
+        "requested_terminal_intent": null,
+        "primary_fault_committed": null,
+        "terminal_reason": null,
+        "durability_policy": "transaction_sync",
+        "durable_extent_bytes": 376,
+        "finalizable": true,
+        "codes": [
+          "SPOOL-018"
+        ]
+      }
+    },
+    {
+      "name": "corrupt-record-header",
+      "file": "corrupt-record-header.spool",
+      "description": "A flipped record header byte, detected by the record header checksum.",
+      "bytes": 1376,
+      "sha256": "7cfdc7cd5a767f3881e2f634787e9bdc55873a31258bd08300015cdc5409b7d0",
+      "expect": {
+        "status": "corrupt_tail",
+        "committed_prefix_end": 376,
+        "committed_transactions": 0,
+        "last_transaction_id": 0,
+        "data_items": 0,
+        "control_items": 0,
+        "session_end_present": false,
+        "capture_outcome": null,
+        "requested_terminal_intent": null,
+        "primary_fault_committed": null,
+        "terminal_reason": null,
+        "durability_policy": "transaction_sync",
+        "durable_extent_bytes": 376,
+        "finalizable": true,
+        "codes": [
+          "SPOOL-017"
+        ]
+      }
+    },
+    {
+      "name": "corrupt-body-checksum",
+      "file": "corrupt-body-checksum.spool",
+      "description": "A resealed trailer whose body checksum no longer matches the body.",
+      "bytes": 1376,
+      "sha256": "9f6a993aaa3ce7669f52975f243394f18e5c63c452ae4bdbc02f7a3d7e910688",
+      "expect": {
+        "status": "corrupt_tail",
+        "committed_prefix_end": 376,
+        "committed_transactions": 0,
+        "last_transaction_id": 0,
+        "data_items": 0,
+        "control_items": 0,
+        "session_end_present": false,
+        "capture_outcome": null,
+        "requested_terminal_intent": null,
+        "primary_fault_committed": null,
+        "terminal_reason": null,
+        "durability_policy": "transaction_sync",
+        "durable_extent_bytes": 376,
+        "finalizable": true,
+        "codes": [
+          "SPOOL-013"
+        ]
+      }
+    },
+    {
+      "name": "corrupt-trailer-checksum",
+      "file": "corrupt-trailer-checksum.spool",
+      "description": "A flipped trailer byte, detected by the trailer checksum.",
+      "bytes": 1376,
+      "sha256": "07dda72fc7bc7946afd277a687040a9a69e56c8c5f3866629509bb29e8970624",
+      "expect": {
+        "status": "corrupt_tail",
+        "committed_prefix_end": 376,
+        "committed_transactions": 0,
+        "last_transaction_id": 0,
+        "data_items": 0,
+        "control_items": 0,
+        "session_end_present": false,
+        "capture_outcome": null,
+        "requested_terminal_intent": null,
+        "primary_fault_committed": null,
+        "terminal_reason": null,
+        "durability_policy": "transaction_sync",
+        "durable_extent_bytes": 376,
+        "finalizable": true,
+        "codes": [
+          "SPOOL-012"
+        ]
+      }
+    },
+    {
+      "name": "corrupt-transaction-header-checksum",
+      "file": "corrupt-transaction-header-checksum.spool",
+      "description": "A flipped transaction header byte, detected by its checksum.",
+      "bytes": 1376,
+      "sha256": "830eea851ac5cb2ffb2d3b47f285d496b65d67d8222d731f7ae3c69e8cdfe824",
+      "expect": {
+        "status": "corrupt_tail",
+        "committed_prefix_end": 376,
+        "committed_transactions": 0,
+        "last_transaction_id": 0,
+        "data_items": 0,
+        "control_items": 0,
+        "session_end_present": false,
+        "capture_outcome": null,
+        "requested_terminal_intent": null,
+        "primary_fault_committed": null,
+        "terminal_reason": null,
+        "durability_policy": "transaction_sync",
+        "durable_extent_bytes": 376,
+        "finalizable": true,
+        "codes": [
+          "SPOOL-011"
+        ]
+      }
+    },
+    {
+      "name": "nonzero-padding",
+      "file": "nonzero-padding.spool",
+      "description": "Record padding that carries something.",
+      "bytes": 1376,
+      "sha256": "94e56db5738a3d1abda9de3b42cc52b49c90c49d0c1346cf7d11020e5ef53c54",
+      "expect": {
+        "status": "corrupt_tail",
+        "committed_prefix_end": 376,
+        "committed_transactions": 0,
+        "last_transaction_id": 0,
+        "data_items": 0,
+        "control_items": 0,
+        "session_end_present": false,
+        "capture_outcome": null,
+        "requested_terminal_intent": null,
+        "primary_fault_committed": null,
+        "terminal_reason": null,
+        "durability_policy": "transaction_sync",
+        "durable_extent_bytes": 376,
+        "finalizable": true,
+        "codes": [
+          "SPOOL-019"
+        ]
+      }
+    },
+    {
+      "name": "duplicate-transaction-id",
+      "file": "duplicate-transaction-id.spool",
+      "description": "The same transaction id committed twice.",
+      "bytes": 1176,
+      "sha256": "53d2ef0b6b48407a9dcd1d331ebbb81ff487512512ff5c4a30e525b54be5093a",
+      "expect": {
+        "status": "corrupt_tail",
+        "committed_prefix_end": 776,
+        "committed_transactions": 1,
+        "last_transaction_id": 1,
+        "data_items": 2,
+        "control_items": 1,
+        "session_end_present": false,
+        "capture_outcome": null,
+        "requested_terminal_intent": null,
+        "primary_fault_committed": null,
+        "terminal_reason": null,
+        "durability_policy": "transaction_sync",
+        "durable_extent_bytes": 776,
+        "finalizable": true,
+        "codes": [
+          "SPOOL-014"
+        ]
+      }
+    },
+    {
+      "name": "transaction-id-gap",
+      "file": "transaction-id-gap.spool",
+      "description": "A transaction id that skips its predecessor.",
+      "bytes": 1176,
+      "sha256": "01167fc3b54c83d417c036ada5dc95d3306b802821e740f90c4db3652b906927",
+      "expect": {
+        "status": "corrupt_tail",
+        "committed_prefix_end": 776,
+        "committed_transactions": 1,
+        "last_transaction_id": 1,
+        "data_items": 2,
+        "control_items": 1,
+        "session_end_present": false,
+        "capture_outcome": null,
+        "requested_terminal_intent": null,
+        "primary_fault_committed": null,
+        "terminal_reason": null,
+        "durability_policy": "transaction_sync",
+        "durable_extent_bytes": 776,
+        "finalizable": true,
+        "codes": [
+          "SPOOL-014"
+        ]
+      }
+    },
+    {
+      "name": "bad-back-link",
+      "file": "bad-back-link.spool",
+      "description": "A back link that does not name the previous transaction.",
+      "bytes": 1176,
+      "sha256": "6face1d66aec4e3f9e5ba6a1572fae3a233340474e5ca4aedbcfd7d4129bf05c",
+      "expect": {
+        "status": "corrupt_tail",
+        "committed_prefix_end": 776,
+        "committed_transactions": 1,
+        "last_transaction_id": 1,
+        "data_items": 2,
+        "control_items": 1,
+        "session_end_present": false,
+        "capture_outcome": null,
+        "requested_terminal_intent": null,
+        "primary_fault_committed": null,
+        "terminal_reason": null,
+        "durability_policy": "transaction_sync",
+        "durable_extent_bytes": 776,
+        "finalizable": true,
+        "codes": [
+          "SPOOL-015"
+        ]
+      }
+    },
+    {
+      "name": "record-count-disagreement",
+      "file": "record-count-disagreement.spool",
+      "description": "Header and trailer disagree on how many records were committed.",
+      "bytes": 776,
+      "sha256": "b1b6edd151e748d9dd81c2cf89bd1b1da33a529aea83f5bebab64cd7791a69b2",
+      "expect": {
+        "status": "corrupt_tail",
+        "committed_prefix_end": 376,
+        "committed_transactions": 0,
+        "last_transaction_id": 0,
+        "data_items": 0,
+        "control_items": 0,
+        "session_end_present": false,
+        "capture_outcome": null,
+        "requested_terminal_intent": null,
+        "primary_fault_committed": null,
+        "terminal_reason": null,
+        "durability_policy": "transaction_sync",
+        "durable_extent_bytes": 376,
+        "finalizable": true,
+        "codes": [
+          "SPOOL-016"
+        ]
+      }
+    },
+    {
+      "name": "empty-transaction",
+      "file": "empty-transaction.spool",
+      "description": "A transaction that commits nothing.",
+      "bytes": 472,
+      "sha256": "7db2efe3a4ac45a9af4936fb493a4e636a3df519ae0615731663a2fd50f31360",
+      "expect": {
+        "status": "corrupt_tail",
+        "committed_prefix_end": 376,
+        "committed_transactions": 0,
+        "last_transaction_id": 0,
+        "data_items": 0,
+        "control_items": 0,
+        "session_end_present": false,
+        "capture_outcome": null,
+        "requested_terminal_intent": null,
+        "primary_fault_committed": null,
+        "terminal_reason": null,
+        "durability_policy": "transaction_sync",
+        "durable_extent_bytes": 376,
+        "finalizable": true,
+        "codes": [
+          "SPOOL-020"
+        ]
+      }
+    },
+    {
+      "name": "trailer-item-counts",
+      "file": "trailer-item-counts.spool",
+      "description": "A trailer claiming more data items than the transaction carries.",
+      "bytes": 776,
+      "sha256": "9cc969985895ce127ac95dd983065c94fb339ed3b71be64832bcda2c8bbacd77",
+      "expect": {
+        "status": "corrupt_tail",
+        "committed_prefix_end": 376,
+        "committed_transactions": 0,
+        "last_transaction_id": 0,
+        "data_items": 0,
+        "control_items": 0,
+        "session_end_present": false,
+        "capture_outcome": null,
+        "requested_terminal_intent": null,
+        "primary_fault_committed": null,
+        "terminal_reason": null,
+        "durability_policy": "transaction_sync",
+        "durable_extent_bytes": 376,
+        "finalizable": true,
+        "codes": [
+          "SPOOL-021"
+        ]
+      }
+    },
+    {
+      "name": "unknown-record-kind",
+      "file": "unknown-record-kind.spool",
+      "description": "A committed record kind this version cannot name.",
+      "bytes": 592,
+      "sha256": "c9bd52110c0ff0e5995f07b43c763a4882c6c64f29e481c0dc56a260724c7df0",
+      "expect": {
+        "status": "ok",
+        "committed_prefix_end": 592,
+        "committed_transactions": 1,
+        "last_transaction_id": 1,
+        "data_items": 1,
+        "control_items": 0,
+        "session_end_present": false,
+        "capture_outcome": null,
+        "requested_terminal_intent": null,
+        "primary_fault_committed": null,
+        "terminal_reason": null,
+        "durability_policy": "transaction_sync",
+        "durable_extent_bytes": 592,
+        "finalizable": false,
+        "codes": [
+          "SPOOL-030"
+        ]
+      }
+    },
+    {
+      "name": "records-after-session-end",
+      "file": "records-after-session-end.spool",
+      "description": "A transaction committed after the session had ended.",
+      "bytes": 1776,
+      "sha256": "f6a6b110bb02ee4a6ff2112c201aa7bee67a2a94994afb16f45673548555e19d",
+      "expect": {
+        "status": "ok",
+        "committed_prefix_end": 1776,
+        "committed_transactions": 4,
+        "last_transaction_id": 4,
+        "data_items": 4,
+        "control_items": 2,
+        "session_end_present": true,
+        "capture_outcome": "normal",
+        "requested_terminal_intent": "normal",
+        "primary_fault_committed": false,
+        "terminal_reason": "",
+        "durability_policy": "transaction_sync",
+        "durable_extent_bytes": 1776,
+        "finalizable": false,
+        "codes": [
+          "SPOOL-031"
+        ]
+      }
+    },
+    {
+      "name": "session-end-without-accounting",
+      "file": "session-end-without-accounting.spool",
+      "description": "A session end that seals no accounting snapshot.",
+      "bytes": 984,
+      "sha256": "450f571e339031ebd002b77a686d8e97dde70d108f9b0e0a0c79d92a99eff108",
+      "expect": {
+        "status": "ok",
+        "committed_prefix_end": 984,
+        "committed_transactions": 2,
+        "last_transaction_id": 2,
+        "data_items": 2,
+        "control_items": 1,
+        "session_end_present": true,
+        "capture_outcome": "normal",
+        "requested_terminal_intent": "normal",
+        "primary_fault_committed": false,
+        "terminal_reason": "",
+        "durability_policy": "transaction_sync",
+        "durable_extent_bytes": 984,
+        "finalizable": false,
+        "codes": [
+          "SPOOL-032"
+        ]
+      }
+    },
+    {
+      "name": "accounting-with-items",
+      "file": "accounting-with-items.spool",
+      "description": "An accounting snapshot sharing its transaction with a data item.",
+      "bytes": 880,
+      "sha256": "8fc0de4d5d005b25638547a301071ed915d2ef99e159287eba47fd7a81103d72",
+      "expect": {
+        "status": "ok",
+        "committed_prefix_end": 880,
+        "committed_transactions": 1,
+        "last_transaction_id": 1,
+        "data_items": 1,
+        "control_items": 0,
+        "session_end_present": true,
+        "capture_outcome": "normal",
+        "requested_terminal_intent": "normal",
+        "primary_fault_committed": false,
+        "terminal_reason": "",
+        "durability_policy": "transaction_sync",
+        "durable_extent_bytes": 880,
+        "finalizable": false,
+        "codes": [
+          "SPOOL-033"
+        ]
+      }
+    },
+    {
+      "name": "accounting-identity-violation",
+      "file": "accounting-identity-violation.spool",
+      "description": "Counters that do not satisfy the per-handoff identities.",
+      "bytes": 1224,
+      "sha256": "e8a338e73b70c22d44fa3ab2b890fb425fe29cec36f9150a07ccccb5a38b4c75",
+      "expect": {
+        "status": "ok",
+        "committed_prefix_end": 1224,
+        "committed_transactions": 2,
+        "last_transaction_id": 2,
+        "data_items": 2,
+        "control_items": 1,
+        "session_end_present": true,
+        "capture_outcome": "normal",
+        "requested_terminal_intent": "normal",
+        "primary_fault_committed": false,
+        "terminal_reason": "",
+        "durability_policy": "transaction_sync",
+        "durable_extent_bytes": 1224,
+        "finalizable": false,
+        "codes": [
+          "SPOOL-034",
+          "SPOOL-034"
+        ]
+      }
+    },
+    {
+      "name": "accounting-uint64-wraparound",
+      "file": "accounting-uint64-wraparound.spool",
+      "description": "Counters that satisfy the identities only after unsigned 64-bit wraparound.",
+      "bytes": 824,
+      "sha256": "a822326ec39be71c2f55248b9451a53a6a05296bb35718c82228e7d69ff389ff",
+      "expect": {
+        "status": "ok",
+        "committed_prefix_end": 824,
+        "committed_transactions": 1,
+        "last_transaction_id": 1,
+        "data_items": 0,
+        "control_items": 0,
+        "session_end_present": true,
+        "capture_outcome": "aborted",
+        "requested_terminal_intent": "normal",
+        "primary_fault_committed": false,
+        "terminal_reason": "",
+        "durability_policy": "transaction_sync",
+        "durable_extent_bytes": 824,
+        "finalizable": false,
+        "codes": [
+          "SPOOL-045",
+          "SPOOL-034"
+        ]
+      }
+    },
+    {
+      "name": "accounting-exceeds-prefix",
+      "file": "accounting-exceeds-prefix.spool",
+      "description": "Self-consistent counters claiming more than the committed prefix holds.",
+      "bytes": 1224,
+      "sha256": "eb710ce65052a9d879ac3eebacfb88ffd56b5fb1d095d7ee07cb1d829959ede6",
+      "expect": {
+        "status": "ok",
+        "committed_prefix_end": 1224,
+        "committed_transactions": 2,
+        "last_transaction_id": 2,
+        "data_items": 2,
+        "control_items": 1,
+        "session_end_present": true,
+        "capture_outcome": "normal",
+        "requested_terminal_intent": "normal",
+        "primary_fault_committed": false,
+        "terminal_reason": "",
+        "durability_policy": "transaction_sync",
+        "durable_extent_bytes": 1224,
+        "finalizable": false,
+        "codes": [
+          "SPOOL-035"
+        ]
+      }
+    },
+    {
+      "name": "accounting-origin-not-recorder",
+      "file": "accounting-origin-not-recorder.spool",
+      "description": "Spool accounting claiming an origin only a finalizer could have.",
+      "bytes": 1224,
+      "sha256": "d86f8253eab7fa0e76248b35008c612df681d7f1c97d605d957006022983e8b5",
+      "expect": {
+        "status": "ok",
+        "committed_prefix_end": 1224,
+        "committed_transactions": 2,
+        "last_transaction_id": 2,
+        "data_items": 2,
+        "control_items": 1,
+        "session_end_present": true,
+        "capture_outcome": "normal",
+        "requested_terminal_intent": "normal",
+        "primary_fault_committed": false,
+        "terminal_reason": "",
+        "durability_policy": "transaction_sync",
+        "durable_extent_bytes": 1224,
+        "finalizable": false,
+        "codes": [
+          "SPOOL-037"
+        ]
+      }
+    },
+    {
+      "name": "checkpoint-extent-beyond-transaction",
+      "file": "checkpoint-extent-beyond-transaction.spool",
+      "description": "A checkpoint claiming more synced bytes than existed when it was written.",
+      "bytes": 928,
+      "sha256": "0d06e2a2b31effca629d3a424b59bdfe22241d52c1f1d821916e08ac57c20472",
+      "expect": {
+        "status": "ok",
+        "committed_prefix_end": 928,
+        "committed_transactions": 2,
+        "last_transaction_id": 2,
+        "data_items": 2,
+        "control_items": 1,
+        "session_end_present": false,
+        "capture_outcome": null,
+        "requested_terminal_intent": null,
+        "primary_fault_committed": null,
+        "terminal_reason": null,
+        "durability_policy": "checkpoint_sync",
+        "durable_extent_bytes": 376,
+        "finalizable": false,
+        "codes": [
+          "SPOOL-036"
+        ]
+      }
+    },
+    {
+      "name": "container-payload-size",
+      "file": "container-payload-size.spool",
+      "description": "A container-owned record whose payload is not its fixed size.",
+      "bytes": 1152,
+      "sha256": "6b41d18da42d19cb10d526a1c66be7194ea308f42890eb1762dea8367a604c49",
+      "expect": {
+        "status": "ok",
+        "committed_prefix_end": 1152,
+        "committed_transactions": 2,
+        "last_transaction_id": 2,
+        "data_items": 2,
+        "control_items": 1,
+        "session_end_present": true,
+        "capture_outcome": null,
+        "requested_terminal_intent": null,
+        "primary_fault_committed": null,
+        "terminal_reason": null,
+        "durability_policy": "transaction_sync",
+        "durable_extent_bytes": 1152,
+        "finalizable": false,
+        "codes": [
+          "SPOOL-038"
+        ]
+      }
+    },
+    {
+      "name": "ordinal-block-mismatch",
+      "file": "ordinal-block-mismatch.spool",
+      "description": "A signal_block whose logical_ordinal is not its owning frame's.",
+      "bytes": 584,
+      "sha256": "95536a603e3b19aad0fbe4fc9563d6c51811e4a32365bfc6b6ae955613435d7c",
+      "expect": {
+        "status": "ok",
+        "committed_prefix_end": 584,
+        "committed_transactions": 1,
+        "last_transaction_id": 1,
+        "data_items": 1,
+        "control_items": 0,
+        "session_end_present": false,
+        "capture_outcome": null,
+        "requested_terminal_intent": null,
+        "primary_fault_committed": null,
+        "terminal_reason": null,
+        "durability_policy": "transaction_sync",
+        "durable_extent_bytes": 584,
+        "finalizable": false,
+        "codes": [
+          "SPOOL-039"
+        ]
+      }
+    },
+    {
+      "name": "ordinal-gap-mismatch",
+      "file": "ordinal-gap-mismatch.spool",
+      "description": "A signal_gap whose logical_ordinal is not its owning discontinuity's.",
+      "bytes": 560,
+      "sha256": "57315b82f6bac4d396b6568fec918d7dd6295d011a0617de61e2fe6b51b99af4",
+      "expect": {
+        "status": "ok",
+        "committed_prefix_end": 560,
+        "committed_transactions": 1,
+        "last_transaction_id": 1,
+        "data_items": 1,
+        "control_items": 0,
+        "session_end_present": false,
+        "capture_outcome": null,
+        "requested_terminal_intent": null,
+        "primary_fault_committed": null,
+        "terminal_reason": null,
+        "durability_policy": "transaction_sync",
+        "durable_extent_bytes": 560,
+        "finalizable": false,
+        "codes": [
+          "SPOOL-039"
+        ]
+      }
+    },
+    {
+      "name": "ordinal-session-end-nonzero",
+      "file": "ordinal-session-end-nonzero.spool",
+      "description": "A record with no owning item that carries a nonzero logical_ordinal.",
+      "bytes": 1224,
+      "sha256": "8e6f74e3f4e7bd64b4ed10ab06116792c503fc98a30b8162b7d63b4b42326abc",
+      "expect": {
+        "status": "ok",
+        "committed_prefix_end": 1224,
+        "committed_transactions": 2,
+        "last_transaction_id": 2,
+        "data_items": 2,
+        "control_items": 1,
+        "session_end_present": true,
+        "capture_outcome": "normal",
+        "requested_terminal_intent": "normal",
+        "primary_fault_committed": false,
+        "terminal_reason": "",
+        "durability_policy": "transaction_sync",
+        "durable_extent_bytes": 1224,
+        "finalizable": false,
+        "codes": [
+          "SPOOL-039"
+        ]
+      }
+    },
+    {
+      "name": "record-flags-nonzero",
+      "file": "record-flags-nonzero.spool",
+      "description": "A record or trailer whose flags field is not the version-1 zero.",
+      "bytes": 1376,
+      "sha256": "21ce6175ba4df38a65911deb7c6bbde57e0c2fddbc6100443049ade42831a742",
+      "expect": {
+        "status": "ok",
+        "committed_prefix_end": 1376,
+        "committed_transactions": 3,
+        "last_transaction_id": 3,
+        "data_items": 2,
+        "control_items": 1,
+        "session_end_present": true,
+        "capture_outcome": "normal",
+        "requested_terminal_intent": "normal",
+        "primary_fault_committed": false,
+        "terminal_reason": "",
+        "durability_policy": "transaction_sync",
+        "durable_extent_bytes": 1376,
+        "finalizable": false,
+        "codes": [
+          "SPOOL-040"
+        ]
+      }
+    },
+    {
+      "name": "session-end-undefined-outcome",
+      "file": "session-end-undefined-outcome.spool",
+      "description": "A session_end whose capture_outcome is not a defined value.",
+      "bytes": 1224,
+      "sha256": "898746a9713cffaa0476dbefcda1dd63369fa397aba57e1515325edacd40fd31",
+      "expect": {
+        "status": "ok",
+        "committed_prefix_end": 1224,
+        "committed_transactions": 2,
+        "last_transaction_id": 2,
+        "data_items": 2,
+        "control_items": 1,
+        "session_end_present": true,
+        "capture_outcome": null,
+        "requested_terminal_intent": "normal",
+        "primary_fault_committed": false,
+        "terminal_reason": "",
+        "durability_policy": "transaction_sync",
+        "durable_extent_bytes": 1224,
+        "finalizable": false,
+        "codes": [
+          "SPOOL-041"
+        ]
+      }
+    },
+    {
+      "name": "checkpoint-policy-mismatch",
+      "file": "checkpoint-policy-mismatch.spool",
+      "description": "A checkpoint whose durability policy is not the superblock's.",
+      "bytes": 928,
+      "sha256": "40f0b0d0f12573fe48f23a98b3bf994f927593865af81169f1d29a017bb29b26",
+      "expect": {
+        "status": "ok",
+        "committed_prefix_end": 928,
+        "committed_transactions": 2,
+        "last_transaction_id": 2,
+        "data_items": 2,
+        "control_items": 1,
+        "session_end_present": false,
+        "capture_outcome": null,
+        "requested_terminal_intent": null,
+        "primary_fault_committed": null,
+        "terminal_reason": null,
+        "durability_policy": "checkpoint_sync",
+        "durable_extent_bytes": 776,
+        "finalizable": false,
+        "codes": [
+          "SPOOL-042"
+        ]
+      }
+    },
+    {
+      "name": "accounting-flag-invalid",
+      "file": "accounting-flag-invalid.spool",
+      "description": "An accounting flag byte that is neither 0 nor 1.",
+      "bytes": 1224,
+      "sha256": "d2a7237932bd579572b86e46890f23fb0a8e5f9004181b8c2d7c54eae9cc4dda",
+      "expect": {
+        "status": "ok",
+        "committed_prefix_end": 1224,
+        "committed_transactions": 2,
+        "last_transaction_id": 2,
+        "data_items": 2,
+        "control_items": 1,
+        "session_end_present": true,
+        "capture_outcome": "normal",
+        "requested_terminal_intent": "normal",
+        "primary_fault_committed": false,
+        "terminal_reason": "",
+        "durability_policy": "transaction_sync",
+        "durable_extent_bytes": 1224,
+        "finalizable": false,
+        "codes": [
+          "SPOOL-043"
+        ]
+      }
+    },
+    {
+      "name": "accounting-position-tag-invalid",
+      "file": "accounting-position-tag-invalid.spool",
+      "description": "An accounting position whose tag is not 0, 1, or 2.",
+      "bytes": 1224,
+      "sha256": "cabcc08ce5fde3ab3026090ee1639208bc26b3aa6106467244ce4122aa77912f",
+      "expect": {
+        "status": "ok",
+        "committed_prefix_end": 1224,
+        "committed_transactions": 2,
+        "last_transaction_id": 2,
+        "data_items": 2,
+        "control_items": 1,
+        "session_end_present": true,
+        "capture_outcome": "normal",
+        "requested_terminal_intent": "normal",
+        "primary_fault_committed": false,
+        "terminal_reason": "",
+        "durability_policy": "transaction_sync",
+        "durable_extent_bytes": 1224,
+        "finalizable": false,
+        "codes": [
+          "SPOOL-044"
+        ]
+      }
+    },
+    {
+      "name": "accounting-position-consistency",
+      "file": "accounting-position-consistency.spool",
+      "description": "A first-loss position present while its loss counter is zero.",
+      "bytes": 1224,
+      "sha256": "649c07a35114d9c8f4250171cfecacb9730142e2e3ec8e6046ca41a5ab60a9ab",
+      "expect": {
+        "status": "ok",
+        "committed_prefix_end": 1224,
+        "committed_transactions": 2,
+        "last_transaction_id": 2,
+        "data_items": 2,
+        "control_items": 1,
+        "session_end_present": true,
+        "capture_outcome": "normal",
+        "requested_terminal_intent": "normal",
+        "primary_fault_committed": false,
+        "terminal_reason": "",
+        "durability_policy": "transaction_sync",
+        "durable_extent_bytes": 1224,
+        "finalizable": false,
+        "codes": [
+          "SPOOL-045"
+        ]
+      }
+    },
+    {
+      "name": "multiple-accounting",
+      "file": "multiple-accounting.spool",
+      "description": "Two accounting snapshots committed; the summary is written once.",
+      "bytes": 1464,
+      "sha256": "ce5d52417f4e3cfe2d41a8530dcee5e96bb9438a79f585ef9fee08898674f0e5",
+      "expect": {
+        "status": "ok",
+        "committed_prefix_end": 1464,
+        "committed_transactions": 2,
+        "last_transaction_id": 2,
+        "data_items": 2,
+        "control_items": 1,
+        "session_end_present": true,
+        "capture_outcome": "normal",
+        "requested_terminal_intent": "normal",
+        "primary_fault_committed": false,
+        "terminal_reason": "",
+        "durability_policy": "transaction_sync",
+        "durable_extent_bytes": 1464,
+        "finalizable": false,
+        "codes": [
+          "SPOOL-046"
+        ]
+      }
+    },
+    {
+      "name": "multiple-session-end",
+      "file": "multiple-session-end.spool",
+      "description": "Two session_end records committed; a session has one outcome.",
+      "bytes": 1336,
+      "sha256": "788dfffe46965a4f6d759354e11fc375ab0e9764bcba4bd27d35246a30d3159b",
+      "expect": {
+        "status": "ok",
+        "committed_prefix_end": 1336,
+        "committed_transactions": 2,
+        "last_transaction_id": 2,
+        "data_items": 2,
+        "control_items": 1,
+        "session_end_present": true,
+        "capture_outcome": "normal",
+        "requested_terminal_intent": "normal",
+        "primary_fault_committed": false,
+        "terminal_reason": "",
+        "durability_policy": "transaction_sync",
+        "durable_extent_bytes": 1336,
+        "finalizable": false,
+        "codes": [
+          "SPOOL-047"
+        ]
+      }
+    },
+    {
+      "name": "accounting-without-session-end",
+      "file": "accounting-without-session-end.spool",
+      "description": "An accounting snapshot committed with no session_end to seal it.",
+      "bytes": 1112,
+      "sha256": "87513843923cd40dba5e054cf48eff48457117736338b1a3808227fc13dee459",
+      "expect": {
+        "status": "ok",
+        "committed_prefix_end": 1112,
+        "committed_transactions": 2,
+        "last_transaction_id": 2,
+        "data_items": 2,
+        "control_items": 1,
+        "session_end_present": false,
+        "capture_outcome": null,
+        "requested_terminal_intent": null,
+        "primary_fault_committed": null,
+        "terminal_reason": null,
+        "durability_policy": "transaction_sync",
+        "durable_extent_bytes": 1112,
+        "finalizable": false,
+        "codes": [
+          "SPOOL-048"
+        ]
+      }
+    },
+    {
+      "name": "corrupt-tail-wrong-magic",
+      "file": "corrupt-tail-wrong-magic.spool",
+      "description": "A complete header with the wrong begin magic: corruption, not truncation.",
+      "bytes": 1424,
+      "sha256": "ec3654c251615a1bb69637c99e3f38ddf1e178b3f8ba1f88ee3d6b7a86aa2b55",
+      "expect": {
+        "status": "corrupt_tail",
+        "committed_prefix_end": 1376,
+        "committed_transactions": 3,
+        "last_transaction_id": 3,
+        "data_items": 2,
+        "control_items": 1,
+        "session_end_present": true,
+        "capture_outcome": "normal",
+        "requested_terminal_intent": "normal",
+        "primary_fault_committed": false,
+        "terminal_reason": "",
+        "durability_policy": "transaction_sync",
+        "durable_extent_bytes": 1376,
+        "finalizable": true,
+        "codes": [
+          "SPOOL-049"
+        ]
+      }
+    },
+    {
+      "name": "corrupt-tail-bad-header-bytes",
+      "file": "corrupt-tail-bad-header-bytes.spool",
+      "description": "A checksum-valid header whose header_bytes is not 48.",
+      "bytes": 1424,
+      "sha256": "2bff0b6b27a2a72ea973fe48aff529aefcacadc7f83e9126756ed0034c34f3bf",
+      "expect": {
+        "status": "corrupt_tail",
+        "committed_prefix_end": 1376,
+        "committed_transactions": 3,
+        "last_transaction_id": 3,
+        "data_items": 2,
+        "control_items": 1,
+        "session_end_present": true,
+        "capture_outcome": "normal",
+        "requested_terminal_intent": "normal",
+        "primary_fault_committed": false,
+        "terminal_reason": "",
+        "durability_policy": "transaction_sync",
+        "durable_extent_bytes": 1376,
+        "finalizable": true,
+        "codes": [
+          "SPOOL-049"
+        ]
+      }
+    },
+    {
+      "name": "accounting-position-loss-missing",
+      "file": "accounting-position-loss-missing.spool",
+      "description": "An accepted-item loss with no first-loss ordinal latched.",
+      "bytes": 1224,
+      "sha256": "0078684dd45303f91b3d0f17fe6ada8c99071b12f4d70ce7c51da149075bfda6",
+      "expect": {
+        "status": "ok",
+        "committed_prefix_end": 1224,
+        "committed_transactions": 2,
+        "last_transaction_id": 2,
+        "data_items": 2,
+        "control_items": 1,
+        "session_end_present": true,
+        "capture_outcome": "normal",
+        "requested_terminal_intent": "normal",
+        "primary_fault_committed": false,
+        "terminal_reason": "",
+        "durability_policy": "transaction_sync",
+        "durable_extent_bytes": 1224,
+        "finalizable": false,
+        "codes": [
+          "SPOOL-045"
+        ]
+      }
+    },
+    {
+      "name": "accounting-position-data-loss-tag",
+      "file": "accounting-position-data-loss-tag.spool",
+      "description": "A first data loss recorded as a producer identity, not an ordinal.",
+      "bytes": 1224,
+      "sha256": "c22ed8e724ce3922fc28b6ec09a42f2aa181f63fc44d212fcf0d482a596e4b87",
+      "expect": {
+        "status": "ok",
+        "committed_prefix_end": 1224,
+        "committed_transactions": 2,
+        "last_transaction_id": 2,
+        "data_items": 2,
+        "control_items": 1,
+        "session_end_present": true,
+        "capture_outcome": "normal",
+        "requested_terminal_intent": "normal",
+        "primary_fault_committed": false,
+        "terminal_reason": "",
+        "durability_policy": "transaction_sync",
+        "durable_extent_bytes": 1224,
+        "finalizable": false,
+        "codes": [
+          "SPOOL-050"
+        ]
+      }
+    },
+    {
+      "name": "accounting-position-data-rejection-tag",
+      "file": "accounting-position-data-rejection-tag.spool",
+      "description": "A first data rejection recorded as an ordinal, not a producer identity.",
+      "bytes": 1224,
+      "sha256": "51209fbd4704f32915dd79f5d5c76db0645e46917c58b243d50a6350052dbfe5",
+      "expect": {
+        "status": "ok",
+        "committed_prefix_end": 1224,
+        "committed_transactions": 2,
+        "last_transaction_id": 2,
+        "data_items": 2,
+        "control_items": 1,
+        "session_end_present": true,
+        "capture_outcome": "normal",
+        "requested_terminal_intent": "normal",
+        "primary_fault_committed": false,
+        "terminal_reason": "",
+        "durability_policy": "transaction_sync",
+        "durable_extent_bytes": 1224,
+        "finalizable": false,
+        "codes": [
+          "SPOOL-050"
+        ]
+      }
+    },
+    {
+      "name": "accounting-position-control-loss-tag",
+      "file": "accounting-position-control-loss-tag.spool",
+      "description": "A first control loss recorded as a producer identity, not an ordinal.",
+      "bytes": 1224,
+      "sha256": "b6319d75b84579c240732a0d8a216ee6e675d735d506035adc4020656cb154f5",
+      "expect": {
+        "status": "ok",
+        "committed_prefix_end": 1224,
+        "committed_transactions": 2,
+        "last_transaction_id": 2,
+        "data_items": 2,
+        "control_items": 1,
+        "session_end_present": true,
+        "capture_outcome": "normal",
+        "requested_terminal_intent": "normal",
+        "primary_fault_committed": false,
+        "terminal_reason": "",
+        "durability_policy": "transaction_sync",
+        "durable_extent_bytes": 1224,
+        "finalizable": false,
+        "codes": [
+          "SPOOL-050"
+        ]
+      }
+    },
+    {
+      "name": "accounting-position-control-rejection-tag",
+      "file": "accounting-position-control-rejection-tag.spool",
+      "description": "A first control rejection recorded as an ordinal, not a producer identity.",
+      "bytes": 1224,
+      "sha256": "36ce7fa07811e95824a7eddc53d8918f36c109fbd7555bad1bd09d3a93be14f8",
+      "expect": {
+        "status": "ok",
+        "committed_prefix_end": 1224,
+        "committed_transactions": 2,
+        "last_transaction_id": 2,
+        "data_items": 2,
+        "control_items": 1,
+        "session_end_present": true,
+        "capture_outcome": "normal",
+        "requested_terminal_intent": "normal",
+        "primary_fault_committed": false,
+        "terminal_reason": "",
+        "durability_policy": "transaction_sync",
+        "durable_extent_bytes": 1224,
+        "finalizable": false,
+        "codes": [
+          "SPOOL-050"
+        ]
+      }
+    },
+    {
+      "name": "accounting-position-identity-kind-unknown",
+      "file": "accounting-position-identity-kind-unknown.spool",
+      "description": "A first rejection whose identity_kind is not in the registry.",
+      "bytes": 1224,
+      "sha256": "5df9911ede0bad319b15c615fc8a1a362aa34ff572dd09407f53f779e2ee76fa",
+      "expect": {
+        "status": "ok",
+        "committed_prefix_end": 1224,
+        "committed_transactions": 2,
+        "last_transaction_id": 2,
+        "data_items": 2,
+        "control_items": 1,
+        "session_end_present": true,
+        "capture_outcome": "normal",
+        "requested_terminal_intent": "normal",
+        "primary_fault_committed": false,
+        "terminal_reason": "",
+        "durability_policy": "transaction_sync",
+        "durable_extent_bytes": 1224,
+        "finalizable": false,
+        "codes": [
+          "SPOOL-051"
+        ]
+      }
+    },
+    {
+      "name": "accounting-position-identity-kind-wrong-plane",
+      "file": "accounting-position-identity-kind-wrong-plane.spool",
+      "description": "A first data rejection that names a control record-set kind.",
+      "bytes": 1224,
+      "sha256": "e139dc7d6ae6e1c835363a0170930d1fda08dff47a2ee7984720cc34d7b2d263",
+      "expect": {
+        "status": "ok",
+        "committed_prefix_end": 1224,
+        "committed_transactions": 2,
+        "last_transaction_id": 2,
+        "data_items": 2,
+        "control_items": 1,
+        "session_end_present": true,
+        "capture_outcome": "normal",
+        "requested_terminal_intent": "normal",
+        "primary_fault_committed": false,
+        "terminal_reason": "",
+        "durability_policy": "transaction_sync",
+        "durable_extent_bytes": 1224,
+        "finalizable": false,
+        "codes": [
+          "SPOOL-051"
+        ]
+      }
+    }
+  ]
+}

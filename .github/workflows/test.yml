@@ -1,0 +1,655 @@
+name: Full correctness matrix
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/test.yml"
+      - "CMakeLists.txt"
+      - "cpp/**"
+      - "specifications/**"
+      - "src/**"
+      - "tests/**"
+      - "tools/**"
+      - "examples/device_providers/**"
+      - "pyproject.toml"
+      - "pytest.ini"
+      - "SUPPORT.md"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  release-matrix-contract:
+    name: Frozen release matrix contract
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Verify packaging and unavailable optional domains
+        run: |
+          python - <<'PY'
+          import re
+          import tomllib
+          from pathlib import Path
+
+          project = tomllib.loads(Path("pyproject.toml").read_text(encoding="utf-8"))["project"]
+          assert project["requires-python"] == ">=3.11,<3.13"
+          assert project["license"] == "MIT"
+          assert project["license-files"] == ["LICENSE", "NOTICE.md"]
+          assert not any(item.startswith("License ::") for item in project["classifiers"])
+          classifiers = set(project["classifiers"])
+          assert "Programming Language :: Python :: 3.11" in classifiers
+          assert "Programming Language :: Python :: 3.12" in classifiers
+          assert "Operating System :: Microsoft :: Windows" in classifiers
+          assert "Operating System :: POSIX :: Linux" in classifiers
+          extras = project.get("optional-dependencies", {})
+          assert set(extras) == {"nrf", "test", "docs", "dev", "lsl"}
+          assert not Path("src/neurale/visualization").exists()
+
+          def normalize(cell: str) -> str:
+              return " ".join(cell.replace("**", "").replace("`", "").split()).casefold()
+
+          rows: dict[str, list[tuple[str, ...]]] = {}
+          for line in Path("SUPPORT.md").read_text(encoding="utf-8").splitlines():
+              if not line.lstrip().startswith("|"):
+                  continue
+              cells = tuple(cell.strip() for cell in line.strip().strip("|").split("|"))
+              if len(cells) < 3 or all(re.fullmatch(r":?-+:?", cell.replace(" ", "")) for cell in cells):
+                  continue
+              rows.setdefault(normalize(cells[0]), []).append(cells)
+
+          def require(area: str, status: str, *contract_terms: str) -> None:
+              matches = rows.get(normalize(area), [])
+              assert len(matches) == 1, (area, matches)
+              row = matches[0]
+              assert normalize(row[1]) == normalize(status), row
+              contract = normalize(row[2])
+              for term in contract_terms:
+                  assert normalize(term) in contract, (term, row)
+
+          require("Python", "Supported", "CPython", "3.11", "3.12")
+          require("Linux", "Supported", "Ubuntu 24.04", "x86-64", "GCC 13.3", "C++20")
+          require("Windows", "Supported", "Windows 11", "x86-64", "MSVC 19.51", "C++20")
+          require("Builtin CPU provider", "Supported", "MKL OFF", "CUDA OFF")
+          require("oneMKL", "Supported", "MKL ON", "LP64")
+          require("CUDA kernels", "Experimental")
+          require("Windows 11 x86-64 desktop OpenGL", "Supported", "OpenGL 3.3")
+          require("Ubuntu 24.04 x86-64 X11/Xvfb with Mesa", "Supported")
+          require("Visualization package", "Unavailable", "M10 has not passed")
+          PY
+
+  python-only:
+    name: Python-only imports and dependency errors
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install Python test dependencies without PyNeurale
+        run: python -m pip install --upgrade pip && python -m pip install numpy scipy pytest
+      - name: Run explicit source-only tests
+        env:
+          PYTHONPATH: ${{ github.workspace }}/src
+        run: |
+          # The file list is the one in tests/conftest.py, never a second copy:
+          # a hand-written list in CI drifts, and a python_only file missing
+          # from it silently runs nowhere. Passing paths is still required --
+          # collecting all of tests/ without an install dies on the native
+          # modules before any marker selection happens.
+          readarray -t suite < <(python -c "
+          import sys
+          sys.path.insert(0, 'tests')
+          import conftest
+          for relative in sorted(conftest._PYTHON_ONLY_FILES):
+              print('tests/' + relative)
+          ")
+          python -m pytest -o addopts="" -m python_only "${suite[@]}"
+
+  built-install:
+    name: CPU wheel and full installed Python test suite (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        # Exercise every Python version in the frozen Supported matrix. Running
+        # only the newest version is how a floor-breaking import reaches a
+        # release without being detected.
+        python-version: ["3.11", "3.12"]
+    env:
+      CMAKE_ARGS: >-
+        -DNEURALE_ENABLE_MKL=OFF
+        -DNEURALE_ENABLE_CUDA=OFF
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      - name: Install build tooling
+        run: python -m pip install --upgrade pip && python -m pip install pybind11 auditwheel
+      - name: Record the working tree before the build
+        run: git status --porcelain > "${RUNNER_TEMP}/tree-before.txt"
+      - name: Build CPU wheel
+        run: python -m pip wheel . --no-deps --wheel-dir dist
+      - name: Audit core wheel shared-library boundary
+        run: |
+          mkdir -p build/wheel-evidence
+          auditwheel show dist/*.whl 2>&1 | tee build/wheel-evidence/core-audit.txt
+      - name: Inspect core extension exports and direct dependencies
+        run: >-
+          python tools/validate_native_binary.py --profile core --wheel-dir dist
+          --audit-report build/wheel-evidence/core-audit.txt
+          --report build/wheel-evidence/core-native-binary.json
+      - name: Test core wheel in a clean environment
+        run: >-
+          python tools/validate_clean_wheel.py --profile core --wheel-dir dist
+          --report build/wheel-evidence/core-clean.json
+      # The NRF v1 schemas are installed into the wheel straight from
+      # specifications/nrf/v1, which is the only tracked copy. A build that
+      # wrote them back into src/neurale/io/nrf/schemas would recreate the
+      # second copy this layout exists to prevent, and would do it invisibly.
+      - name: Verify the build left the working tree unchanged
+        run: |
+          git status --porcelain > "${RUNNER_TEMP}/tree-after.txt"
+          diff "${RUNNER_TEMP}/tree-before.txt" "${RUNNER_TEMP}/tree-after.txt"
+      # The [test] extra is the single source of truth for test-only
+      # dependencies (pytest, jsonschema, rfc8785); do not re-list them here.
+      - name: Install built wheel with test dependencies
+        run: python -m pip install "$(ls dist/*.whl)[test]"
+      - name: Build standalone device packages against the installed wheel
+        run: |
+          python -m pip install scikit-build-core setuptools wheel
+          python -m pip install --no-build-isolation examples/device_providers/pull examples/device_providers/callback examples/device_providers/python
+      - name: Validate external device paths
+        run: |
+          python -m pip install "pylsl>=1.17,<2"
+          python tools/validate_device_providers.py
+          python -m pytest tests/unit/devices
+      - name: Verify installed native extension
+        run: python -c "import neurale._native as native; print(native.build_info())"
+      - name: Verify headless experiment boundary
+        run: |
+          python - <<'PY'
+          import importlib.util
+          import sys
+
+          import neurale.experiments
+
+          assert "neurale._native" not in sys.modules
+          import neurale._native as native
+          assert not hasattr(native.experiments, "presentation")
+          PY
+      - name: Run installed-wheel formal Center-Out closed loops
+        run: >-
+          python -m pytest -o "addopts=--require-native -ra"
+          tests/integration/experiments/test_center_out_closed_loop.py::test_headless_center_out
+      - name: Build native record/replay test helper
+        run: |
+          cmake -S . -B build/record-replay-ci \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DNEURALE_ENABLE_MKL=OFF \
+            -DNEURALE_ENABLE_CUDA=OFF \
+            -DNEURALE_BUILD_BENCHMARKS=ON \
+            -Dpybind11_DIR="$(python -m pybind11 --cmakedir)"
+          cmake --build build/record-replay-ci --config Release \
+            --target neurale_recording_replay_benchmark
+      # No path arguments: pytest.ini owns testpaths, the --require-native
+      # preflight, and the marker deselection. Run from the repository root:
+      # tests/specification reads the specification tree and loads its reference
+      # tooling from this checkout by path, while `neurale` resolves to the
+      # installed wheel rather than src/.
+      - name: Run full installed-package Python test suite
+        run: python -m pytest
+      # pytest.ini's addopts deselect `python_only` from the run above, so the
+      # python_only files that need an install -- they spawn a probe
+      # interpreter that does not inherit PYTHONPATH, which is why the
+      # source-only job cannot run them -- execute here or nowhere.
+      - name: Run installed-package python-only tests
+        run: |
+          readarray -t suite < <(python -c "
+          import sys
+          sys.path.insert(0, 'tests')
+          import conftest
+          for relative in sorted(conftest._PYTHON_ONLY_INSTALLED_FILES):
+              print('tests/' + relative)
+          ")
+          python -m pytest -o addopts="-ra" -m python_only "${suite[@]}"
+
+  # A wheel built from a source distribution sees only what sdist.include
+  # shipped, so this is the only job that would notice specifications/nrf/v1
+  # being left out of the sdist -- a failure mode that is invisible when
+  # building from a Git checkout and fatal for anyone installing from PyPI.
+  sdist-install:
+    name: Wheel built from the source distribution
+    runs-on: ubuntu-24.04
+    env:
+      CMAKE_ARGS: >-
+        -DNEURALE_ENABLE_MKL=OFF
+        -DNEURALE_ENABLE_CUDA=OFF
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install build tooling
+        run: python -m pip install --upgrade pip && python -m pip install build auditwheel
+      - name: Build source distribution
+        run: python -m build --sdist --outdir dist
+      - name: Build CPU wheel from the source distribution
+        run: python -m pip wheel dist/*.tar.gz --no-deps --wheel-dir dist
+      - name: Audit sdist-built wheel shared-library boundary
+        run: |
+          mkdir -p build/wheel-evidence
+          auditwheel show dist/*.whl 2>&1 | tee build/wheel-evidence/sdist-core-audit.txt
+      - name: Inspect sdist-built extension exports and direct dependencies
+        run: >-
+          python tools/validate_native_binary.py --profile core --wheel-dir dist
+          --audit-report build/wheel-evidence/sdist-core-audit.txt
+          --report build/wheel-evidence/sdist-core-native-binary.json
+      - name: Test sdist-built wheel in a clean environment
+        run: >-
+          python tools/validate_clean_wheel.py --profile core --wheel-dir dist
+          --report build/wheel-evidence/sdist-core-clean.json
+      - name: Install the wheel with test dependencies
+        run: python -m pip install "$(ls dist/*.whl)[test]"
+      # Checks the installed package resources against the specification tree
+      # in this checkout, which is what pins the two together.
+      - name: Verify the installed schemas against the specification
+        run: python -m pytest tests/unit/io/nrf/test_schema_layer.py
+
+  # The repository already builds C++ on Windows, but nothing installed the
+  # Python package there, so no job could see a writer that opened its temporary
+  # file read-only to fsync it -- legal on Linux, EBADF on Windows, and fatal to
+  # every session. This job runs the filesystem-facing suites only: paths,
+  # renames, sync, and file sharing are what differ between the platforms, while
+  # the timing-sensitive streaming tests would mostly contribute flake from a
+  # shared runner.
+  windows-install:
+    name: CPU wheel and filesystem-facing tests (Windows, Python ${{ matrix.python-version }})
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
+    env:
+      CMAKE_ARGS: >-
+        -DNEURALE_ENABLE_MKL=OFF
+        -DNEURALE_ENABLE_CUDA=OFF
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      - name: Install build tooling
+        run: python -m pip install --upgrade pip && python -m pip install pybind11 delvewheel
+      - name: Build CPU wheel
+        run: python -m pip wheel . --no-deps --wheel-dir dist
+      - name: Audit core wheel shared-library boundary
+        run: |
+          New-Item -ItemType Directory -Force build/wheel-evidence | Out-Null
+          delvewheel show "$((Get-ChildItem dist/*.whl)[0].FullName)" 2>&1 |
+            Tee-Object -FilePath build/wheel-evidence/core-audit.txt
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Inspect core extension exports and direct dependencies
+        run: >-
+          python tools/validate_native_binary.py --profile core --wheel-dir dist
+          --audit-report build/wheel-evidence/core-audit.txt
+          --report build/wheel-evidence/core-native-binary.json
+      - name: Test core wheel in a clean environment
+        run: >-
+          python tools/validate_clean_wheel.py --profile core --wheel-dir dist
+          --report build/wheel-evidence/core-clean.json
+      - name: Install built wheel with test dependencies
+        run: python -m pip install "$((Get-ChildItem dist/*.whl)[0].FullName)[test]"
+      - name: Install standalone provider build tooling
+        run: python -m pip install scikit-build-core setuptools wheel
+      - name: Build standalone device packages against the installed wheel
+        run: python -m pip install --no-build-isolation examples/device_providers/pull examples/device_providers/callback examples/device_providers/python
+      - name: Validate external device paths
+        run: python tools/validate_device_providers.py
+      - name: Test device contracts
+        run: |
+          python -m pip install "pylsl>=1.17,<2"
+          python -m pytest tests/unit/devices
+      - name: Verify installed native extension
+        run: python -c "import neurale._native as native; print(native.build_info())"
+      - name: Run the I/O, recording, and specification suites
+        run: python -m pytest tests/unit/io tests/unit/recording tests/specification
+
+  experiment-presentation-windows:
+    name: Optional native experiment presentation (Windows, Python ${{ matrix.python-version }})
+    runs-on: windows-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
+    env:
+      CMAKE_ARGS: >-
+        -DNEURALE_ENABLE_EXPERIMENT_PRESENTATION=ON
+        -DNEURALE_ENABLE_MKL=OFF
+        -DNEURALE_ENABLE_CUDA=OFF
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      - name: Install build tooling
+        run: python -m pip install --upgrade pip && python -m pip install pybind11 delvewheel
+      - name: Build presentation-enabled wheel
+        run: python -m pip wheel . --no-deps --wheel-dir dist
+      - name: Audit presentation wheel shared-library boundary
+        run: |
+          New-Item -ItemType Directory -Force build/wheel-evidence | Out-Null
+          delvewheel show "$((Get-ChildItem dist/*.whl)[0].FullName)" 2>&1 |
+            Tee-Object -FilePath build/wheel-evidence/presentation-audit.txt
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Inspect presentation extension exports and direct dependencies
+        run: >-
+          python tools/validate_native_binary.py --profile presentation --wheel-dir dist
+          --audit-report build/wheel-evidence/presentation-audit.txt
+          --report build/wheel-evidence/presentation-native-binary.json
+      - name: Test presentation wheel in a clean environment
+        run: >-
+          python tools/validate_clean_wheel.py --profile presentation --wheel-dir dist
+          --report build/wheel-evidence/presentation-clean.json
+      - name: Install presentation-enabled wheel
+        run: >-
+          python -c "from pathlib import Path; import subprocess,sys;
+          wheel=next(Path('dist').glob('*.whl'));
+          subprocess.check_call([sys.executable,'-m','pip','install',str(wheel)+'[test]'])"
+      - name: Require native presentation and dependency versions
+        run: >-
+          python -c "import importlib.util,json;
+          import neurale._native as native;
+          assert hasattr(native.experiments, 'presentation');
+          from neurale.experiments.presentation import dependency_versions;
+          versions=dependency_versions();
+          assert set(versions)=={'glfw','opengl_minimum','freetype','harfbuzz'};
+          assert versions['opengl_minimum']==(3,3);
+          print(json.dumps(versions,sort_keys=True))"
+      # Hosted Windows runners do not provide reproducible physical display
+      # evidence. Run the public import/configuration contracts here; Linux
+      # Xvfb jobs below remain the owner of required window smoke.
+      - name: Run non-window public presentation contracts
+        run: >-
+          python -m pytest -o addopts="--require-native -ra"
+          --deselect=tests/unit/experiments/test_presentation_import.py::test_webgrid_presenter_accepts_misselection_feedback
+          --junitxml=presentation-windows-pytest.xml
+          tests/unit/experiments/test_presentation_import.py
+      - name: Reject skipped Windows presentation contracts
+        run: |
+          @'
+          import xml.etree.ElementTree as ET
+
+          root = ET.parse("presentation-windows-pytest.xml").getroot()
+          suites = [root] if root.tag == "testsuite" else list(root.findall("testsuite"))
+          tests = sum(int(suite.attrib.get("tests", 0)) for suite in suites)
+          skipped = sum(int(suite.attrib.get("skipped", 0)) for suite in suites)
+          failures = sum(int(suite.attrib.get("failures", 0)) for suite in suites)
+          errors = sum(int(suite.attrib.get("errors", 0)) for suite in suites)
+          assert tests >= 9, tests
+          assert skipped == 0, skipped
+          assert failures == 0 and errors == 0, (failures, errors)
+          '@ | python -
+
+  native-cpu:
+    name: Native CPU tests
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install native build tooling
+        run: python -m pip install --upgrade pip pybind11
+      - name: Configure native tests
+        run: >-
+          cmake -S . -B build/native-cpu
+          -DNEURALE_BUILD_CPP_TESTS=ON
+          -DNEURALE_BUILD_BENCHMARKS=OFF
+          -DNEURALE_ENABLE_MKL=OFF
+          -DNEURALE_ENABLE_CUDA=OFF
+          -Dpybind11_DIR="$(python -m pybind11 --cmakedir)"
+      - name: Compile every public header independently
+        run: >-
+          cmake --build build/native-cpu --config Release
+          --target neurale_public_header_self_containment
+      - name: Build native tests
+        run: cmake --build build/native-cpu --config Release
+      - name: Run native tests
+        run: >-
+          ctest --test-dir build/native-cpu -C Release
+          -LE 'strict-realtime|allocation-full|allocation-operator-new'
+          --no-tests=error
+          --output-on-failure
+
+  experiment-presentation:
+    name: Optional native experiment presentation
+    runs-on: ubuntu-24.04
+    env:
+      CMAKE_ARGS: >-
+        -DNEURALE_ENABLE_EXPERIMENT_PRESENTATION=ON
+        -DNEURALE_ENABLE_MKL=OFF
+        -DNEURALE_ENABLE_CUDA=OFF
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install presentation development dependencies
+        run: >-
+          sudo apt-get update && sudo apt-get install --yes
+          libglfw3-dev libgl1-mesa-dev libfreetype-dev libharfbuzz-dev
+          fonts-dejavu-core fonts-noto-cjk xauth xvfb
+      - name: Install build tooling
+        run: python -m pip install --upgrade pip && python -m pip install pybind11
+      - name: Build presentation-enabled wheel
+        run: python -m pip wheel . --no-deps --wheel-dir dist
+      - name: Test system-dependency presentation wheel in a clean environment
+        run: python tools/validate_clean_wheel.py --profile presentation --wheel-dir dist
+      - name: Install presentation-enabled wheel
+        run: python -m pip install "$(ls dist/*.whl)[test]"
+      - name: Verify optional native module and lightweight core imports
+        run: |
+          python -c "from neurale.experiments.presentation import dependency_versions; print(dependency_versions())"
+          python -m pytest tests/unit/experiments/test_presentation_import.py
+      - name: Run installed-wheel formal presented Center-Out loop
+        run: >-
+          xvfb-run -a python -m pytest -o "addopts=--require-native -ra"
+          tests/integration/experiments/test_center_out_closed_loop.py::test_center_out_presentation
+      - name: Configure presentation native test
+        run: >-
+          cmake -S . -B build/presentation
+          -DNEURALE_BUILD_CPP_TESTS=ON
+          -DNEURALE_BUILD_BENCHMARKS=OFF
+          -DNEURALE_ENABLE_EXPERIMENT_PRESENTATION=ON
+          -DNEURALE_ENABLE_MKL=OFF
+          -DNEURALE_ENABLE_CUDA=OFF
+          -Dpybind11_DIR="$(python -m pybind11 --cmakedir)"
+      - name: Build and run presentation native test
+        run: |
+          cmake --build build/presentation --config Release --target neurale_experiment_presentation_dependency_test neurale_experiment_presentation_surface_test neurale_experiment_presentation_center_out_test neurale_experiment_presentation_webgrid_test neurale_experiment_presentation_speech_test neurale_experiment_presentation_ssvep_test neurale_experiment_presentation_recording_test
+          ctest --test-dir build/presentation -C Release -R '^neurale_experiment_presentation_(dependency|surface_contract|center_out_contract|webgrid_contract|speech_contract|ssvep_contract|recording)$' --no-tests=error --output-on-failure
+          # NEURALE_PRESENTATION_REQUIRE_DISPLAY turns a display/font skip into a
+          # failure. This job installs xvfb and both fonts, so a skipped window
+          # case here means the environment broke -- and a green run that
+          # silently executed none of the rendering, timing, or glyph assertions
+          # would be worse than a red one.
+          xvfb-run -a env NEURALE_PRESENTATION_TEST_FONT=/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf NEURALE_PRESENTATION_TEST_CJK_FONT=/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc NEURALE_PRESENTATION_TEST_FULLSCREEN=1 NEURALE_PRESENTATION_REQUIRE_DISPLAY=1 \
+            ctest --test-dir build/presentation -C Release -R '^neurale_experiment_presentation_(surface|center_out|webgrid|speech|ssvep|recording)_window$' --no-tests=error --output-on-failure
+
+  experiment-presentation-bundled:
+    name: Optional native experiment presentation (bundled deps, Python ${{ matrix.python-version }})
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
+    env:
+      CMAKE_ARGS: >-
+        -DNEURALE_ENABLE_EXPERIMENT_PRESENTATION=ON
+        -DNEURALE_ENABLE_MKL=OFF
+        -DNEURALE_ENABLE_CUDA=OFF
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      # Deliberately do NOT install libglfw3-dev / libfreetype-dev / libharfbuzz-dev
+      # so FetchContent downloads and builds private static copies. OpenGL still
+      # comes from the system (Mesa dev package).
+      - name: Install OpenGL dev, fonts, and xvfb
+        run: >-
+          sudo apt-get update && sudo apt-get install --yes
+          libgl1-mesa-dev fonts-dejavu-core fonts-noto-cjk xauth xvfb
+      - name: Install build tooling and auditwheel
+        run: python -m pip install --upgrade pip && python -m pip install pybind11 auditwheel
+      - name: Build presentation-enabled wheel (FetchContent bundled static deps)
+        run: python -m pip wheel . --no-deps --wheel-dir dist
+      - name: Test bundled presentation wheel in a clean environment
+        run: >-
+          python tools/validate_clean_wheel.py --profile presentation --wheel-dir dist
+          --report build/presentation-clean.json
+      - name: Install presentation-enabled wheel
+        run: python -m pip install "$(ls dist/*.whl)[test]"
+      - name: Audit bundled presentation shared-library boundary
+        run: |
+          auditwheel show dist/*.whl 2>&1 | tee build/presentation-audit.txt
+      - name: Inspect bundled extension exports and direct dependencies
+        run: >-
+          python tools/validate_native_binary.py --profile presentation --wheel-dir dist
+          --audit-report build/presentation-audit.txt
+          --report build/presentation-native-binary.json
+      - name: Verify optional native module and lightweight core imports
+        run: |
+          python -c "from neurale.experiments.presentation import dependency_versions; print(dependency_versions())"
+          python -m pytest tests/unit/experiments/test_presentation_import.py
+      - name: Configure presentation native test
+        run: >-
+          cmake -S . -B build/presentation
+          -DNEURALE_BUILD_CPP_TESTS=ON
+          -DNEURALE_BUILD_BENCHMARKS=OFF
+          -DNEURALE_ENABLE_EXPERIMENT_PRESENTATION=ON
+          -DNEURALE_ENABLE_MKL=OFF
+          -DNEURALE_ENABLE_CUDA=OFF
+          -Dpybind11_DIR="$(python -m pybind11 --cmakedir)"
+      - name: Build and run presentation native test
+        run: |
+          cmake --build build/presentation --config Release --target neurale_experiment_presentation_dependency_test neurale_experiment_presentation_surface_test neurale_experiment_presentation_center_out_test neurale_experiment_presentation_webgrid_test neurale_experiment_presentation_speech_test neurale_experiment_presentation_ssvep_test neurale_experiment_presentation_recording_test
+          ctest --test-dir build/presentation -C Release -R '^neurale_experiment_presentation_(dependency|surface_contract|center_out_contract|webgrid_contract|speech_contract|ssvep_contract|recording)$' --no-tests=error --output-on-failure
+          # NEURALE_PRESENTATION_REQUIRE_DISPLAY turns a display/font skip into a
+          # failure. This job installs xvfb and both fonts, so a skipped window
+          # case here means the environment broke -- and a green run that
+          # silently executed none of the rendering, timing, or glyph assertions
+          # would be worse than a red one.
+          xvfb-run -a env NEURALE_PRESENTATION_TEST_FONT=/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf NEURALE_PRESENTATION_TEST_CJK_FONT=/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc NEURALE_PRESENTATION_TEST_FULLSCREEN=1 NEURALE_PRESENTATION_REQUIRE_DISPLAY=1 \
+            ctest --test-dir build/presentation -C Release -R '^neurale_experiment_presentation_(surface|center_out|webgrid|speech|ssvep|recording)_window$' --no-tests=error --output-on-failure
+
+  # The contract and the allocation gate are two label selections over one
+  # binary: `neurale_pipeline_strict_realtime_contract_test` built CPU-only.
+  # They used to be two jobs, which configured and compiled that binary twice
+  # for nothing. The MKL job below has always run both selections from a single
+  # build; this is the same shape.
+  strict-realtime-and-allocation-gate:
+    name: Strict native chain contract and full allocation gate
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install native build tooling
+        run: python -m pip install --upgrade pip pybind11
+      - name: Configure strict contract and allocation gate
+        run: >-
+          cmake -S . -B build/strict-contract
+          -DNEURALE_BUILD_CPP_TESTS=ON
+          -DNEURALE_BUILD_BENCHMARKS=OFF
+          -DNEURALE_ENABLE_MKL=OFF
+          -DNEURALE_ENABLE_CUDA=OFF
+          -Dpybind11_DIR="$(python -m pybind11 --cmakedir)"
+      # ctest selects by label, so the build has to cover everything a label
+      # can select. A hand-written --target list is a second source of truth
+      # and drifts from the labels: it had already lost the three
+      # neurale_recording_*_allocation gates, which carry allocation-full and
+      # were selected here without ever being built. The MKL job below builds
+      # everything for the same reason; a CPU-only build is cheap.
+      - name: Build strict contract and allocation gate
+        run: cmake --build build/strict-contract --config Release
+      - name: Run strict contract and the malloc, calloc, realloc gate
+        run: >-
+          ctest --test-dir build/strict-contract -C Release
+          -L 'strict-realtime|allocation-full' --no-tests=error --output-on-failure
+
+  # The CPU-only gate above cannot say anything about the MKL kernels: they are
+  # compiled out of that build entirely. This job is the only place where the
+  # steady-state allocation contract is checked for mkl_blas_df2t (SOS and
+  # direct-form IIR at >= 128 channels), mkl_dfti (the Hilbert analytic path),
+  # and the MKL multitaper backend. The contract test prints the kernels each
+  # geometry resolved to, and fails if its wide geometry stops crossing those
+  # thresholds.
+  #
+  # This job also carries the rest of the MKL native suite. Installing
+  # intel-oneapi-mkl-devel and compiling an MKL build are the expensive parts
+  # and they were being paid twice, by two jobs whose CMake configuration was
+  # identical and whose ctest label selections were complements of each other.
+  # One build, two selections.
+  mkl-native-and-allocation-gate:
+    name: Linux MKL native tests and allocation gate
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Add Intel oneAPI APT repository
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes gpg-agent wget
+          wget -O- https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB | gpg --dearmor | sudo tee /usr/share/keyrings/oneapi-archive-keyring.gpg > /dev/null
+          echo "deb [signed-by=/usr/share/keyrings/oneapi-archive-keyring.gpg] https://apt.repos.intel.com/oneapi all main" | sudo tee /etc/apt/sources.list.d/oneAPI.list
+          sudo apt-get update
+      - name: Install oneMKL and native build tooling
+        run: sudo apt-get install --yes intel-oneapi-mkl-devel && python -m pip install --upgrade pip pybind11
+      - name: Record resolved oneMKL packages
+        run: dpkg-query -W 'intel-oneapi-mkl*'
+      - name: Configure MKL allocation gate
+        run: >-
+          cmake -S . -B build/allocation-gate-mkl
+          -DNEURALE_BUILD_CPP_TESTS=ON
+          -DNEURALE_BUILD_BENCHMARKS=OFF
+          -DNEURALE_ENABLE_MKL=ON
+          -DNEURALE_ENABLE_CUDA=OFF
+          -Dpybind11_DIR="$(python -m pybind11 --cmakedir)"
+      - name: Build MKL native tests and allocation gate
+        run: cmake --build build/allocation-gate-mkl --config Release
+      - name: Run MKL native tests
+        run: >-
+          ctest --test-dir build/allocation-gate-mkl -C Release
+          -LE 'strict-realtime|allocation-full|allocation-operator-new'
+          --no-tests=error
+          --output-on-failure
+      - name: Run MKL strict contract and allocation gate
+        run: >-
+          ctest --test-dir build/allocation-gate-mkl -C Release
+          -L 'strict-realtime|allocation-full' --no-tests=error --output-on-failure

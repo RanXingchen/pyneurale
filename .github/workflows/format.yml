@@ -1,0 +1,38 @@
+name: Format checks
+
+# A same-repository pull request fires both `push` and `pull_request`, so an
+# unfiltered `push` ran this workflow twice per pull request. The pull-request
+# trigger is the gate; `push` only needs to cover the main branch.
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: format-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  format:
+    name: Python and C++ formatting
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+
+      - name: Install pre-commit
+        run: python -m pip install pre-commit==4.6.0
+
+      - name: Run formatting checks
+        run: pre-commit run --all-files --show-diff-on-failure

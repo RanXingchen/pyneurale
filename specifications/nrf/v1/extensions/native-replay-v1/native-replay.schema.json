@@ -1,0 +1,3615 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pyneurale.org/specifications/nrf/v1/extensions/native-replay-v1.schema.json",
+  "title": "NRF v1 native replay ledger extension",
+  "description": "Machine-readable form of the native-replay-v1 extension: the five ledger record schemas, the manifest extension object, and the journal termination extension object. Generated from README.md by tools/generate_fixtures.py.",
+  "type": "object",
+  "$defs": {
+    "namespace": {
+      "const": "neurale.native_replay"
+    },
+    "replayCapability": {
+      "type": "object",
+      "required": [
+        "available",
+        "reason"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "available": {
+          "type": "boolean"
+        },
+        "reason": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "available": {
+                "const": true
+              }
+            },
+            "required": [
+              "available"
+            ]
+          },
+          "then": {
+            "properties": {
+              "reason": {
+                "type": "null"
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "reason": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    "ledgerRecordSchemas": {
+      "native_frames": {
+        "type": "object",
+        "required": [
+          "id",
+          "kind",
+          "path",
+          "primary_key",
+          "fields",
+          "chunk_length"
+        ],
+        "properties": {
+          "id": {
+            "const": "native-frames-v1"
+          },
+          "kind": {
+            "const": "native_frames"
+          },
+          "path": {
+            "const": "records/native_frames/native-frames-v1"
+          },
+          "primary_key": {
+            "const": "data_message_ordinal"
+          },
+          "chunk_length": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "fields": {
+            "type": "array",
+            "minItems": 14,
+            "maxItems": 14,
+            "prefixItems": [
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "data_message_ordinal"
+                  },
+                  "dtype": {
+                    "const": "uint64"
+                  },
+                  "endianness": {
+                    "const": "little"
+                  },
+                  "nullable": {
+                    "const": false
+                  },
+                  "array_path": {
+                    "const": "records/native_frames/native-frames-v1/columns/data_message_ordinal"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "bytes-le"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "native_session_id"
+                  },
+                  "dtype": {
+                    "const": "uint64"
+                  },
+                  "endianness": {
+                    "const": "little"
+                  },
+                  "nullable": {
+                    "const": false
+                  },
+                  "array_path": {
+                    "const": "records/native_frames/native-frames-v1/columns/native_session_id"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "bytes-le"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "frame_sequence"
+                  },
+                  "dtype": {
+                    "const": "uint64"
+                  },
+                  "endianness": {
+                    "const": "little"
+                  },
+                  "nullable": {
+                    "const": false
+                  },
+                  "array_path": {
+                    "const": "records/native_frames/native-frames-v1/columns/frame_sequence"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "bytes-le"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "frame_ordinal"
+                  },
+                  "dtype": {
+                    "const": "uint64"
+                  },
+                  "endianness": {
+                    "const": "little"
+                  },
+                  "nullable": {
+                    "const": false
+                  },
+                  "array_path": {
+                    "const": "records/native_frames/native-frames-v1/columns/frame_ordinal"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "bytes-le"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "host_received_ns"
+                  },
+                  "dtype": {
+                    "const": "uint64"
+                  },
+                  "endianness": {
+                    "const": "little"
+                  },
+                  "nullable": {
+                    "const": false
+                  },
+                  "array_path": {
+                    "const": "records/native_frames/native-frames-v1/columns/host_received_ns"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "bytes-le"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable",
+                  "validity_path"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "source_tick"
+                  },
+                  "dtype": {
+                    "const": "uint64"
+                  },
+                  "endianness": {
+                    "const": "little"
+                  },
+                  "nullable": {
+                    "const": true
+                  },
+                  "array_path": {
+                    "const": "records/native_frames/native-frames-v1/columns/source_tick"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "bytes-le"
+                    ]
+                  },
+                  "validity_path": {
+                    "const": "records/native_frames/native-frames-v1/validity/source_tick"
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable",
+                  "validity_path"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "valid_until_ns"
+                  },
+                  "dtype": {
+                    "const": "uint64"
+                  },
+                  "endianness": {
+                    "const": "little"
+                  },
+                  "nullable": {
+                    "const": true
+                  },
+                  "array_path": {
+                    "const": "records/native_frames/native-frames-v1/columns/valid_until_ns"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "bytes-le"
+                    ]
+                  },
+                  "validity_path": {
+                    "const": "records/native_frames/native-frames-v1/validity/valid_until_ns"
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "native_schema_id"
+                  },
+                  "dtype": {
+                    "const": "uint32"
+                  },
+                  "endianness": {
+                    "const": "little"
+                  },
+                  "nullable": {
+                    "const": false
+                  },
+                  "array_path": {
+                    "const": "records/native_frames/native-frames-v1/columns/native_schema_id"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "bytes-le"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "source_clock_domain"
+                  },
+                  "dtype": {
+                    "const": "uint32"
+                  },
+                  "endianness": {
+                    "const": "little"
+                  },
+                  "nullable": {
+                    "const": false
+                  },
+                  "array_path": {
+                    "const": "records/native_frames/native-frames-v1/columns/source_clock_domain"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "bytes-le"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "frame_flags"
+                  },
+                  "dtype": {
+                    "const": "uint32"
+                  },
+                  "endianness": {
+                    "const": "little"
+                  },
+                  "nullable": {
+                    "const": false
+                  },
+                  "array_path": {
+                    "const": "records/native_frames/native-frames-v1/columns/frame_flags"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "bytes-le"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "signal_block_count"
+                  },
+                  "dtype": {
+                    "const": "uint32"
+                  },
+                  "endianness": {
+                    "const": "little"
+                  },
+                  "nullable": {
+                    "const": false
+                  },
+                  "array_path": {
+                    "const": "records/native_frames/native-frames-v1/columns/signal_block_count"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "bytes-le"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "recorded_signal_block_count"
+                  },
+                  "dtype": {
+                    "const": "uint32"
+                  },
+                  "endianness": {
+                    "const": "little"
+                  },
+                  "nullable": {
+                    "const": false
+                  },
+                  "array_path": {
+                    "const": "records/native_frames/native-frames-v1/columns/recorded_signal_block_count"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "bytes-le"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "total_payload_byte_count"
+                  },
+                  "dtype": {
+                    "const": "uint64"
+                  },
+                  "endianness": {
+                    "const": "little"
+                  },
+                  "nullable": {
+                    "const": false
+                  },
+                  "array_path": {
+                    "const": "records/native_frames/native-frames-v1/columns/total_payload_byte_count"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "bytes-le"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable",
+                  "validity_path"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "first_signal_block_ordinal"
+                  },
+                  "dtype": {
+                    "const": "uint64"
+                  },
+                  "endianness": {
+                    "const": "little"
+                  },
+                  "nullable": {
+                    "const": true
+                  },
+                  "array_path": {
+                    "const": "records/native_frames/native-frames-v1/columns/first_signal_block_ordinal"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "bytes-le"
+                    ]
+                  },
+                  "validity_path": {
+                    "const": "records/native_frames/native-frames-v1/validity/first_signal_block_ordinal"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      },
+      "native_signal_blocks": {
+        "type": "object",
+        "required": [
+          "id",
+          "kind",
+          "path",
+          "primary_key",
+          "fields",
+          "chunk_length"
+        ],
+        "properties": {
+          "id": {
+            "const": "native-signal-blocks-v1"
+          },
+          "kind": {
+            "const": "native_signal_blocks"
+          },
+          "path": {
+            "const": "records/native_signal_blocks/native-signal-blocks-v1"
+          },
+          "primary_key": {
+            "const": "signal_block_ordinal"
+          },
+          "chunk_length": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "fields": {
+            "type": "array",
+            "minItems": 22,
+            "maxItems": 22,
+            "prefixItems": [
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "signal_block_ordinal"
+                  },
+                  "dtype": {
+                    "const": "uint64"
+                  },
+                  "endianness": {
+                    "const": "little"
+                  },
+                  "nullable": {
+                    "const": false
+                  },
+                  "array_path": {
+                    "const": "records/native_signal_blocks/native-signal-blocks-v1/columns/signal_block_ordinal"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "bytes-le"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "data_message_ordinal"
+                  },
+                  "dtype": {
+                    "const": "uint64"
+                  },
+                  "endianness": {
+                    "const": "little"
+                  },
+                  "nullable": {
+                    "const": false
+                  },
+                  "array_path": {
+                    "const": "records/native_signal_blocks/native-signal-blocks-v1/columns/data_message_ordinal"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "bytes-le"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "frame_ordinal"
+                  },
+                  "dtype": {
+                    "const": "uint64"
+                  },
+                  "endianness": {
+                    "const": "little"
+                  },
+                  "nullable": {
+                    "const": false
+                  },
+                  "array_path": {
+                    "const": "records/native_signal_blocks/native-signal-blocks-v1/columns/frame_ordinal"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "bytes-le"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "block_index_in_frame"
+                  },
+                  "dtype": {
+                    "const": "uint32"
+                  },
+                  "endianness": {
+                    "const": "little"
+                  },
+                  "nullable": {
+                    "const": false
+                  },
+                  "array_path": {
+                    "const": "records/native_signal_blocks/native-signal-blocks-v1/columns/block_index_in_frame"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "bytes-le"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "native_signal_id"
+                  },
+                  "dtype": {
+                    "const": "uint32"
+                  },
+                  "endianness": {
+                    "const": "little"
+                  },
+                  "nullable": {
+                    "const": false
+                  },
+                  "array_path": {
+                    "const": "records/native_signal_blocks/native-signal-blocks-v1/columns/native_signal_id"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "bytes-le"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable",
+                  "reference"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "stream_id"
+                  },
+                  "dtype": {
+                    "const": "utf8"
+                  },
+                  "endianness": {
+                    "const": "not_applicable"
+                  },
+                  "nullable": {
+                    "const": false
+                  },
+                  "array_path": {
+                    "const": "records/native_signal_blocks/native-signal-blocks-v1/columns/stream_id"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "utf8-vlen"
+                    ]
+                  },
+                  "reference": {
+                    "const": "stream"
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "sample_idx_start"
+                  },
+                  "dtype": {
+                    "const": "uint64"
+                  },
+                  "endianness": {
+                    "const": "little"
+                  },
+                  "nullable": {
+                    "const": false
+                  },
+                  "array_path": {
+                    "const": "records/native_signal_blocks/native-signal-blocks-v1/columns/sample_idx_start"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "bytes-le"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "last_sample_idx"
+                  },
+                  "dtype": {
+                    "const": "uint64"
+                  },
+                  "endianness": {
+                    "const": "little"
+                  },
+                  "nullable": {
+                    "const": false
+                  },
+                  "array_path": {
+                    "const": "records/native_signal_blocks/native-signal-blocks-v1/columns/last_sample_idx"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "bytes-le"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "n_samples"
+                  },
+                  "dtype": {
+                    "const": "uint32"
+                  },
+                  "endianness": {
+                    "const": "little"
+                  },
+                  "nullable": {
+                    "const": false
+                  },
+                  "array_path": {
+                    "const": "records/native_signal_blocks/native-signal-blocks-v1/columns/n_samples"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "bytes-le"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "device_tick_start"
+                  },
+                  "dtype": {
+                    "const": "uint64"
+                  },
+                  "endianness": {
+                    "const": "little"
+                  },
+                  "nullable": {
+                    "const": false
+                  },
+                  "array_path": {
+                    "const": "records/native_signal_blocks/native-signal-blocks-v1/columns/device_tick_start"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "bytes-le"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "observation_time_start_ns"
+                  },
+                  "dtype": {
+                    "const": "uint64"
+                  },
+                  "endianness": {
+                    "const": "little"
+                  },
+                  "nullable": {
+                    "const": false
+                  },
+                  "array_path": {
+                    "const": "records/native_signal_blocks/native-signal-blocks-v1/columns/observation_time_start_ns"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "bytes-le"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "row_offset"
+                  },
+                  "dtype": {
+                    "const": "uint64"
+                  },
+                  "endianness": {
+                    "const": "little"
+                  },
+                  "nullable": {
+                    "const": false
+                  },
+                  "array_path": {
+                    "const": "records/native_signal_blocks/native-signal-blocks-v1/columns/row_offset"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "bytes-le"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "payload_byte_count"
+                  },
+                  "dtype": {
+                    "const": "uint64"
+                  },
+                  "endianness": {
+                    "const": "little"
+                  },
+                  "nullable": {
+                    "const": false
+                  },
+                  "array_path": {
+                    "const": "records/native_signal_blocks/native-signal-blocks-v1/columns/payload_byte_count"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "bytes-le"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "payload_offset"
+                  },
+                  "dtype": {
+                    "const": "uint64"
+                  },
+                  "endianness": {
+                    "const": "little"
+                  },
+                  "nullable": {
+                    "const": false
+                  },
+                  "array_path": {
+                    "const": "records/native_signal_blocks/native-signal-blocks-v1/columns/payload_offset"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "bytes-le"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "clock_sync_device_tick_reference"
+                  },
+                  "dtype": {
+                    "const": "uint64"
+                  },
+                  "endianness": {
+                    "const": "little"
+                  },
+                  "nullable": {
+                    "const": false
+                  },
+                  "array_path": {
+                    "const": "records/native_signal_blocks/native-signal-blocks-v1/columns/clock_sync_device_tick_reference"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "bytes-le"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "clock_sync_host_time_reference_ns"
+                  },
+                  "dtype": {
+                    "const": "uint64"
+                  },
+                  "endianness": {
+                    "const": "little"
+                  },
+                  "nullable": {
+                    "const": false
+                  },
+                  "array_path": {
+                    "const": "records/native_signal_blocks/native-signal-blocks-v1/columns/clock_sync_host_time_reference_ns"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "bytes-le"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "clock_sync_rate_numerator"
+                  },
+                  "dtype": {
+                    "const": "uint64"
+                  },
+                  "endianness": {
+                    "const": "little"
+                  },
+                  "nullable": {
+                    "const": false
+                  },
+                  "array_path": {
+                    "const": "records/native_signal_blocks/native-signal-blocks-v1/columns/clock_sync_rate_numerator"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "bytes-le"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "clock_sync_rate_denominator"
+                  },
+                  "dtype": {
+                    "const": "uint64"
+                  },
+                  "endianness": {
+                    "const": "little"
+                  },
+                  "nullable": {
+                    "const": false
+                  },
+                  "array_path": {
+                    "const": "records/native_signal_blocks/native-signal-blocks-v1/columns/clock_sync_rate_denominator"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "bytes-le"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "clock_sync_uncertainty_ns"
+                  },
+                  "dtype": {
+                    "const": "uint64"
+                  },
+                  "endianness": {
+                    "const": "little"
+                  },
+                  "nullable": {
+                    "const": false
+                  },
+                  "array_path": {
+                    "const": "records/native_signal_blocks/native-signal-blocks-v1/columns/clock_sync_uncertainty_ns"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "bytes-le"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "clock_sync_clock_domain"
+                  },
+                  "dtype": {
+                    "const": "uint32"
+                  },
+                  "endianness": {
+                    "const": "little"
+                  },
+                  "nullable": {
+                    "const": false
+                  },
+                  "array_path": {
+                    "const": "records/native_signal_blocks/native-signal-blocks-v1/columns/clock_sync_clock_domain"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "bytes-le"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "clock_sync_generation"
+                  },
+                  "dtype": {
+                    "const": "uint32"
+                  },
+                  "endianness": {
+                    "const": "little"
+                  },
+                  "nullable": {
+                    "const": false
+                  },
+                  "array_path": {
+                    "const": "records/native_signal_blocks/native-signal-blocks-v1/columns/clock_sync_generation"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "bytes-le"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "clock_sync_flags"
+                  },
+                  "dtype": {
+                    "const": "uint32"
+                  },
+                  "endianness": {
+                    "const": "little"
+                  },
+                  "nullable": {
+                    "const": false
+                  },
+                  "array_path": {
+                    "const": "records/native_signal_blocks/native-signal-blocks-v1/columns/clock_sync_flags"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "bytes-le"
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        }
+      },
+      "native_discontinuities": {
+        "type": "object",
+        "required": [
+          "id",
+          "kind",
+          "path",
+          "primary_key",
+          "fields",
+          "chunk_length"
+        ],
+        "properties": {
+          "id": {
+            "const": "native-discontinuities-v1"
+          },
+          "kind": {
+            "const": "native_discontinuities"
+          },
+          "path": {
+            "const": "records/native_discontinuities/native-discontinuities-v1"
+          },
+          "primary_key": {
+            "const": "data_message_ordinal"
+          },
+          "chunk_length": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "fields": {
+            "type": "array",
+            "minItems": 8,
+            "maxItems": 8,
+            "prefixItems": [
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "data_message_ordinal"
+                  },
+                  "dtype": {
+                    "const": "uint64"
+                  },
+                  "endianness": {
+                    "const": "little"
+                  },
+                  "nullable": {
+                    "const": false
+                  },
+                  "array_path": {
+                    "const": "records/native_discontinuities/native-discontinuities-v1/columns/data_message_ordinal"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "bytes-le"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "native_session_id"
+                  },
+                  "dtype": {
+                    "const": "uint64"
+                  },
+                  "endianness": {
+                    "const": "little"
+                  },
+                  "nullable": {
+                    "const": false
+                  },
+                  "array_path": {
+                    "const": "records/native_discontinuities/native-discontinuities-v1/columns/native_session_id"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "bytes-le"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "previous_frame_sequence"
+                  },
+                  "dtype": {
+                    "const": "uint64"
+                  },
+                  "endianness": {
+                    "const": "little"
+                  },
+                  "nullable": {
+                    "const": false
+                  },
+                  "array_path": {
+                    "const": "records/native_discontinuities/native-discontinuities-v1/columns/previous_frame_sequence"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "bytes-le"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "actual_frame_sequence"
+                  },
+                  "dtype": {
+                    "const": "uint64"
+                  },
+                  "endianness": {
+                    "const": "little"
+                  },
+                  "nullable": {
+                    "const": false
+                  },
+                  "array_path": {
+                    "const": "records/native_discontinuities/native-discontinuities-v1/columns/actual_frame_sequence"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "bytes-le"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "reason"
+                  },
+                  "dtype": {
+                    "const": "utf8"
+                  },
+                  "endianness": {
+                    "const": "not_applicable"
+                  },
+                  "nullable": {
+                    "const": false
+                  },
+                  "array_path": {
+                    "const": "records/native_discontinuities/native-discontinuities-v1/columns/reason"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "utf8-vlen"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable",
+                  "validity_path"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "first_signal_gap_ordinal"
+                  },
+                  "dtype": {
+                    "const": "uint64"
+                  },
+                  "endianness": {
+                    "const": "little"
+                  },
+                  "nullable": {
+                    "const": true
+                  },
+                  "array_path": {
+                    "const": "records/native_discontinuities/native-discontinuities-v1/columns/first_signal_gap_ordinal"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "bytes-le"
+                    ]
+                  },
+                  "validity_path": {
+                    "const": "records/native_discontinuities/native-discontinuities-v1/validity/first_signal_gap_ordinal"
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "signal_gap_count"
+                  },
+                  "dtype": {
+                    "const": "uint32"
+                  },
+                  "endianness": {
+                    "const": "little"
+                  },
+                  "nullable": {
+                    "const": false
+                  },
+                  "array_path": {
+                    "const": "records/native_discontinuities/native-discontinuities-v1/columns/signal_gap_count"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "bytes-le"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "runtime_accepted_host_time_ns"
+                  },
+                  "dtype": {
+                    "const": "uint64"
+                  },
+                  "endianness": {
+                    "const": "little"
+                  },
+                  "nullable": {
+                    "const": false
+                  },
+                  "array_path": {
+                    "const": "records/native_discontinuities/native-discontinuities-v1/columns/runtime_accepted_host_time_ns"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "bytes-le"
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        }
+      },
+      "native_signal_gaps": {
+        "type": "object",
+        "required": [
+          "id",
+          "kind",
+          "path",
+          "primary_key",
+          "fields",
+          "chunk_length"
+        ],
+        "properties": {
+          "id": {
+            "const": "native-signal-gaps-v1"
+          },
+          "kind": {
+            "const": "native_signal_gaps"
+          },
+          "path": {
+            "const": "records/native_signal_gaps/native-signal-gaps-v1"
+          },
+          "primary_key": {
+            "const": "signal_gap_ordinal"
+          },
+          "chunk_length": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "fields": {
+            "type": "array",
+            "minItems": 11,
+            "maxItems": 11,
+            "prefixItems": [
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "signal_gap_ordinal"
+                  },
+                  "dtype": {
+                    "const": "uint64"
+                  },
+                  "endianness": {
+                    "const": "little"
+                  },
+                  "nullable": {
+                    "const": false
+                  },
+                  "array_path": {
+                    "const": "records/native_signal_gaps/native-signal-gaps-v1/columns/signal_gap_ordinal"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "bytes-le"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "data_message_ordinal"
+                  },
+                  "dtype": {
+                    "const": "uint64"
+                  },
+                  "endianness": {
+                    "const": "little"
+                  },
+                  "nullable": {
+                    "const": false
+                  },
+                  "array_path": {
+                    "const": "records/native_signal_gaps/native-signal-gaps-v1/columns/data_message_ordinal"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "bytes-le"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "gap_index_in_message"
+                  },
+                  "dtype": {
+                    "const": "uint32"
+                  },
+                  "endianness": {
+                    "const": "little"
+                  },
+                  "nullable": {
+                    "const": false
+                  },
+                  "array_path": {
+                    "const": "records/native_signal_gaps/native-signal-gaps-v1/columns/gap_index_in_message"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "bytes-le"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "native_signal_id"
+                  },
+                  "dtype": {
+                    "const": "uint32"
+                  },
+                  "endianness": {
+                    "const": "little"
+                  },
+                  "nullable": {
+                    "const": false
+                  },
+                  "array_path": {
+                    "const": "records/native_signal_gaps/native-signal-gaps-v1/columns/native_signal_id"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "bytes-le"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "expected_sample_index"
+                  },
+                  "dtype": {
+                    "const": "uint64"
+                  },
+                  "endianness": {
+                    "const": "little"
+                  },
+                  "nullable": {
+                    "const": false
+                  },
+                  "array_path": {
+                    "const": "records/native_signal_gaps/native-signal-gaps-v1/columns/expected_sample_index"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "bytes-le"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "actual_sample_index"
+                  },
+                  "dtype": {
+                    "const": "uint64"
+                  },
+                  "endianness": {
+                    "const": "little"
+                  },
+                  "nullable": {
+                    "const": false
+                  },
+                  "array_path": {
+                    "const": "records/native_signal_gaps/native-signal-gaps-v1/columns/actual_sample_index"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "bytes-le"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable",
+                  "validity_path"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "missing_samples"
+                  },
+                  "dtype": {
+                    "const": "uint64"
+                  },
+                  "endianness": {
+                    "const": "little"
+                  },
+                  "nullable": {
+                    "const": true
+                  },
+                  "array_path": {
+                    "const": "records/native_signal_gaps/native-signal-gaps-v1/columns/missing_samples"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "bytes-le"
+                    ]
+                  },
+                  "validity_path": {
+                    "const": "records/native_signal_gaps/native-signal-gaps-v1/validity/missing_samples"
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "expected_device_tick"
+                  },
+                  "dtype": {
+                    "const": "uint64"
+                  },
+                  "endianness": {
+                    "const": "little"
+                  },
+                  "nullable": {
+                    "const": false
+                  },
+                  "array_path": {
+                    "const": "records/native_signal_gaps/native-signal-gaps-v1/columns/expected_device_tick"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "bytes-le"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "actual_device_tick"
+                  },
+                  "dtype": {
+                    "const": "uint64"
+                  },
+                  "endianness": {
+                    "const": "little"
+                  },
+                  "nullable": {
+                    "const": false
+                  },
+                  "array_path": {
+                    "const": "records/native_signal_gaps/native-signal-gaps-v1/columns/actual_device_tick"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "bytes-le"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "reason"
+                  },
+                  "dtype": {
+                    "const": "utf8"
+                  },
+                  "endianness": {
+                    "const": "not_applicable"
+                  },
+                  "nullable": {
+                    "const": false
+                  },
+                  "array_path": {
+                    "const": "records/native_signal_gaps/native-signal-gaps-v1/columns/reason"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "utf8-vlen"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "gap_flags"
+                  },
+                  "dtype": {
+                    "const": "uint32"
+                  },
+                  "endianness": {
+                    "const": "little"
+                  },
+                  "nullable": {
+                    "const": false
+                  },
+                  "array_path": {
+                    "const": "records/native_signal_gaps/native-signal-gaps-v1/columns/gap_flags"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "bytes-le"
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        }
+      },
+      "session_accounting": {
+        "type": "object",
+        "required": [
+          "id",
+          "kind",
+          "path",
+          "primary_key",
+          "fields",
+          "chunk_length"
+        ],
+        "properties": {
+          "id": {
+            "const": "session-accounting-v1"
+          },
+          "kind": {
+            "const": "session_accounting"
+          },
+          "path": {
+            "const": "records/session_accounting/session-accounting-v1"
+          },
+          "primary_key": {
+            "const": "accounting_id"
+          },
+          "chunk_length": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "fields": {
+            "type": "array",
+            "minItems": 27,
+            "maxItems": 27,
+            "prefixItems": [
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "accounting_id"
+                  },
+                  "dtype": {
+                    "const": "utf8"
+                  },
+                  "endianness": {
+                    "const": "not_applicable"
+                  },
+                  "nullable": {
+                    "const": false
+                  },
+                  "array_path": {
+                    "const": "records/session_accounting/session-accounting-v1/columns/accounting_id"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "utf8-vlen"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "accounting_origin"
+                  },
+                  "dtype": {
+                    "const": "utf8"
+                  },
+                  "endianness": {
+                    "const": "not_applicable"
+                  },
+                  "nullable": {
+                    "const": false
+                  },
+                  "array_path": {
+                    "const": "records/session_accounting/session-accounting-v1/columns/accounting_origin"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "utf8-vlen"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "termination_origin"
+                  },
+                  "dtype": {
+                    "const": "utf8"
+                  },
+                  "endianness": {
+                    "const": "not_applicable"
+                  },
+                  "nullable": {
+                    "const": false
+                  },
+                  "array_path": {
+                    "const": "records/session_accounting/session-accounting-v1/columns/termination_origin"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "utf8-vlen"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "producer_acceptance_known"
+                  },
+                  "dtype": {
+                    "const": "bool"
+                  },
+                  "endianness": {
+                    "const": "not_applicable"
+                  },
+                  "nullable": {
+                    "const": false
+                  },
+                  "array_path": {
+                    "const": "records/session_accounting/session-accounting-v1/columns/producer_acceptance_known"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "bytes-le"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "runtime_accepted"
+                  },
+                  "dtype": {
+                    "const": "uint64"
+                  },
+                  "endianness": {
+                    "const": "little"
+                  },
+                  "nullable": {
+                    "const": false
+                  },
+                  "array_path": {
+                    "const": "records/session_accounting/session-accounting-v1/columns/runtime_accepted"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "bytes-le"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "recorder_accepted"
+                  },
+                  "dtype": {
+                    "const": "uint64"
+                  },
+                  "endianness": {
+                    "const": "little"
+                  },
+                  "nullable": {
+                    "const": false
+                  },
+                  "array_path": {
+                    "const": "records/session_accounting/session-accounting-v1/columns/recorder_accepted"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "bytes-le"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable",
+                  "validity_path"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "spool_committed"
+                  },
+                  "dtype": {
+                    "const": "uint64"
+                  },
+                  "endianness": {
+                    "const": "little"
+                  },
+                  "nullable": {
+                    "const": true
+                  },
+                  "array_path": {
+                    "const": "records/session_accounting/session-accounting-v1/columns/spool_committed"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "bytes-le"
+                    ]
+                  },
+                  "validity_path": {
+                    "const": "records/session_accounting/session-accounting-v1/validity/spool_committed"
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "nrf_committed"
+                  },
+                  "dtype": {
+                    "const": "uint64"
+                  },
+                  "endianness": {
+                    "const": "little"
+                  },
+                  "nullable": {
+                    "const": false
+                  },
+                  "array_path": {
+                    "const": "records/session_accounting/session-accounting-v1/columns/nrf_committed"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "bytes-le"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "rejected_before_runtime_acceptance"
+                  },
+                  "dtype": {
+                    "const": "uint64"
+                  },
+                  "endianness": {
+                    "const": "little"
+                  },
+                  "nullable": {
+                    "const": false
+                  },
+                  "array_path": {
+                    "const": "records/session_accounting/session-accounting-v1/columns/rejected_before_runtime_acceptance"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "bytes-le"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "failed_between_runtime_and_recorder"
+                  },
+                  "dtype": {
+                    "const": "uint64"
+                  },
+                  "endianness": {
+                    "const": "little"
+                  },
+                  "nullable": {
+                    "const": false
+                  },
+                  "array_path": {
+                    "const": "records/session_accounting/session-accounting-v1/columns/failed_between_runtime_and_recorder"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "bytes-le"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable",
+                  "validity_path"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "lost_between_recorder_and_spool"
+                  },
+                  "dtype": {
+                    "const": "uint64"
+                  },
+                  "endianness": {
+                    "const": "little"
+                  },
+                  "nullable": {
+                    "const": true
+                  },
+                  "array_path": {
+                    "const": "records/session_accounting/session-accounting-v1/columns/lost_between_recorder_and_spool"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "bytes-le"
+                    ]
+                  },
+                  "validity_path": {
+                    "const": "records/session_accounting/session-accounting-v1/validity/lost_between_recorder_and_spool"
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "lost_during_finalization"
+                  },
+                  "dtype": {
+                    "const": "uint64"
+                  },
+                  "endianness": {
+                    "const": "little"
+                  },
+                  "nullable": {
+                    "const": false
+                  },
+                  "array_path": {
+                    "const": "records/session_accounting/session-accounting-v1/columns/lost_during_finalization"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "bytes-le"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable",
+                  "validity_path"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "control_offered"
+                  },
+                  "dtype": {
+                    "const": "uint64"
+                  },
+                  "endianness": {
+                    "const": "little"
+                  },
+                  "nullable": {
+                    "const": true
+                  },
+                  "array_path": {
+                    "const": "records/session_accounting/session-accounting-v1/columns/control_offered"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "bytes-le"
+                    ]
+                  },
+                  "validity_path": {
+                    "const": "records/session_accounting/session-accounting-v1/validity/control_offered"
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "control_accepted"
+                  },
+                  "dtype": {
+                    "const": "uint64"
+                  },
+                  "endianness": {
+                    "const": "little"
+                  },
+                  "nullable": {
+                    "const": false
+                  },
+                  "array_path": {
+                    "const": "records/session_accounting/session-accounting-v1/columns/control_accepted"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "bytes-le"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable",
+                  "validity_path"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "control_spool_committed"
+                  },
+                  "dtype": {
+                    "const": "uint64"
+                  },
+                  "endianness": {
+                    "const": "little"
+                  },
+                  "nullable": {
+                    "const": true
+                  },
+                  "array_path": {
+                    "const": "records/session_accounting/session-accounting-v1/columns/control_spool_committed"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "bytes-le"
+                    ]
+                  },
+                  "validity_path": {
+                    "const": "records/session_accounting/session-accounting-v1/validity/control_spool_committed"
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "control_nrf_committed"
+                  },
+                  "dtype": {
+                    "const": "uint64"
+                  },
+                  "endianness": {
+                    "const": "little"
+                  },
+                  "nullable": {
+                    "const": false
+                  },
+                  "array_path": {
+                    "const": "records/session_accounting/session-accounting-v1/columns/control_nrf_committed"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "bytes-le"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "control_rejected"
+                  },
+                  "dtype": {
+                    "const": "uint64"
+                  },
+                  "endianness": {
+                    "const": "little"
+                  },
+                  "nullable": {
+                    "const": false
+                  },
+                  "array_path": {
+                    "const": "records/session_accounting/session-accounting-v1/columns/control_rejected"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "bytes-le"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable",
+                  "validity_path"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "lost_between_control_acceptance_and_spool"
+                  },
+                  "dtype": {
+                    "const": "uint64"
+                  },
+                  "endianness": {
+                    "const": "little"
+                  },
+                  "nullable": {
+                    "const": true
+                  },
+                  "array_path": {
+                    "const": "records/session_accounting/session-accounting-v1/columns/lost_between_control_acceptance_and_spool"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "bytes-le"
+                    ]
+                  },
+                  "validity_path": {
+                    "const": "records/session_accounting/session-accounting-v1/validity/lost_between_control_acceptance_and_spool"
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "control_lost_during_finalization"
+                  },
+                  "dtype": {
+                    "const": "uint64"
+                  },
+                  "endianness": {
+                    "const": "little"
+                  },
+                  "nullable": {
+                    "const": false
+                  },
+                  "array_path": {
+                    "const": "records/session_accounting/session-accounting-v1/columns/control_lost_during_finalization"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "bytes-le"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable",
+                  "validity_path"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "data_first_lost_ordinal"
+                  },
+                  "dtype": {
+                    "const": "uint64"
+                  },
+                  "endianness": {
+                    "const": "little"
+                  },
+                  "nullable": {
+                    "const": true
+                  },
+                  "array_path": {
+                    "const": "records/session_accounting/session-accounting-v1/columns/data_first_lost_ordinal"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "bytes-le"
+                    ]
+                  },
+                  "validity_path": {
+                    "const": "records/session_accounting/session-accounting-v1/validity/data_first_lost_ordinal"
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable",
+                  "validity_path"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "data_first_rejected_message_kind"
+                  },
+                  "dtype": {
+                    "const": "utf8"
+                  },
+                  "endianness": {
+                    "const": "not_applicable"
+                  },
+                  "nullable": {
+                    "const": true
+                  },
+                  "array_path": {
+                    "const": "records/session_accounting/session-accounting-v1/columns/data_first_rejected_message_kind"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "utf8-vlen"
+                    ]
+                  },
+                  "validity_path": {
+                    "const": "records/session_accounting/session-accounting-v1/validity/data_first_rejected_message_kind"
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable",
+                  "validity_path"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "data_first_rejected_frame_sequence"
+                  },
+                  "dtype": {
+                    "const": "uint64"
+                  },
+                  "endianness": {
+                    "const": "little"
+                  },
+                  "nullable": {
+                    "const": true
+                  },
+                  "array_path": {
+                    "const": "records/session_accounting/session-accounting-v1/columns/data_first_rejected_frame_sequence"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "bytes-le"
+                    ]
+                  },
+                  "validity_path": {
+                    "const": "records/session_accounting/session-accounting-v1/validity/data_first_rejected_frame_sequence"
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable",
+                  "validity_path"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "control_first_lost_ordinal"
+                  },
+                  "dtype": {
+                    "const": "uint64"
+                  },
+                  "endianness": {
+                    "const": "little"
+                  },
+                  "nullable": {
+                    "const": true
+                  },
+                  "array_path": {
+                    "const": "records/session_accounting/session-accounting-v1/columns/control_first_lost_ordinal"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "bytes-le"
+                    ]
+                  },
+                  "validity_path": {
+                    "const": "records/session_accounting/session-accounting-v1/validity/control_first_lost_ordinal"
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable",
+                  "validity_path"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "control_first_rejected_kind"
+                  },
+                  "dtype": {
+                    "const": "utf8"
+                  },
+                  "endianness": {
+                    "const": "not_applicable"
+                  },
+                  "nullable": {
+                    "const": true
+                  },
+                  "array_path": {
+                    "const": "records/session_accounting/session-accounting-v1/columns/control_first_rejected_kind"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "utf8-vlen"
+                    ]
+                  },
+                  "validity_path": {
+                    "const": "records/session_accounting/session-accounting-v1/validity/control_first_rejected_kind"
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable",
+                  "validity_path"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "control_first_rejected_identity"
+                  },
+                  "dtype": {
+                    "const": "utf8"
+                  },
+                  "endianness": {
+                    "const": "not_applicable"
+                  },
+                  "nullable": {
+                    "const": true
+                  },
+                  "array_path": {
+                    "const": "records/session_accounting/session-accounting-v1/columns/control_first_rejected_identity"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "utf8-vlen"
+                    ]
+                  },
+                  "validity_path": {
+                    "const": "records/session_accounting/session-accounting-v1/validity/control_first_rejected_identity"
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "data_rejected_after_close"
+                  },
+                  "dtype": {
+                    "const": "uint64"
+                  },
+                  "endianness": {
+                    "const": "little"
+                  },
+                  "nullable": {
+                    "const": false
+                  },
+                  "array_path": {
+                    "const": "records/session_accounting/session-accounting-v1/columns/data_rejected_after_close"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "bytes-le"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "array_path",
+                  "codec_ids",
+                  "dtype",
+                  "endianness",
+                  "name",
+                  "nullable"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "control_rejected_after_close"
+                  },
+                  "dtype": {
+                    "const": "uint64"
+                  },
+                  "endianness": {
+                    "const": "little"
+                  },
+                  "nullable": {
+                    "const": false
+                  },
+                  "array_path": {
+                    "const": "records/session_accounting/session-accounting-v1/columns/control_rejected_after_close"
+                  },
+                  "codec_ids": {
+                    "const": [
+                      "bytes-le"
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "manifestExtension": {
+      "type": "object",
+      "required": [
+        "extension_version",
+        "plan_fingerprint",
+        "native_schema",
+        "coverage",
+        "planned_signal_ids",
+        "recorded_signal_ids",
+        "streams",
+        "ledgers",
+        "replay_capabilities",
+        "session",
+        "resource_bounds",
+        "session_metadata",
+        "metadata"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "extension_version": {
+          "const": 1
+        },
+        "plan_fingerprint": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "native_schema": {
+          "type": "object",
+          "required": [
+            "schema_id",
+            "signals",
+            "feature_sets",
+            "units"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "schema_id": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "signals": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "required": [
+                  "id",
+                  "clock_domain",
+                  "n_channels",
+                  "nominal_block_samples",
+                  "max_block_samples",
+                  "fs",
+                  "dtype",
+                  "layout",
+                  "device_tick_tracking",
+                  "kind",
+                  "physical_unit",
+                  "channel_set_id",
+                  "calibration_id",
+                  "reference_id",
+                  "feature_set_id",
+                  "observation_timing",
+                  "fixed_block_bytes",
+                  "max_block_bytes"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "clock_domain": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "n_channels": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "nominal_block_samples": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "max_block_samples": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "fs": {
+                    "type": "object",
+                    "required": [
+                      "numerator",
+                      "denominator"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "numerator": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      "denominator": {
+                        "type": "integer",
+                        "minimum": 1
+                      }
+                    }
+                  },
+                  "dtype": {
+                    "enum": [
+                      "INT16",
+                      "INT32",
+                      "FLOAT32",
+                      "FLOAT64"
+                    ]
+                  },
+                  "layout": {
+                    "enum": [
+                      "SAMPLE_MAJOR",
+                      "CHANNEL_MAJOR"
+                    ]
+                  },
+                  "device_tick_tracking": {
+                    "enum": [
+                      "UNAVAILABLE",
+                      "SAMPLE_COUNTER"
+                    ]
+                  },
+                  "kind": {
+                    "enum": [
+                      "SAMPLED",
+                      "EVENT",
+                      "FEATURE",
+                      "SPIKE"
+                    ]
+                  },
+                  "physical_unit": {
+                    "enum": [
+                      "UNSPECIFIED",
+                      "VOLTS",
+                      "AMPERES",
+                      "DIMENSIONLESS"
+                    ]
+                  },
+                  "channel_set_id": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "calibration_id": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "reference_id": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "feature_set_id": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "observation_timing": {
+                    "enum": [
+                      "NOT_APPLICABLE",
+                      "REGULAR"
+                    ]
+                  },
+                  "fixed_block_bytes": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "max_block_bytes": {
+                    "type": "integer",
+                    "minimum": 0
+                  }
+                }
+              }
+            },
+            "feature_sets": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "id",
+                  "feature_names",
+                  "unit_ids",
+                  "source_stream_id",
+                  "source_stream",
+                  "algorithm_name",
+                  "algorithm_version",
+                  "window_length_ns",
+                  "shift_ns",
+                  "timestamp_reference"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "feature_names": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "minItems": 1
+                  },
+                  "unit_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer",
+                      "minimum": 1
+                    }
+                  },
+                  "source_stream_id": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "source_stream": {
+                    "type": "string"
+                  },
+                  "algorithm_name": {
+                    "type": "string"
+                  },
+                  "algorithm_version": {
+                    "type": "string"
+                  },
+                  "window_length_ns": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "shift_ns": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "timestamp_reference": {
+                    "enum": [
+                      "WINDOW_CENTER"
+                    ]
+                  }
+                }
+              }
+            },
+            "units": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "id",
+                  "symbol",
+                  "description"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "symbol": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "coverage": {
+          "enum": [
+            "full",
+            "partial"
+          ]
+        },
+        "planned_signal_ids": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "uniqueItems": true
+        },
+        "recorded_signal_ids": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "uniqueItems": true
+        },
+        "streams": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "native_signal_id",
+              "stream_id",
+              "kind",
+              "timing",
+              "block_index",
+              "name",
+              "unit",
+              "channel_names",
+              "feature_names",
+              "segment_start_index",
+              "segment_start_time_ns",
+              "algorithm_name",
+              "algorithm_version",
+              "window_length_ns",
+              "shift_ns",
+              "source_stream_ids"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "native_signal_id": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "stream_id": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9]*(?:[-_.][a-z0-9]+)*$"
+              },
+              "kind": {
+                "enum": [
+                  "neural",
+                  "behavioral",
+                  "feature",
+                  "spike"
+                ]
+              },
+              "timing": {
+                "enum": [
+                  "explicit",
+                  "regular"
+                ]
+              },
+              "block_index": {
+                "type": "boolean"
+              },
+              "name": {
+                "type": "string"
+              },
+              "unit": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "channel_names": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "feature_names": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "segment_start_index": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "segment_start_time_ns": {
+                "type": "integer"
+              },
+              "algorithm_name": {
+                "type": "string"
+              },
+              "algorithm_version": {
+                "type": "string"
+              },
+              "window_length_ns": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "shift_ns": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "source_stream_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "ledgers": {
+          "type": "object",
+          "required": [
+            "native_discontinuities",
+            "native_frames",
+            "native_signal_blocks",
+            "native_signal_gaps",
+            "session_accounting"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "native_frames": {
+              "const": "native-frames-v1"
+            },
+            "native_signal_blocks": {
+              "const": "native-signal-blocks-v1"
+            },
+            "native_discontinuities": {
+              "const": "native-discontinuities-v1"
+            },
+            "native_signal_gaps": {
+              "const": "native-signal-gaps-v1"
+            },
+            "session_accounting": {
+              "const": "session-accounting-v1"
+            }
+          }
+        },
+        "replay_capabilities": {
+          "type": "object",
+          "required": [
+            "exact_frames",
+            "recorded_projection",
+            "stream_frames"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "exact_frames": {
+              "$ref": "#/$defs/replayCapability"
+            },
+            "recorded_projection": {
+              "$ref": "#/$defs/replayCapability"
+            },
+            "stream_frames": {
+              "$ref": "#/$defs/replayCapability"
+            }
+          }
+        },
+        "session": {
+          "type": "object",
+          "required": [
+            "session_id",
+            "created_at",
+            "writer_name",
+            "writer_version"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "session_id": {
+              "type": "string"
+            },
+            "created_at": {
+              "type": "string"
+            },
+            "writer_name": {
+              "type": "string"
+            },
+            "writer_version": {
+              "type": "string"
+            }
+          }
+        },
+        "resource_bounds": {
+          "type": "object",
+          "required": [
+            "frame_queue_capacity",
+            "control_queue_capacity",
+            "control_chunk_length",
+            "checkpoint_interval",
+            "overflow_policy",
+            "streams"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "frame_queue_capacity": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "control_queue_capacity": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "spool_capacity_bytes": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991,
+              "description": "Optional spool byte ceiling. Omission retains the legacy 64 MiB bound; continuous-file writers use the I-JSON integer ceiling when no disk limit is configured."
+            },
+            "control_chunk_length": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "checkpoint_interval": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "overflow_policy": {
+              "enum": [
+                "fault",
+                "continue"
+              ]
+            },
+            "streams": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "stream_id",
+                  "capacity",
+                  "chunk_length",
+                  "block_index_chunk_length"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "stream_id": {
+                    "type": "string"
+                  },
+                  "capacity": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "chunk_length": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "block_index_chunk_length": {
+                    "type": "integer",
+                    "minimum": 1
+                  }
+                }
+              }
+            }
+          }
+        },
+        "session_metadata": {
+          "type": "object"
+        },
+        "metadata": {
+          "type": "object"
+        }
+      }
+    },
+    "journalTerminationExtension": {
+      "type": "object",
+      "required": [
+        "extension_version",
+        "plan_fingerprint",
+        "termination_origin",
+        "requested_terminal_intent",
+        "capture_outcome",
+        "effective_session_outcome",
+        "finalization_status",
+        "primary_fault_row_committed"
+      ],
+      "properties": {
+        "extension_version": {
+          "const": 1
+        },
+        "plan_fingerprint": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "termination_origin": {
+          "const": "recorder"
+        },
+        "requested_terminal_intent": {
+          "enum": [
+            "normal",
+            "aborted",
+            "fault"
+          ]
+        },
+        "capture_outcome": {
+          "enum": [
+            "normal",
+            "aborted",
+            "faulted",
+            "unknown"
+          ]
+        },
+        "effective_session_outcome": {
+          "enum": [
+            "normal",
+            "aborted",
+            "faulted"
+          ]
+        },
+        "finalization_status": {
+          "enum": [
+            "not_started",
+            "running",
+            "failed_retryable",
+            "succeeded",
+            "abandoned"
+          ]
+        },
+        "primary_fault_row_committed": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}

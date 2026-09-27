@@ -1,0 +1,122 @@
+{
+  "id": "native-signal-gaps-v1",
+  "kind": "native_signal_gaps",
+  "path": "records/native_signal_gaps/native-signal-gaps-v1",
+  "primary_key": "signal_gap_ordinal",
+  "clock_id": "session.clock",
+  "chunk_length": 64,
+  "committed_extent": 0,
+  "fields": [
+    {
+      "name": "signal_gap_ordinal",
+      "dtype": "uint64",
+      "endianness": "little",
+      "nullable": false,
+      "array_path": "records/native_signal_gaps/native-signal-gaps-v1/columns/signal_gap_ordinal",
+      "codec_ids": [
+        "bytes-le"
+      ]
+    },
+    {
+      "name": "data_message_ordinal",
+      "dtype": "uint64",
+      "endianness": "little",
+      "nullable": false,
+      "array_path": "records/native_signal_gaps/native-signal-gaps-v1/columns/data_message_ordinal",
+      "codec_ids": [
+        "bytes-le"
+      ]
+    },
+    {
+      "name": "gap_index_in_message",
+      "dtype": "uint32",
+      "endianness": "little",
+      "nullable": false,
+      "array_path": "records/native_signal_gaps/native-signal-gaps-v1/columns/gap_index_in_message",
+      "codec_ids": [
+        "bytes-le"
+      ]
+    },
+    {
+      "name": "native_signal_id",
+      "dtype": "uint32",
+      "endianness": "little",
+      "nullable": false,
+      "array_path": "records/native_signal_gaps/native-signal-gaps-v1/columns/native_signal_id",
+      "codec_ids": [
+        "bytes-le"
+      ]
+    },
+    {
+      "name": "expected_sample_index",
+      "dtype": "uint64",
+      "endianness": "little",
+      "nullable": false,
+      "array_path": "records/native_signal_gaps/native-signal-gaps-v1/columns/expected_sample_index",
+      "codec_ids": [
+        "bytes-le"
+      ]
+    },
+    {
+      "name": "actual_sample_index",
+      "dtype": "uint64",
+      "endianness": "little",
+      "nullable": false,
+      "array_path": "records/native_signal_gaps/native-signal-gaps-v1/columns/actual_sample_index",
+      "codec_ids": [
+        "bytes-le"
+      ]
+    },
+    {
+      "name": "missing_samples",
+      "dtype": "uint64",
+      "endianness": "little",
+      "nullable": true,
+      "array_path": "records/native_signal_gaps/native-signal-gaps-v1/columns/missing_samples",
+      "codec_ids": [
+        "bytes-le"
+      ],
+      "validity_path": "records/native_signal_gaps/native-signal-gaps-v1/validity/missing_samples"
+    },
+    {
+      "name": "expected_device_tick",
+      "dtype": "uint64",
+      "endianness": "little",
+      "nullable": false,
+      "array_path": "records/native_signal_gaps/native-signal-gaps-v1/columns/expected_device_tick",
+      "codec_ids": [
+        "bytes-le"
+      ]
+    },
+    {
+      "name": "actual_device_tick",
+      "dtype": "uint64",
+      "endianness": "little",
+      "nullable": false,
+      "array_path": "records/native_signal_gaps/native-signal-gaps-v1/columns/actual_device_tick",
+      "codec_ids": [
+        "bytes-le"
+      ]
+    },
+    {
+      "name": "reason",
+      "dtype": "utf8",
+      "endianness": "not_applicable",
+      "nullable": false,
+      "array_path": "records/native_signal_gaps/native-signal-gaps-v1/columns/reason",
+      "codec_ids": [
+        "utf8-vlen"
+      ]
+    },
+    {
+      "name": "gap_flags",
+      "dtype": "uint32",
+      "endianness": "little",
+      "nullable": false,
+      "array_path": "records/native_signal_gaps/native-signal-gaps-v1/columns/gap_flags",
+      "codec_ids": [
+        "bytes-le"
+      ]
+    }
+  ]
+}

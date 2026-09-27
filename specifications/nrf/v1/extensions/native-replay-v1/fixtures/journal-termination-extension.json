@@ -1,0 +1,10 @@
+{
+  "extension_version": 1,
+  "plan_fingerprint": "a1e1c674965634a8cda3348bfd00a2d2577b21d2ab29870d6f310843dec8fa28",
+  "termination_origin": "recorder",
+  "requested_terminal_intent": "normal",
+  "capture_outcome": "normal",
+  "effective_session_outcome": "normal",
+  "finalization_status": "succeeded",
+  "primary_fault_row_committed": true
+}

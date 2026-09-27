@@ -1,0 +1,57 @@
+name: Documentation
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/docs.yml"
+      - ".readthedocs.yaml"
+      - "cpp/**"
+      - "docs/**"
+      - "src/**"
+      - "tools/build_docs.py"
+      - "pyproject.toml"
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/docs.yml"
+      - ".readthedocs.yaml"
+      - "cpp/**"
+      - "docs/**"
+      - "src/**"
+      - "tools/build_docs.py"
+      - "pyproject.toml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: docs-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: Build documentation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install Doxygen
+        run: sudo apt-get update && sudo apt-get install --yes doxygen graphviz
+      - name: Install project and documentation dependencies
+        run: python -m pip install --upgrade pip && python -m pip install -e ".[docs]"
+      - name: Verify headless presentation documentation boundary
+        run: |
+          python - <<'PY'
+          import importlib.util
+          import neurale.experiments.presentation
+
+          import neurale._native as native
+          assert not hasattr(native.experiments, "presentation")
+          PY
+      - name: Build documentation
+        run: python tools/build_docs.py --clean

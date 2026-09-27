@@ -1,0 +1,110 @@
+name: CUDA hardware validation
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cuda-hardware-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  cuda-runtime-and-models:
+    name: CUDA runtime probe and model parity
+    runs-on: [self-hosted, linux, x64, cuda]
+    timeout-minutes: 90
+    env:
+      CMAKE_ARGS: >-
+        -DNEURALE_ENABLE_MKL=OFF
+        -DNEURALE_ENABLE_CUDA=ON
+        -DNEURALE_ENABLE_EXPERIMENT_PRESENTATION=OFF
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Require CUDA hardware and compiler
+        run: |
+          nvidia-smi
+          nvcc --version
+      - name: Install build tooling
+        run: python -m pip install --upgrade pip && python -m pip install pybind11 auditwheel
+      - name: Build CUDA-enabled wheel
+        run: python -m pip wheel . --no-deps --wheel-dir dist
+      - name: Audit CUDA wheel shared-library boundary
+        run: |
+          mkdir -p build/cuda-results
+          auditwheel show dist/*.whl 2>&1 | tee build/cuda-results/wheel-audit.txt
+      - name: Inspect CUDA extension exports and direct dependencies
+        run: >-
+          python tools/validate_native_binary.py --profile cuda --wheel-dir dist
+          --audit-report build/cuda-results/wheel-audit.txt
+          --report build/cuda-results/native-binary.json
+      - name: Test CUDA wheel in a clean environment
+        run: >-
+          python tools/validate_clean_wheel.py --profile cuda --wheel-dir dist
+          --report build/cuda-results/clean-wheel.json
+      - name: Install CUDA-enabled wheel
+        run: >-
+          python -c "from pathlib import Path; import subprocess,sys;
+          wheel=next(Path('dist').glob('*.whl'));
+          subprocess.check_call([sys.executable,'-m','pip','install',str(wheel)+'[test]'])"
+      - name: Require compiled and available CUDA runtime
+        run: |
+          mkdir -p build/cuda-results
+          nvidia-smi --query-gpu=name,driver_version,compute_cap --format=csv > build/cuda-results/gpu.csv
+          nvcc --version > build/cuda-results/nvcc.txt
+          python - <<'PY' | tee build/cuda-results/runtime.json
+          import json
+          import neurale._native as native
+
+          build = native.build_info()
+          runtime = native.cuda.info()
+          assert build["cuda_compiled"] is True, build
+          assert build["cuda_toolkit_version"], build
+          assert runtime["compiled"] is True, runtime
+          assert runtime["available"] is True, runtime
+          assert runtime["device_count"] >= 1, runtime
+          assert runtime["devices"], runtime
+          print(json.dumps({"build": build, "runtime": runtime}, indent=2))
+          PY
+      # The supported hardware contract requires one CUDA device. The separate
+      # multi-device restoration case is deliberately outside this job rather
+      # than being selected and then silently skipped on a one-GPU runner.
+      - name: Run required single-device CUDA runtime and model tests
+        run: >-
+          python -m pytest -o addopts="--require-native -ra"
+          -m gpu
+          --deselect=tests/unit/models/test_neighbors.py::test_knn_cuda_restores_previous_device
+          --junitxml=build/cuda-results/pytest.xml
+          tests/integration/runtime/test_native_extension.py
+          tests/unit/models/test_neighbors.py
+          tests/unit/models/test_density.py
+          tests/unit/models/test_manifold.py
+      - name: Reject an all-skipped CUDA result
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import xml.etree.ElementTree as ET
+
+          root = ET.parse(Path("build/cuda-results/pytest.xml")).getroot()
+          suites = [root] if root.tag == "testsuite" else list(root.findall("testsuite"))
+          tests = sum(int(suite.attrib.get("tests", 0)) for suite in suites)
+          skipped = sum(int(suite.attrib.get("skipped", 0)) for suite in suites)
+          failures = sum(int(suite.attrib.get("failures", 0)) for suite in suites)
+          errors = sum(int(suite.attrib.get("errors", 0)) for suite in suites)
+          assert tests >= 31, tests
+          assert skipped == 0, skipped
+          assert failures == 0 and errors == 0, (failures, errors)
+          PY
+      - name: Upload CUDA evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cuda-hardware-${{ github.run_id }}-${{ github.run_attempt }}
+          path: build/cuda-results
+          if-no-files-found: error
+          retention-days: 30

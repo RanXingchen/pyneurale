@@ -1,0 +1,206 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pyneurale.org/specifications/nrf/v1/checkpoint.schema.json",
+  "title": "NRF v1 checkpoint",
+  "type": "object",
+  "required": [
+    "format",
+    "version",
+    "checkpoint_id",
+    "journal_sequence",
+    "last_committed_transaction_id",
+    "committed_extents",
+    "sealed_targets",
+    "committed_objects",
+    "index_extents",
+    "record_checksum"
+  ],
+  "properties": {
+    "format": { "const": "nrf-checkpoint" },
+    "version": {
+      "type": "object",
+      "required": ["major", "minor"],
+      "properties": {
+        "major": { "const": 1 },
+        "minor": { "$ref": "#/$defs/nonNegativeSafeInteger" }
+      },
+      "additionalProperties": false
+    },
+    "checkpoint_id": {
+      "type": "string",
+      "pattern": "^checkpoint-[0-9]{16}$"
+    },
+    "journal_sequence": { "$ref": "#/$defs/nonNegativeSafeInteger" },
+    "last_committed_transaction_id": {
+      "type": ["string", "null"],
+      "pattern": "^tx-[0-9]{16}$"
+    },
+    "committed_extents": {
+      "type": "object",
+      "propertyNames": { "$ref": "#/$defs/relativePath" },
+      "additionalProperties": { "$ref": "#/$defs/nonNegativeSafeInteger" }
+    },
+    "sealed_targets": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/relativePath" },
+      "uniqueItems": true
+    },
+    "committed_objects": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/committedObject" }
+    },
+    "index_extents": {
+      "type": "object",
+      "propertyNames": { "$ref": "#/$defs/relativePath" },
+      "additionalProperties": { "$ref": "#/$defs/nonNegativeSafeInteger" }
+    },
+    "record_checksum": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "extensions": { "type": "object", "additionalProperties": true }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "safeInteger": {
+      "type": "integer",
+      "minimum": -9007199254740991,
+      "maximum": 9007199254740991
+    },
+    "nonNegativeSafeInteger": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "positiveSafeInteger": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9007199254740991
+    },
+    "relativePath": {
+      "type": "string",
+      "pattern": "^(?!(?:con|prn|aux|nul|com[1-9]|lpt[1-9])(?:\\.|/|$))(?![a-z0-9._-]*\\.(?:/|$))(?!\\.{1,2}(?:/|$))[a-z0-9._-]+(?:/(?!(?:con|prn|aux|nul|com[1-9]|lpt[1-9])(?:\\.|/|$))(?![a-z0-9._-]*\\.(?:/|$))(?!\\.{1,2}(?:/|$))[a-z0-9._-]+)*$"
+    },
+    "indexPath": {
+      "allOf": [
+        { "$ref": "#/$defs/relativePath" },
+        {
+          "pattern": "^indexes/[a-z][a-z0-9]*(?:[-_.][a-z0-9]+)*/[a-z0-9._-]+(?:/[a-z0-9._-]+)*$"
+        }
+      ]
+    },
+    "committedObject": {
+      "type": "object",
+      "required": [
+        "path",
+        "byte_length",
+        "sha256",
+        "content_kind",
+        "target_path",
+        "array_path",
+        "logical_role"
+      ],
+      "properties": {
+        "path": { "$ref": "#/$defs/relativePath" },
+        "byte_length": { "$ref": "#/$defs/nonNegativeSafeInteger" },
+        "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "content_kind": { "enum": ["zarr_metadata", "zarr_chunk", "index"] },
+        "target_path": { "$ref": "#/$defs/relativePath" },
+        "array_path": { "$ref": "#/$defs/relativePath" },
+        "logical_role": {
+          "enum": [
+            "array_chunk",
+            "record_column_chunk",
+            "record_validity_chunk",
+            "metadata_snapshot",
+            "index"
+          ]
+        },
+        "chunk_coordinate": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/nonNegativeSafeInteger" },
+          "minItems": 1
+        },
+        "record_schema_id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9]*(?:[-_.][a-z0-9]+)*$"
+        },
+        "column_name": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9]*(?:[-_.][a-z0-9]+)*$"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "logical_role": {
+                "enum": [
+                  "array_chunk",
+                  "record_column_chunk",
+                  "record_validity_chunk"
+                ]
+              }
+            },
+            "required": ["logical_role"]
+          },
+          "then": {
+            "required": ["chunk_coordinate"],
+            "properties": {
+              "content_kind": { "const": "zarr_chunk" }
+            }
+          },
+          "else": {
+            "not": { "required": ["chunk_coordinate"] }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "logical_role": {
+                "enum": ["record_column_chunk", "record_validity_chunk"]
+              }
+            },
+            "required": ["logical_role"]
+          },
+          "then": {
+            "required": ["record_schema_id", "column_name"]
+          },
+          "else": {
+            "not": {
+              "anyOf": [
+                { "required": ["record_schema_id"] },
+                { "required": ["column_name"] }
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "logical_role": { "const": "metadata_snapshot" }
+            },
+            "required": ["logical_role"]
+          },
+          "then": {
+            "properties": {
+              "content_kind": { "const": "zarr_metadata" }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "logical_role": { "const": "index" }
+            },
+            "required": ["logical_role"]
+          },
+          "then": {
+            "properties": {
+              "content_kind": { "const": "index" },
+              "path": { "$ref": "#/$defs/indexPath" }
+            }
+          }
+        }
+      ],
+      "additionalProperties": false
+    }
+  }
+}

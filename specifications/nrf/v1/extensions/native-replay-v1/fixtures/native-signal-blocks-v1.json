@@ -1,0 +1,232 @@
+{
+  "id": "native-signal-blocks-v1",
+  "kind": "native_signal_blocks",
+  "path": "records/native_signal_blocks/native-signal-blocks-v1",
+  "primary_key": "signal_block_ordinal",
+  "clock_id": "session.clock",
+  "chunk_length": 1024,
+  "committed_extent": 0,
+  "fields": [
+    {
+      "name": "signal_block_ordinal",
+      "dtype": "uint64",
+      "endianness": "little",
+      "nullable": false,
+      "array_path": "records/native_signal_blocks/native-signal-blocks-v1/columns/signal_block_ordinal",
+      "codec_ids": [
+        "bytes-le"
+      ]
+    },
+    {
+      "name": "data_message_ordinal",
+      "dtype": "uint64",
+      "endianness": "little",
+      "nullable": false,
+      "array_path": "records/native_signal_blocks/native-signal-blocks-v1/columns/data_message_ordinal",
+      "codec_ids": [
+        "bytes-le"
+      ]
+    },
+    {
+      "name": "frame_ordinal",
+      "dtype": "uint64",
+      "endianness": "little",
+      "nullable": false,
+      "array_path": "records/native_signal_blocks/native-signal-blocks-v1/columns/frame_ordinal",
+      "codec_ids": [
+        "bytes-le"
+      ]
+    },
+    {
+      "name": "block_index_in_frame",
+      "dtype": "uint32",
+      "endianness": "little",
+      "nullable": false,
+      "array_path": "records/native_signal_blocks/native-signal-blocks-v1/columns/block_index_in_frame",
+      "codec_ids": [
+        "bytes-le"
+      ]
+    },
+    {
+      "name": "native_signal_id",
+      "dtype": "uint32",
+      "endianness": "little",
+      "nullable": false,
+      "array_path": "records/native_signal_blocks/native-signal-blocks-v1/columns/native_signal_id",
+      "codec_ids": [
+        "bytes-le"
+      ]
+    },
+    {
+      "name": "stream_id",
+      "dtype": "utf8",
+      "endianness": "not_applicable",
+      "nullable": false,
+      "array_path": "records/native_signal_blocks/native-signal-blocks-v1/columns/stream_id",
+      "codec_ids": [
+        "utf8-vlen"
+      ],
+      "reference": "stream"
+    },
+    {
+      "name": "sample_idx_start",
+      "dtype": "uint64",
+      "endianness": "little",
+      "nullable": false,
+      "array_path": "records/native_signal_blocks/native-signal-blocks-v1/columns/sample_idx_start",
+      "codec_ids": [
+        "bytes-le"
+      ]
+    },
+    {
+      "name": "last_sample_idx",
+      "dtype": "uint64",
+      "endianness": "little",
+      "nullable": false,
+      "array_path": "records/native_signal_blocks/native-signal-blocks-v1/columns/last_sample_idx",
+      "codec_ids": [
+        "bytes-le"
+      ]
+    },
+    {
+      "name": "n_samples",
+      "dtype": "uint32",
+      "endianness": "little",
+      "nullable": false,
+      "array_path": "records/native_signal_blocks/native-signal-blocks-v1/columns/n_samples",
+      "codec_ids": [
+        "bytes-le"
+      ]
+    },
+    {
+      "name": "device_tick_start",
+      "dtype": "uint64",
+      "endianness": "little",
+      "nullable": false,
+      "array_path": "records/native_signal_blocks/native-signal-blocks-v1/columns/device_tick_start",
+      "codec_ids": [
+        "bytes-le"
+      ]
+    },
+    {
+      "name": "observation_time_start_ns",
+      "dtype": "uint64",
+      "endianness": "little",
+      "nullable": false,
+      "array_path": "records/native_signal_blocks/native-signal-blocks-v1/columns/observation_time_start_ns",
+      "codec_ids": [
+        "bytes-le"
+      ]
+    },
+    {
+      "name": "row_offset",
+      "dtype": "uint64",
+      "endianness": "little",
+      "nullable": false,
+      "array_path": "records/native_signal_blocks/native-signal-blocks-v1/columns/row_offset",
+      "codec_ids": [
+        "bytes-le"
+      ]
+    },
+    {
+      "name": "payload_byte_count",
+      "dtype": "uint64",
+      "endianness": "little",
+      "nullable": false,
+      "array_path": "records/native_signal_blocks/native-signal-blocks-v1/columns/payload_byte_count",
+      "codec_ids": [
+        "bytes-le"
+      ]
+    },
+    {
+      "name": "payload_offset",
+      "dtype": "uint64",
+      "endianness": "little",
+      "nullable": false,
+      "array_path": "records/native_signal_blocks/native-signal-blocks-v1/columns/payload_offset",
+      "codec_ids": [
+        "bytes-le"
+      ]
+    },
+    {
+      "name": "clock_sync_device_tick_reference",
+      "dtype": "uint64",
+      "endianness": "little",
+      "nullable": false,
+      "array_path": "records/native_signal_blocks/native-signal-blocks-v1/columns/clock_sync_device_tick_reference",
+      "codec_ids": [
+        "bytes-le"
+      ]
+    },
+    {
+      "name": "clock_sync_host_time_reference_ns",
+      "dtype": "uint64",
+      "endianness": "little",
+      "nullable": false,
+      "array_path": "records/native_signal_blocks/native-signal-blocks-v1/columns/clock_sync_host_time_reference_ns",
+      "codec_ids": [
+        "bytes-le"
+      ]
+    },
+    {
+      "name": "clock_sync_rate_numerator",
+      "dtype": "uint64",
+      "endianness": "little",
+      "nullable": false,
+      "array_path": "records/native_signal_blocks/native-signal-blocks-v1/columns/clock_sync_rate_numerator",
+      "codec_ids": [
+        "bytes-le"
+      ]
+    },
+    {
+      "name": "clock_sync_rate_denominator",
+      "dtype": "uint64",
+      "endianness": "little",
+      "nullable": false,
+      "array_path": "records/native_signal_blocks/native-signal-blocks-v1/columns/clock_sync_rate_denominator",
+      "codec_ids": [
+        "bytes-le"
+      ]
+    },
+    {
+      "name": "clock_sync_uncertainty_ns",
+      "dtype": "uint64",
+      "endianness": "little",
+      "nullable": false,
+      "array_path": "records/native_signal_blocks/native-signal-blocks-v1/columns/clock_sync_uncertainty_ns",
+      "codec_ids": [
+        "bytes-le"
+      ]
+    },
+    {
+      "name": "clock_sync_clock_domain",
+      "dtype": "uint32",
+      "endianness": "little",
+      "nullable": false,
+      "array_path": "records/native_signal_blocks/native-signal-blocks-v1/columns/clock_sync_clock_domain",
+      "codec_ids": [
+        "bytes-le"
+      ]
+    },
+    {
+      "name": "clock_sync_generation",
+      "dtype": "uint32",
+      "endianness": "little",
+      "nullable": false,
+      "array_path": "records/native_signal_blocks/native-signal-blocks-v1/columns/clock_sync_generation",
+      "codec_ids": [
+        "bytes-le"
+      ]
+    },
+    {
+      "name": "clock_sync_flags",
+      "dtype": "uint32",
+      "endianness": "little",
+      "nullable": false,
+      "array_path": "records/native_signal_blocks/native-signal-blocks-v1/columns/clock_sync_flags",
+      "codec_ids": [
+        "bytes-le"
+      ]
+    }
+  ]
+}

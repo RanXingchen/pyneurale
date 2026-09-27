@@ -1,0 +1,112 @@
+name: Fast PR smoke
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/**"
+      - "benchmarks/**"
+      - "CMakeLists.txt"
+      - "cpp/**"
+      - "specifications/**"
+      - "src/**"
+      - "tests/**"
+      - "tools/**"
+      - "pyproject.toml"
+      - "pytest.ini"
+      - "SUPPORT.md"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pr-smoke-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  source-imports:
+    name: Source-only imports (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      - name: Install source-only dependencies
+        run: python -m pip install --upgrade pip && python -m pip install numpy scipy pytest
+      - name: Run import and dependency-error smoke
+        env:
+          PYTHONPATH: ${{ github.workspace }}/src
+        run: |
+          # The file list is the one in tests/conftest.py, never a second copy:
+          # a hand-written list in CI drifts, and a python_only file missing
+          # from it silently runs nowhere. Passing paths is still required --
+          # collecting all of tests/ without an install dies on the native
+          # modules before any marker selection happens.
+          readarray -t suite < <(python -c "
+          import sys
+          sys.path.insert(0, 'tests')
+          import conftest
+          for relative in sorted(conftest._PYTHON_ONLY_FILES):
+              print('tests/' + relative)
+          ")
+          python -m pytest -o addopts="" -m python_only "${suite[@]}"
+
+  cpu-wheel:
+    name: CPU wheel smoke (${{ matrix.name }})
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Ubuntu 24.04 / Python 3.12
+            runner: ubuntu-24.04
+          - name: Windows / Python 3.12
+            runner: windows-latest
+    env:
+      CMAKE_ARGS: >-
+        -DNEURALE_ENABLE_MKL=OFF
+        -DNEURALE_ENABLE_CUDA=OFF
+        -DNEURALE_ENABLE_EXPERIMENT_PRESENTATION=OFF
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install build tooling
+        run: python -m pip install --upgrade pip && python -m pip install pybind11
+      - name: Build CPU wheel
+        run: python -m pip wheel . --no-deps --wheel-dir dist
+      - name: Test core wheel in a clean environment
+        run: python tools/validate_clean_wheel.py --profile core --wheel-dir dist
+      - name: Install built wheel
+        run: >-
+          python -c "from pathlib import Path; import subprocess,sys;
+          wheel=next(Path('dist').glob('*.whl'));
+          subprocess.check_call([sys.executable,'-m','pip','install',str(wheel)+'[test]'])"
+      - name: Require native CPU and headless imports
+        run: >-
+          python -c "import importlib.util,sys;
+          import neurale,neurale.experiments;
+          import neurale._native as native;
+          info=native.build_info();
+          assert info['cuda_compiled'] is False;
+          assert info['cpu_math_backend']=='none';
+          assert not hasattr(native.experiments, 'presentation');
+          print(info)"
+      - name: Run native and headless experiment smoke
+        run: >-
+          python -m pytest
+          tests/integration/runtime/test_native_extension.py
+          tests/unit/experiments/test_experiments_import.py
+          tests/unit/experiments/test_presentation_import.py
+      - name: Run installed-wheel formal Center-Out closed loops
+        run: >-
+          python -m pytest -o "addopts=--require-native -ra"
+          tests/integration/experiments/test_center_out_closed_loop.py::test_headless_center_out

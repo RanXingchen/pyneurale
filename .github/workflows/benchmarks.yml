@@ -1,0 +1,215 @@
+name: Controlled physical-chain performance characterization
+
+on:
+  workflow_dispatch:
+    inputs:
+      collect_controlled_history:
+        description: Run the administered self-hosted benchmark-history job
+        required: false
+        default: false
+        type: boolean
+  schedule:
+    - cron: "17 3 * * 0"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: physical-chain-benchmarks-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  physical-chain:
+    name: Physical chain (${{ matrix.provider }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - provider: builtin
+            enable_mkl: "OFF"
+            build_fft_backend: none
+          - provider: mkl
+            enable_mkl: "ON"
+            build_fft_backend: mkl
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install native build tooling
+        run: python -m pip install --upgrade pip pybind11
+      - name: Add Intel oneAPI APT repository
+        if: matrix.provider == 'mkl'
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes gpg-agent wget
+          wget -O- https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB | gpg --dearmor | sudo tee /usr/share/keyrings/oneapi-archive-keyring.gpg > /dev/null
+          echo "deb [signed-by=/usr/share/keyrings/oneapi-archive-keyring.gpg] https://apt.repos.intel.com/oneapi all main" | sudo tee /etc/apt/sources.list.d/oneAPI.list
+          sudo apt-get update
+      - name: Install oneMKL
+        if: matrix.provider == 'mkl'
+        run: sudo apt-get install --yes intel-oneapi-mkl-devel
+      - name: Record resolved oneMKL packages
+        if: matrix.provider == 'mkl'
+        run: dpkg-query -W 'intel-oneapi-mkl*'
+      - name: Resolve oneMKL package version
+        id: mkl-version
+        if: matrix.provider == 'mkl'
+        run: echo "version=$(dpkg-query -W -f='${Version}' intel-oneapi-mkl-devel)" >> "$GITHUB_OUTPUT"
+      - name: Configure Release benchmark
+        run: >-
+          cmake -S . -B build/performance
+          -DCMAKE_BUILD_TYPE=Release
+          -DCMAKE_RUNTIME_OUTPUT_DIRECTORY="${GITHUB_WORKSPACE}/build/performance/bin"
+          -DNEURALE_BUILD_CPP_TESTS=OFF
+          -DNEURALE_BUILD_BENCHMARKS=ON
+          -DNEURALE_ENABLE_MKL=${{ matrix.enable_mkl }}
+          -DNEURALE_ENABLE_CUDA=OFF
+          -Dpybind11_DIR="$(python -m pybind11 --cmakedir)"
+      - name: Build physical-chain benchmark
+        run: >-
+          cmake --build build/performance --config Release
+          --target neurale_pipeline_strict_realtime_benchmark
+      - name: Run physical-chain performance characterization
+        run: |
+          mkdir -p "build/benchmark-results/${{ matrix.provider }}"
+          build/performance/bin/neurale_pipeline_strict_realtime_benchmark \
+            --warmup-seconds 1 --duration-seconds 60 --runs 3 \
+            > "build/benchmark-results/${{ matrix.provider }}/results.jsonl"
+      - name: Capture exact characterization environment
+        run: >-
+          python tools/benchmark_policy.py capture
+          --results "build/benchmark-results/${{ matrix.provider }}/results.jsonl"
+          --output "build/benchmark-results/${{ matrix.provider }}/environment.json"
+          --runner-class github-hosted-characterization
+          --runner-label github-hosted --runner-label linux --runner-label x64
+          --runner-name "${RUNNER_NAME}"
+          --runner-image "${ImageOS:-unknown}-${ImageVersion:-unknown}"
+          --evidence-run-id "${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.provider }}"
+          --git-sha "${{ github.sha }}"
+          --exact-command "neurale_pipeline_strict_realtime_benchmark --warmup-seconds 1 --duration-seconds 60 --runs 3"
+          --provider "${{ matrix.provider }}"
+          --software-component "cmake=$(cmake --version | head -n 1)"
+          --software-component "pybind11=$(python -c 'import pybind11; print(pybind11.__version__)')"
+          --software-component "mkl=${{ steps.mkl-version.outputs.version || 'disabled' }}"
+      - name: Validate machine-readable result structure
+        env:
+          EXPECTED_BUILD_FFT_BACKEND: ${{ matrix.build_fft_backend }}
+          RESULT_PATH: build/benchmark-results/${{ matrix.provider }}/results.jsonl
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          path = Path(os.environ["RESULT_PATH"])
+          rows = [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line]
+          assert len(rows) == 42, f"expected 42 records, found {len(rows)}"
+          cases = {(row["feature"], row["bandpass"], row["resampler"]) for row in rows}
+          assert len(cases) == 14, f"expected 14 scenarios, found {len(cases)}"
+          assert {row["run"] for row in rows} == {0, 1, 2}
+          expected_build_backend = os.environ["EXPECTED_BUILD_FFT_BACKEND"]
+          for row in rows:
+              assert row["runs"] == 3
+              assert row["duration_seconds"] == 60
+              assert row["warmup_seconds"] == 1
+              assert row["build_fft_backend"] == expected_build_backend
+              assert row["feature_fft_backend"]
+              assert row["min"] <= row["median"] <= row["p95"] <= row["p99"] <= row["max"]
+              assert row["frames_per_second"] > 0
+              assert row["scalar_samples_per_second"] > 0
+              assert row["realtime_factor"] > 0
+              assert row["compiler"] and row["cpu_model"] and row["build_type"] == "Release"
+          PY
+      - name: Upload JSON Lines results
+        uses: actions/upload-artifact@v4
+        with:
+          name: physical-native-chains-${{ matrix.provider }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: build/benchmark-results/${{ matrix.provider }}/
+          if-no-files-found: error
+          retention-days: 30
+
+  controlled-history:
+    name: Controlled history (${{ matrix.provider }})
+    if: github.event_name == 'workflow_dispatch' && inputs.collect_controlled_history
+    runs-on: [self-hosted, linux, x64, pyneurale-benchmark]
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - provider: builtin
+            enable_mkl: "OFF"
+          - provider: mkl
+            enable_mkl: "ON"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install native build tooling
+        run: python -m pip install --upgrade pip pybind11
+      - name: Require pre-provisioned oneMKL
+        id: mkl-version
+        if: matrix.provider == 'mkl'
+        run: |
+          dpkg-query -W 'intel-oneapi-mkl*'
+          echo "version=$(dpkg-query -W -f='${Version}' intel-oneapi-mkl-devel)" >> "$GITHUB_OUTPUT"
+      - name: Validate benchmark policy
+        run: >-
+          python tools/benchmark_policy.py validate
+          --policy benchmarks/regression_policy.json
+      - name: Configure controlled Release benchmark
+        run: >-
+          cmake -S . -B build/controlled-performance-${{ matrix.provider }}
+          -DCMAKE_BUILD_TYPE=Release
+          -DCMAKE_RUNTIME_OUTPUT_DIRECTORY="${GITHUB_WORKSPACE}/build/controlled-performance-${{ matrix.provider }}/bin"
+          -DNEURALE_BUILD_CPP_TESTS=OFF
+          -DNEURALE_BUILD_BENCHMARKS=ON
+          -DNEURALE_ENABLE_MKL=${{ matrix.enable_mkl }}
+          -DNEURALE_ENABLE_CUDA=OFF
+          -Dpybind11_DIR="$(python -m pybind11 --cmakedir)"
+      - name: Build controlled physical-chain benchmark
+        run: >-
+          cmake --build build/controlled-performance-${{ matrix.provider }} --config Release
+          --target neurale_pipeline_strict_realtime_benchmark
+      - name: Run controlled physical-chain history sample
+        run: |
+          mkdir -p "build/controlled-evidence/${{ matrix.provider }}"
+          build/controlled-performance-${{ matrix.provider }}/bin/neurale_pipeline_strict_realtime_benchmark \
+            --warmup-seconds 1 --duration-seconds 60 --runs 3 \
+            > "build/controlled-evidence/${{ matrix.provider }}/results.jsonl"
+      - name: Capture controlled hardware and software fingerprint
+        run: >-
+          python tools/benchmark_policy.py capture
+          --results "build/controlled-evidence/${{ matrix.provider }}/results.jsonl"
+          --output "build/controlled-evidence/${{ matrix.provider }}/environment.json"
+          --runner-class pyneurale-linux-x64-benchmark-v1
+          --runner-label self-hosted --runner-label linux --runner-label x64
+          --runner-label pyneurale-benchmark
+          --runner-name "${RUNNER_NAME}" --runner-image "self-hosted"
+          --evidence-run-id "${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.provider }}"
+          --git-sha "${{ github.sha }}"
+          --exact-command "neurale_pipeline_strict_realtime_benchmark --warmup-seconds 1 --duration-seconds 60 --runs 3"
+          --provider "${{ matrix.provider }}"
+          --software-component "cmake=$(cmake --version | head -n 1)"
+          --software-component "pybind11=$(python -c 'import pybind11; print(pybind11.__version__)')"
+          --software-component "mkl=${{ steps.mkl-version.outputs.version || 'disabled' }}"
+      - name: Report current history eligibility without creating a gate
+        run: >-
+          python tools/benchmark_policy.py assess
+          --policy benchmarks/regression_policy.json
+          --runner-class pyneurale-linux-x64-benchmark-v1
+          --input "build/controlled-evidence/${{ matrix.provider }}"
+          --output "build/controlled-evidence/${{ matrix.provider }}/eligibility.json"
+      - name: Upload controlled history evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: controlled-physical-chain-${{ matrix.provider }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: build/controlled-evidence/${{ matrix.provider }}/
+          if-no-files-found: error
+          retention-days: 180

@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "historical_evidence": {
+    "minimum_independent_runs": 5,
+    "minimum_repetitions_per_scenario": 3,
+    "maximum_relative_mad": 0.05,
+    "maximum_relative_range": 0.10
+  },
+  "runner_classes": {
+    "github-hosted-characterization": {
+      "controlled": false,
+      "purpose": "Smoke and release characterization only; hosted hardware varies."
+    },
+    "pyneurale-linux-x64-benchmark-v1": {
+      "controlled": true,
+      "required_labels": ["self-hosted", "linux", "x64", "pyneurale-benchmark"],
+      "purpose": "Repeatable history collection on one administered benchmark host."
+    }
+  },
+  "metrics": [
+    {
+      "id": "benchmark_entrypoint_execution",
+      "status": "smoke",
+      "reason": "Reduced-duration CTest or workflow runs prove execution and result structure only."
+    },
+    {
+      "id": "streaming_steady_state_allocation",
+      "status": "correctness_gate",
+      "contract": "allocation_count == 0",
+      "evidence": "CTest allocation-full and strict-realtime labels",
+      "reason": "This is a deterministic prepared-path contract, not a portable timing threshold."
+    },
+    {
+      "id": "physical_chain_p99_latency",
+      "status": "history_required",
+      "benchmark": "pipeline_realtime_physical_chain",
+      "metric": "p99",
+      "direction": "lower_is_better",
+      "scenario_fields": ["feature", "bandpass", "resampler"],
+      "reason": "The repository has characterization artifacts but no checked-in controlled-run history."
+    },
+    {
+      "id": "physical_chain_throughput",
+      "status": "history_required",
+      "benchmark": "pipeline_realtime_physical_chain",
+      "metric": "scalar_samples_per_second",
+      "direction": "higher_is_better",
+      "scenario_fields": ["feature", "bandpass", "resampler"],
+      "reason": "The repository has characterization artifacts but no checked-in controlled-run history."
+    },
+    {
+      "id": "resampler_lmp_bandpower",
+      "status": "history_required",
+      "reason": "Scenario metadata is stable, but independent controlled histories are not yet available."
+    },
+    {
+      "id": "pca_lda_knn_kde",
+      "status": "history_required",
+      "reason": "Current measurements are developer or provider characterization, not an approved controlled baseline."
+    },
+    {
+      "id": "sorting_100k_time_memory",
+      "status": "release_evidence",
+      "reason": "Peak RSS and sampled temporary-resident deltas are host-sensitive and have no controlled history."
+    },
+    {
+      "id": "native_recording_replay",
+      "status": "release_evidence",
+      "reason": "Storage, durability, codec, and filesystem configuration dominate the result and must remain explicit."
+    },
+    {
+      "id": "simulated_acquisition",
+      "status": "history_required",
+      "reason": "Native timing output exists, but no approved controlled baseline exists."
+    },
+    {
+      "id": "experiment_presentation",
+      "status": "release_evidence",
+      "reason": "Display, GPU, driver, compositor, refresh, and window mode are part of the evidence and are not a core gate."
+    },
+    {
+      "id": "m10_live_visualization",
+      "status": "deferred",
+      "reason": "M10 has not passed and live visualization cannot block a core-only release."
+    }
+  ],
+  "active_performance_gates": []
+}

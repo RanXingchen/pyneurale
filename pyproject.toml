@@ -1,0 +1,175 @@
+[build-system]
+requires = [
+    "scikit-build-core>=0.10",
+    "pybind11>=2.13",
+    "setuptools-scm>=8",
+    "cmake>=3.24,<4.4",
+]
+build-backend = "scikit_build_core.build"
+
+[project]
+name = "pyneurale"
+dynamic = ["version"]
+description = "Typed neural data, signal processing, models, and native streaming for neural engineering."
+readme = "README.md"
+requires-python = ">=3.11,<3.13"
+dependencies = [
+    "numpy>=1.23",
+    "scipy>=1.9",
+]
+license = "MIT"
+license-files = ["LICENSE", "NOTICE.md"]
+authors = [
+    { name = "Xingchen Ran", email = "xcran@cqu.edu.cn" },
+]
+keywords = [
+    "neural-engineering",
+    "brain-computer-interface",
+    "signal-processing",
+    "neural-data",
+]
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Intended Audience :: Science/Research",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Typing :: Typed",
+    "Topic :: Scientific/Engineering",
+]
+
+[project.entry-points."neurale.devices"]
+lsl = "neurale.devices.lsl:provider"
+
+[project.optional-dependencies]
+lsl = ["pylsl>=1.17,<2"]
+# Native build capabilities are wheel profiles, not Python dependency extras:
+# CUDA and experiment presentation cannot be enabled after a wheel is built.
+# Torch, vendor devices, and M10 visualization are not shipped capabilities, so
+# no empty or aspirational extras are declared for them.
+# NRF v1 recording sessions. Zarr v3 is the only chunked-array encoding the
+# format defines, and rfc8785 provides the canonical JSON that journal,
+# checkpoint, and report checksums are computed over. Importing neurale.io must
+# not import either; neurale.io.nrf resolves them at first use.
+nrf = [
+    "jsonschema>=4.21",
+    "rfc8785>=0.1.4",
+    "zarr>=3",
+]
+# The NRF suites exercise real sessions, so the test extra needs whatever `nrf`
+# needs. Referring to it rather than restating it is what keeps the two from
+# drifting the day a dependency is added to one of them.
+test = [
+    "pyneurale[nrf]",
+    "pytest>=8",
+]
+docs = [
+    "breathe>=4.35",
+    "myst-parser>=3.0",
+    "pydata-sphinx-theme>=0.16",
+    "sphinx>=7.2,<9",
+]
+dev = [
+    "pyneurale[test,docs,lsl]",
+    "pre-commit==4.6.0",
+    "ruff==0.15.22",
+]
+
+[project.urls]
+Repository = "https://github.com/RanXingchen/pyneurale"
+
+[tool.scikit-build]
+minimum-version = "build-system.requires"
+build-dir = "build/{wheel_tag}"
+wheel.packages = ["src/neurale"]
+metadata.version.provider = "scikit_build_core.metadata.setuptools_scm"
+sdist.include = [
+    "CMakeLists.txt",
+    "tools/validate_clean_wheel.py",
+    "tools/validate_installed_artifact.py",
+    "tools/validate_native_binary.py",
+    "tools/validate_wheel_profile.py",
+    "tools/validate_device_providers.py",
+    "src/neurale/devices/sdk/*.h",
+    "src/neurale/devices/sdk/*.hpp",
+    "examples/device_providers/*/CMakeLists.txt",
+    "examples/device_providers/*/pyproject.toml",
+    "examples/device_providers/*/native/*.cpp",
+    "examples/device_providers/*/src/*/*.py",
+    "cpp/bindings/**",
+    "cpp/include/**",
+    "cpp/src/**",
+    "src/neurale/_version.py",
+    # The build installs the NRF v1 schemas into the package from here, so a
+    # wheel built from an sdist needs the specification tree the same way it
+    # needs the C++ sources. The README, semantic rules, test vectors, and the
+    # executable reference tools come along, which suits a source distribution
+    # of a documented format. Listed by extension rather than as a recursive
+    # glob: an include is force-applied and would otherwise sweep up whatever
+    # __pycache__ a local run of the reference tools left behind.
+    "specifications/nrf/v1/*.md",
+    "specifications/nrf/package-v1.md",
+    "specifications/nrf/v1/*.json",
+    "specifications/nrf/v1/tools/*.py",
+    # The v1.1 native replay ledger extension. Nothing is installed into the
+    # wheel from it -- a reader needs the core schemas, not the extension's
+    # fixtures -- but an sdist of a documented format carries its own
+    # specification, and the recording tests check the implementation against
+    # these files.
+    "specifications/nrf/v1/extensions/native-replay-v1/*.md",
+    "specifications/nrf/v1/extensions/native-replay-v1/*.json",
+    "specifications/nrf/v1/extensions/native-replay-v1/fixtures/*.json",
+    "specifications/nrf/v1/extensions/native-replay-v1/tools/*.py",
+    # The private native spool. Nothing from it is installed into the wheel and
+    # nothing outside this repository may depend on its bytes, but the binary
+    # vectors are the only description of the format a writer and a finalizer
+    # written by different tasks agree on, so an sdist that dropped them would
+    # ship a repository whose specification suite cannot run.
+    "specifications/native-spool/v1/*.md",
+    "specifications/native-spool/v1/tools/*.py",
+    "specifications/native-spool/v1/vectors/*.json",
+    "specifications/native-spool/v1/vectors/*.spool",
+]
+
+[tool.setuptools_scm]
+version_scheme = "guess-next-dev"
+local_scheme = "node-and-date"
+write_to = "src/neurale/_version.py"
+fallback_version = "0.0.0"
+
+[tool.ruff]
+line-length = 100
+extend-exclude = [
+    "build",
+    "build-*",
+    "_skbuild",
+    ".venv",
+    "external",
+    "generated",
+]
+
+[tool.ruff.lint]
+select = [
+    "E4",
+    "E7",
+    "E9",
+    "F",
+    "I",
+    "UP",
+    "B",
+    "RUF",
+]
+ignore = ["E501"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "lf"
+docstring-code-format = true
+
+[tool.ruff.lint.isort]
+known-first-party = ["neurale"]
+force-sort-within-sections = false
+lines-between-types = 0
