@@ -514,12 +514,14 @@ jobs:
           python-version: ${{ matrix.python-version }}
           cache: pip
       # Deliberately do NOT install libglfw3-dev / libfreetype-dev / libharfbuzz-dev
-      # so FetchContent downloads and builds private static copies. OpenGL still
-      # comes from the system (Mesa dev package).
-      - name: Install OpenGL dev, fonts, and xvfb
+      # so FetchContent downloads and builds private static copies. OpenGL and
+      # the X11 headers required by bundled GLFW still come from the system.
+      - name: Install OpenGL and X11 dev, fonts, and xvfb
         run: >-
           sudo apt-get update && sudo apt-get install --yes
-          libgl1-mesa-dev fonts-dejavu-core fonts-noto-cjk xauth xvfb
+          libgl1-mesa-dev libx11-dev libxrandr-dev libxinerama-dev
+          libxcursor-dev libxi-dev libxext-dev
+          fonts-dejavu-core fonts-noto-cjk xauth xvfb
       - name: Install build tooling and auditwheel
         run: python -m pip install --upgrade pip && python -m pip install pybind11 auditwheel
       - name: Build presentation-enabled wheel (FetchContent bundled static deps)

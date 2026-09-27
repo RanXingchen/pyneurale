@@ -299,6 +299,11 @@ require xvfb-run
 require pkg-config
 pkg-config --exists glfw3 freetype2 harfbuzz || { echo 'BLOCKED: system GLFW/FreeType/HarfBuzz development packages missing'; exit 86; }
 '@ + "`n"
+        } else {
+            $preflight += @'
+require pkg-config
+pkg-config --exists x11 xrandr xinerama xcursor xi xext || { echo 'BLOCKED: bundled GLFW X11 development packages missing'; exit 86; }
+'@ + "`n"
         }
     }
     $body = @'
