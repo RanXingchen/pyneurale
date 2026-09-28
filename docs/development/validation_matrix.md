@@ -5,10 +5,9 @@ the repository root with the root ``.venv`` activated unless the command is
 explicitly validating a clean wheel installation.
 
 The repository-root
-[support matrix](https://github.com/RanXingchen/pyneurale/blob/main/SUPPORT.md)
-defines supported, tested, experimental, and unavailable release profiles.
-This page explains how to produce evidence; it does not turn a locally skipped
-or unavailable profile into a passing result.
+[support information](https://github.com/RanXingchen/pyneurale/blob/main/SUPPORT.md)
+summarizes supported platforms and capabilities. This page provides the
+corresponding validation commands and evidence.
 
 ## Run CI locally
 
@@ -204,15 +203,16 @@ an editable install. A core wheel uses:
 ```bash
 CMAKE_ARGS="-DNEURALE_ENABLE_MKL=OFF -DNEURALE_ENABLE_CUDA=OFF -DNEURALE_ENABLE_EXPERIMENT_PRESENTATION=OFF" \
 python -m pip wheel . --no-deps --wheel-dir dist
-python tools/validate_wheel_profile.py --profile core --wheel-dir dist
+python tools/artifacts/validate_wheel_profile.py --profile core --wheel-dir dist
 auditwheel show dist/*.whl > build/core-audit.txt 2>&1
-python tools/validate_native_binary.py --profile core --wheel-dir dist \
+python tools/artifacts/validate_native_binary.py --profile core --wheel-dir dist \
   --audit-report build/core-audit.txt
-python tools/validate_clean_wheel.py --profile core --wheel-dir dist
+python tools/artifacts/validate_clean_wheel.py --profile core --wheel-dir dist
 ```
 
 Use ``--profile presentation`` or ``--profile cuda`` only for a wheel built
-with the matching explicit CMake definitions. Profile validation checks archive
+with the matching explicit CMake definitions. The integrated distribution uses
+``--profile release`` with all three native capabilities ON. Profile validation checks archive
 contents and declared dependencies; native binary validation checks extension
 exports, direct dependencies, and the complete-wheel audit report; clean-wheel
 validation installs the artifact in an isolated environment and exercises only
@@ -226,9 +226,11 @@ python -m pytest
 ```
 
 Linux wheel jobs also inspect the artifact with ``auditwheel show`` and Windows
-jobs with ``delvewheel show``. Pass the captured report to
-``tools/validate_native_binary.py --audit-report`` with the same profile and
-wheel. These checks audit the built wheel; they do not repair or mutate it.
+jobs with ``delvewheel show``. Development-profile jobs pass the captured report
+to ``tools/artifacts/validate_native_binary.py --audit-report`` with the same profile and
+wheel. The integrated release build inspects and repairs the wheel before
+its final archive, binary, and clean-install acceptance. See the
+{doc}`release procedure <release>`.
 
 CUDA validation requires a hardware runner with a compatible driver and at
 least one visible device. A build on a host without executed GPU tests is not

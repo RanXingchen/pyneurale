@@ -40,12 +40,12 @@ jobs:
           auditwheel show dist/*.whl 2>&1 | tee build/cuda-results/wheel-audit.txt
       - name: Inspect CUDA extension exports and direct dependencies
         run: >-
-          python tools/validate_native_binary.py --profile cuda --wheel-dir dist
+          python tools/artifacts/validate_native_binary.py --profile cuda --wheel-dir dist
           --audit-report build/cuda-results/wheel-audit.txt
           --report build/cuda-results/native-binary.json
       - name: Test CUDA wheel in a clean environment
         run: >-
-          python tools/validate_clean_wheel.py --profile cuda --wheel-dir dist
+          python tools/artifacts/validate_clean_wheel.py --profile cuda --wheel-dir dist
           --report build/cuda-results/clean-wheel.json
       - name: Install CUDA-enabled wheel
         run: >-

@@ -273,8 +273,8 @@ mapfile -t archives < <(find __DIST__ -maxdepth 1 -name '*.tar.gz' -type f)
 python -m pip wheel "${archives[0]}" --no-deps --wheel-dir __DIST__ --config-settings=build-dir=__BUILD__
 artifact=$(wheel __DIST__)
 auditwheel show "$artifact" > __DIST__/audit.txt 2>&1
-python tools/validate_native_binary.py --profile core --wheel-dir __DIST__ --audit-report __DIST__/audit.txt
-python tools/validate_clean_wheel.py --profile core --wheel-dir __DIST__
+python tools/artifacts/validate_native_binary.py --profile core --wheel-dir __DIST__ --audit-report __DIST__/audit.txt
+python tools/artifacts/validate_clean_wheel.py --profile core --wheel-dir __DIST__
 python -m pip install "${artifact}[test]"
 python -m pytest tests/unit/io/nrf/test_schema_layer.py
 '@
@@ -313,12 +313,12 @@ mkdir -p __DIST__
 python -m pip wheel . --no-deps --wheel-dir __DIST__ --config-settings=build-dir=__BUILD__/wheel
 artifact=$(wheel __DIST__)
 __BINARY_VALIDATION__
-python tools/validate_clean_wheel.py --profile __PROFILE__ --wheel-dir __DIST__
+python tools/artifacts/validate_clean_wheel.py --profile __PROFILE__ --wheel-dir __DIST__
 python -m pip install "${artifact}[test]"
 '@
     $binaryValidation = if ($name -eq 'experiment-presentation') { '' } else {
         'auditwheel show "$artifact" > __DIST__/audit.txt 2>&1' + "`n" +
-        'python tools/validate_native_binary.py --profile __PROFILE__ --wheel-dir __DIST__ --audit-report __DIST__/audit.txt'
+        'python tools/artifacts/validate_native_binary.py --profile __PROFILE__ --wheel-dir __DIST__ --audit-report __DIST__/audit.txt'
     }
     $values = @{ FLAGS = $flags; DIST = $dist; BUILD = $build; PROFILE = $profile }
     $values.BINARY_VALIDATION = Expand-Template $binaryValidation $values
@@ -335,7 +335,7 @@ python -m pytest -o "addopts=--require-native -ra" tests/integration/experiments
         $body = @'
 python -m pip install scikit-build-core setuptools 'pylsl>=1.17,<2'
 python -m pip install --no-build-isolation examples/device_providers/pull examples/device_providers/callback examples/device_providers/python
-python tools/validate_device_providers.py
+python tools/artifacts/validate_device_providers.py
 python -m pytest tests/unit/devices
 python -c "import neurale.experiments; import neurale._native as n; assert not hasattr(n.experiments, 'presentation')"
 python -m pytest -o "addopts=--require-native -ra" tests/integration/experiments/test_center_out_closed_loop.py::test_headless_center_out
@@ -435,8 +435,8 @@ mkdir -p __DIST__ build/cuda-results
 python -m pip wheel . --no-deps --wheel-dir __DIST__ --config-settings=build-dir=__BUILD__/wheel
 artifact=$(wheel __DIST__)
 auditwheel show "$artifact" > build/cuda-results/wheel-audit.txt 2>&1
-python tools/validate_native_binary.py --profile cuda --wheel-dir __DIST__ --audit-report build/cuda-results/wheel-audit.txt
-python tools/validate_clean_wheel.py --profile cuda --wheel-dir __DIST__
+python tools/artifacts/validate_native_binary.py --profile cuda --wheel-dir __DIST__ --audit-report build/cuda-results/wheel-audit.txt
+python tools/artifacts/validate_clean_wheel.py --profile cuda --wheel-dir __DIST__
 python -m pip install "${artifact}[test]"
 '@ + "`n" + $runtime + "`n" + @'
 python -m pytest -o addopts='--require-native -ra' -m gpu --deselect=tests/unit/models/test_neighbors.py::test_knn_cuda_restores_previous_device --junitxml=build/cuda-results/pytest.xml tests/integration/runtime/test_native_extension.py tests/unit/models/test_neighbors.py tests/unit/models/test_density.py tests/unit/models/test_manifold.py
@@ -501,8 +501,8 @@ if ($wheels.Count -ne 1) { throw 'Expected exactly one wheel' }
 $wheel = $wheels[0].FullName
 & (Join-Path (Resolve-Path '__ENV__') 'Scripts/delvewheel.exe') show $wheel 2>&1 | Tee-Object -FilePath '__DIST__/audit.txt'
 if ($LASTEXITCODE -ne 0) { throw 'delvewheel show failed' }
-Run $python @('tools/validate_native_binary.py', '--profile', '__PROFILE__', '--wheel-dir', '__DIST__', '--audit-report', '__DIST__/audit.txt')
-Run $python @('tools/validate_clean_wheel.py', '--profile', '__PROFILE__', '--wheel-dir', '__DIST__')
+Run $python @('tools/artifacts/validate_native_binary.py', '--profile', '__PROFILE__', '--wheel-dir', '__DIST__', '--audit-report', '__DIST__/audit.txt')
+Run $python @('tools/artifacts/validate_clean_wheel.py', '--profile', '__PROFILE__', '--wheel-dir', '__DIST__')
 Run $python @('-m', 'pip', 'install', "${wheel}[test]")
 '@
     $script = $Setup + (Expand-Template $body @{ PRESENTATION = $enablePresentation; DIST = $dist; BUILD = $build; ENV = $envDir; PROFILE = $profile }) + "`n"
@@ -518,7 +518,7 @@ Run $python @('-m', 'pytest', '-o', 'addopts=--require-native -ra', 'tests/integ
         return $script + @'
 Run $python @('-m', 'pip', 'install', 'scikit-build-core', 'setuptools', 'wheel', 'pylsl>=1.17,<2')
 Run $python @('-m', 'pip', 'install', '--no-build-isolation', 'examples/device_providers/pull', 'examples/device_providers/callback', 'examples/device_providers/python')
-Run $python @('tools/validate_device_providers.py')
+Run $python @('tools/artifacts/validate_device_providers.py')
 Run $python @('-m', 'pytest', 'tests/unit/devices')
 Run $python @('-m', 'pytest', 'tests/unit/io', 'tests/unit/recording', 'tests/specification')
 '@

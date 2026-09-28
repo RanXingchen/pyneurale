@@ -45,9 +45,8 @@ not use CuPy to detect or execute CUDA operations.
 
 CUDA is currently an experimental source-build/hardware-validation profile,
 not a published release wheel or runtime bundle. Builtin CPU and oneMKL are the
-supported CPU profiles. The exact tested platforms and toolchains are frozen
-by the repository-root
-[release/support matrix](https://github.com/RanXingchen/pyneurale/blob/main/SUPPORT.md).
+supported CPU profiles. Supported platforms and toolchains are listed in the
+repository-root [support information](https://github.com/RanXingchen/pyneurale/blob/main/SUPPORT.md).
 
 `random_seed` seeds Python, NumPy, and PyTorch when PyTorch is installed.
 `deterministic=True` additionally enables PyTorch deterministic algorithms and

@@ -15,8 +15,10 @@ import venv
 from pathlib import Path
 
 if __package__:
+    from .artifact_profiles import PROFILE_CAPABILITIES
     from .validate_wheel_profile import WheelProfileError, _select_wheel, validate_wheel_profile
 else:
+    from artifact_profiles import PROFILE_CAPABILITIES
     from validate_wheel_profile import WheelProfileError, _select_wheel, validate_wheel_profile
 
 
@@ -90,12 +92,15 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("wheel", nargs="?", type=Path)
     parser.add_argument("--wheel-dir", type=Path)
-    parser.add_argument("--profile", choices=("core", "presentation", "cuda"), required=True)
+    parser.add_argument("--profile", choices=sorted(PROFILE_CAPABILITIES), required=True)
+    parser.add_argument("--require-cuda-device", action="store_true")
     parser.add_argument("--report", type=Path)
     args = parser.parse_args(argv)
     try:
         wheel = _select_wheel(args.wheel, args.wheel_dir)
         result = validate_clean_wheel(wheel, args.profile)
+        if args.require_cuda_device and not result["cuda"]["available"]:
+            raise WheelProfileError("required CUDA device was unavailable in the clean wheel test")
     except (WheelProfileError, subprocess.CalledProcessError) as exc:
         print(f"clean wheel validation failed: {exc}", file=sys.stderr)
         return 1

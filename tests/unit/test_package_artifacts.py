@@ -4,16 +4,19 @@
 from __future__ import annotations
 
 import sys
+import tarfile
 import tomllib
 import zipfile
+from io import BytesIO
 from pathlib import Path
 from types import ModuleType
 
 import pytest
 from _repository_module import load_repository_module
+from packaging.version import Version
 
 _ROOT = Path(__file__).resolve().parents[2]
-_TOOLS = _ROOT / "tools"
+_TOOLS = _ROOT / "tools" / "artifacts"
 
 sys.path.insert(0, str(_TOOLS))
 
@@ -27,6 +30,8 @@ _validate_wheel_profile = _load_tool("validate_wheel_profile")
 _validate_native_binary = _load_tool("validate_native_binary")
 _validate_clean_wheel = _load_tool("validate_clean_wheel")
 _validate_installed_artifact = _load_tool("validate_installed_artifact")
+_validate_release_dist = _load_tool("validate_release_dist")
+_validate_required_pytest = _load_tool("validate_required_pytest")
 
 _clean_environment = _validate_clean_wheel._clean_environment
 _venv_python = _validate_clean_wheel._venv_python
@@ -113,6 +118,7 @@ def test_bundled_presentation_disables_optional_freetype_dependencies() -> None:
         ("core", ("_native",)),
         ("presentation", ("_native",)),
         ("cuda", ("_native", "_native_cuda")),
+        ("release", ("_native", "_native_cuda")),
     ],
 )
 def test_valid_wheel_profiles_are_accepted(
@@ -133,6 +139,113 @@ def test_profile_rejects_unexpected_native_module(tmp_path: Path) -> None:
 
     with pytest.raises(WheelProfileError, match="core profile requires native modules"):
         validate_wheel_profile(wheel, "core")
+
+
+def test_windows_release_profile_requires_one_openmp_runtime(tmp_path: Path) -> None:
+    wheel = _write_wheel(
+        tmp_path / "pyneurale-1.0-cp312-cp312-win_amd64.whl",
+        modules=("_native", "_native_cuda"),
+    )
+    with pytest.raises(WheelProfileError, match="one Intel OpenMP runtime"):
+        validate_wheel_profile(wheel, "release")
+
+    with zipfile.ZipFile(wheel, "a") as archive:
+        archive.writestr("neurale/libiomp5md.dll", b"")
+    validate_wheel_profile(wheel, "release")
+
+    with zipfile.ZipFile(wheel, "a") as archive:
+        archive.writestr("pyneurale.libs/libiomp5md-2299b046.dll", b"")
+    with pytest.raises(WheelProfileError, match="one Intel OpenMP runtime"):
+        validate_wheel_profile(wheel, "release")
+
+
+def test_linux_release_profile_requires_repaired_runtimes(tmp_path: Path) -> None:
+    wheel = _write_wheel(
+        tmp_path / "pyneurale-1.0-cp312-cp312-manylinux_2_39_x86_64.whl",
+        modules=("_native", "_native_cuda"),
+    )
+    with pytest.raises(WheelProfileError, match="bundled libiomp5"):
+        validate_wheel_profile(wheel, "release")
+
+    with zipfile.ZipFile(wheel, "a") as archive:
+        archive.writestr("pyneurale.libs/libiomp5-19cd02fb.so", b"")
+        archive.writestr("pyneurale.libs/libcudart-862020da.so.13.2.86", b"")
+    validate_wheel_profile(wheel, "release")
+
+
+def test_release_dist_requires_exactly_four_platform_wheels(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(_validate_release_dist, "validate_wheel_profile", lambda *_args: None)
+    sdist = tmp_path / "pyneurale-0.1.1.tar.gz"
+    with tarfile.open(sdist, "w:gz") as archive:
+        for name in (
+            "CMakeLists.txt",
+            "LICENSE",
+            "NOTICE.md",
+            "PKG-INFO",
+            "pyproject.toml",
+            "tools/artifacts/artifact_profiles.py",
+        ):
+            info = tarfile.TarInfo(f"pyneurale-0.1.1/{name}")
+            info.size = 1
+            archive.addfile(info, BytesIO(b"x"))
+    for python in ("cp311", "cp312"):
+        for platform in ("win_amd64", "manylinux_2_39_x86_64"):
+            (tmp_path / f"pyneurale-0.1.1-{python}-{python}-{platform}.whl").touch()
+
+    report = _validate_release_dist.validate_release_dist(tmp_path, "0.1.1")
+    assert len(report["wheels"]) == 4
+
+    (tmp_path / "pyneurale-0.1.1-cp312-cp312-manylinux_2_39_x86_64.whl").rename(
+        tmp_path / "pyneurale-0.1.1-cp312-cp312-linux_x86_64.whl"
+    )
+    with pytest.raises(ValueError, match="unsupported wheel tags"):
+        _validate_release_dist.validate_release_dist(tmp_path, "0.1.1")
+
+    with tarfile.open(sdist, "w:gz") as archive:
+        for name in (
+            "CMakeLists.txt",
+            "LICENSE",
+            "NOTICE.md",
+            "PKG-INFO",
+            "pyproject.toml",
+            "tools/artifacts/artifact_profiles.py",
+            "AGENTS.md",
+        ):
+            info = tarfile.TarInfo(f"pyneurale-0.1.1/{name}")
+            info.size = 1
+            archive.addfile(info, BytesIO(b"x"))
+    with pytest.raises(ValueError, match="local build file"):
+        _validate_release_dist.validate_release_dist(tmp_path, "0.1.1")
+
+
+def test_release_sdist_rejects_absolute_symlink(tmp_path: Path) -> None:
+    sdist = tmp_path / "pyneurale-0.1.1.tar.gz"
+    with tarfile.open(sdist, "w:gz") as archive:
+        info = tarfile.TarInfo("pyneurale-0.1.1/bin/python")
+        info.type = tarfile.SYMTYPE
+        info.linkname = "/usr/bin/python3.12"
+        archive.addfile(info)
+
+    with pytest.raises(ValueError, match="sdist contains a link"):
+        _validate_release_dist._validate_sdist(sdist, Version("0.1.1"))
+
+
+def test_required_pytest_rejects_skipped_gpu_test(tmp_path: Path) -> None:
+    report = tmp_path / "gpu.xml"
+    report.write_text(
+        '<testsuites><testsuite tests="31" skipped="0" failures="0" errors="0" /></testsuites>',
+        encoding="utf-8",
+    )
+    assert _validate_required_pytest.validate_required_pytest(report, 31) == (31, 0)
+
+    report.write_text(
+        '<testsuites><testsuite tests="31" skipped="1" failures="0" errors="0" /></testsuites>',
+        encoding="utf-8",
+    )
+    with pytest.raises(ValueError, match="skipped=1"):
+        _validate_required_pytest.validate_required_pytest(report, 31)
 
 
 def test_profile_accepts_lsl_as_optional_dependency(tmp_path: Path) -> None:
@@ -207,6 +320,7 @@ def test_clean_environment_python_path_is_platform_specific(tmp_path: Path) -> N
         ("core", "libc.so.6 libm.so.6 libstdc++.so.6"),
         ("presentation", "opengl32.dll user32.dll x11.dll"),
         ("cuda", "libcuda.so.1 libcudart.so libstdc++.so.6"),
+        ("release", "libcuda.so.1 libiomp5.so libcudart.so libGL.so.1"),
     ],
 )
 def test_shared_library_report_accepts_profile_dependencies(profile: str, report: str) -> None:
@@ -221,6 +335,7 @@ def test_shared_library_report_accepts_profile_dependencies(profile: str, report
         ("presentation", "libharfbuzz.so"),
         ("presentation", "glfw3.dll"),
         ("cuda", "Qt6Core.dll"),
+        ("release", "libharfbuzz.so"),
     ],
 )
 def test_shared_library_report_rejects_cross_profile_dependency(
@@ -296,6 +411,18 @@ def test_linux_binary_reports_are_parsed() -> None:
             ["libstdc++.so.6", "libOpenGL.so.0", "libX11.so.6"],
         ),
         ("_native_cuda", "cuda", "linux", ["libcudart.so.13", "libstdc++.so.6"]),
+        (
+            "_native",
+            "release",
+            "windows",
+            ["python312.dll", "OPENGL32.dll", "libiomp5md.dll"],
+        ),
+        (
+            "_native",
+            "release",
+            "linux",
+            ["libcudart-862020da.so.13.2.86", "libOpenGL-9a0a6024.so.0.0.0"],
+        ),
     ],
 )
 def test_native_binary_contract_accepts_owned_dependencies(
@@ -347,4 +474,26 @@ def test_presentation_binary_rejects_dynamic_font_dependency() -> None:
             platform="linux",
             exports=["PyInit__native"],
             dependencies=["libOpenGL.so.0", "libharfbuzz.so.0"],
+        )
+
+
+def test_release_binary_rejects_unowned_repaired_library() -> None:
+    with pytest.raises(NativeBinaryValidationError, match="outside the release/linux boundary"):
+        validate_binary_contract(
+            module="_native",
+            profile="release",
+            platform="linux",
+            exports=["PyInit__native"],
+            dependencies=["libvendor-9a0a6024.so.1"],
+        )
+
+
+def test_release_cuda_extension_rejects_graphics_dependency() -> None:
+    with pytest.raises(NativeBinaryValidationError, match="outside the release/linux boundary"):
+        validate_binary_contract(
+            module="_native_cuda",
+            profile="release",
+            platform="linux",
+            exports=["PyInit__native_cuda"],
+            dependencies=["libOpenGL-9a0a6024.so.0.0.0"],
         )

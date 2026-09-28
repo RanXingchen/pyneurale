@@ -12,8 +12,14 @@ import importlib.metadata
 import importlib.util
 import json
 import re
+import runpy
 import sys
 from pathlib import Path
+
+# The clean-wheel validator runs this script with -I, which omits tools/ from sys.path.
+_PROFILE_POLICY = runpy.run_path(str(Path(__file__).with_name("artifact_profiles.py")))
+PROFILE_CAPABILITIES = _PROFILE_POLICY["PROFILE_CAPABILITIES"]
+RUNTIME_REQUIREMENTS = _PROFILE_POLICY["RUNTIME_REQUIREMENTS"]
 
 _OPTIONAL_IMPORTS = (
     "OpenGL",
@@ -33,7 +39,6 @@ _OPTIONAL_IMPORTS = (
     "uharfbuzz",
     "zarr",
 )
-_RUNTIME_REQUIREMENTS = frozenset({"numpy", "scipy"})
 
 
 class InstalledArtifactError(RuntimeError):
@@ -120,16 +125,32 @@ def _cuda_contract(profile: str, native: object) -> dict[str, object]:
     cuda = native.cuda.info()
     values = np.array([[0.0], [1.0], [3.0]], dtype=np.float64)
 
-    if profile == "cuda":
+    if "cuda" in PROFILE_CAPABILITIES[profile]:
         _require(cuda["compiled"] is True, "CUDA profile is not compiled with CUDA")
-        _require(cuda["available"] is True, f"CUDA profile is unavailable: {cuda['reason']}")
-        _require(cuda["device_count"] >= 1, "CUDA profile reports no device")
-        with runtime_context(device="cuda"):
-            indices, distances = knn(values, 1)
-        np.testing.assert_array_equal(indices[:, 0], np.array([1, 0, 1]))
-        np.testing.assert_array_equal(distances[:, 0], np.array([1.0, 1.0, 4.0]))
-        _require("neurale._native_cuda" in sys.modules, "explicit CUDA probe did not load CUDA")
-        return {"compiled": True, "available": True, "device_count": cuda["device_count"]}
+        _require(
+            importlib.util.find_spec("neurale._native_cuda") is not None, "CUDA module missing"
+        )
+        if cuda["available"]:
+            _require(cuda["device_count"] >= 1, "CUDA profile reports no device")
+            with runtime_context(device="cuda"):
+                indices, distances = knn(values, 1)
+            np.testing.assert_array_equal(indices[:, 0], np.array([1, 0, 1]))
+            np.testing.assert_array_equal(distances[:, 0], np.array([1.0, 1.0, 4.0]))
+            _require("neurale._native_cuda" in sys.modules, "explicit CUDA probe did not load CUDA")
+        else:
+            _require(profile == "release", f"CUDA profile is unavailable: {cuda['reason']}")
+            try:
+                with runtime_context(device="cuda"):
+                    knn(values, 1)
+            except DeviceUnavailableError:
+                pass
+            else:
+                raise InstalledArtifactError("explicit CUDA request silently executed without CUDA")
+        return {
+            "compiled": True,
+            "available": cuda["available"],
+            "device_count": cuda["device_count"],
+        }
 
     _require(cuda["compiled"] is False, f"{profile} profile unexpectedly compiled CUDA")
     _require(cuda["available"] is False, f"{profile} profile unexpectedly exposes CUDA")
@@ -152,7 +173,7 @@ def _presentation_contract(profile: str) -> dict[str, object]:
         "neurale._native" not in sys.modules,
         "presentation namespace import eagerly loaded the native extension",
     )
-    if profile != "presentation":
+    if "presentation" not in PROFILE_CAPABILITIES[profile]:
         try:
             presentation.dependency_versions()
         except DependencyError as exc:
@@ -181,14 +202,14 @@ def _presentation_contract(profile: str) -> dict[str, object]:
 def validate_installed_artifact(profile: str) -> dict[str, object]:
     """Validate and return machine-readable evidence for an installed profile."""
 
-    if profile not in {"core", "presentation", "cuda"}:
+    if profile not in PROFILE_CAPABILITIES:
         raise InstalledArtifactError(f"unknown artifact profile: {profile!r}")
 
     distribution = importlib.metadata.distribution("pyneurale")
     requirements = _runtime_requirement_names(distribution)
     _require(
-        requirements == _RUNTIME_REQUIREMENTS,
-        f"runtime requirements must be {sorted(_RUNTIME_REQUIREMENTS)}, found {sorted(requirements)}",
+        requirements == RUNTIME_REQUIREMENTS,
+        f"runtime requirements must be {sorted(RUNTIME_REQUIREMENTS)}, found {sorted(requirements)}",
     )
     optional_absent = _assert_optional_dependencies_absent()
 
@@ -232,8 +253,13 @@ def validate_installed_artifact(profile: str) -> dict[str, object]:
     _require(build["abi_version"] == 1, f"unexpected native ABI: {build['abi_version']}")
     _require(bool(build["compiler"]), "native compiler metadata is empty")
     _require(bool(build["build_type"]), "native build type metadata is empty")
-    _require(build["cpu_math_backend"] == "none", "release artifact is not builtin CPU")
-    _require(build["cuda_compiled"] is (profile == "cuda"), "CUDA build metadata mismatch")
+    capabilities = PROFILE_CAPABILITIES[profile]
+    expected_math = "mkl" if "mkl" in capabilities else "none"
+    _require(build["cpu_math_backend"] == expected_math, "CPU math backend mismatch")
+    _require(build["cuda_compiled"] is ("cuda" in capabilities), "CUDA build metadata mismatch")
+    if "mkl" in capabilities:
+        _require(build["blas_available"] is True, "MKL BLAS is unavailable")
+        _require(build["fft_backend"] == "mkl", "MKL FFT is unavailable")
 
     pipeline = neurale.pipeline.compile_pipeline(
         neurale.pipeline.PipelinePlan(
@@ -289,7 +315,7 @@ def validate_installed_artifact(profile: str) -> dict[str, object]:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--profile", choices=("core", "presentation", "cuda"), required=True)
+    parser.add_argument("--profile", choices=sorted(PROFILE_CAPABILITIES), required=True)
     args = parser.parse_args(argv)
     try:
         result = validate_installed_artifact(args.profile)

@@ -10,7 +10,7 @@
 PyNeurale unifies acquisition, signal processing, decoding, experiment control, and data recording in an extensible framework that supports classic BCI paradigms and makes it straightforward to connect new devices through provider adapters or LSL and add new experiments.
 
 [Getting started](docs/getting_started/index.md) ·
-[Support matrix](SUPPORT.md)
+[Support](SUPPORT.md)
 
 ## Experiments
 
@@ -38,11 +38,11 @@ Data and results keep timestamps, channel names, and trial IDs, so you can trace
 | Data and offline analysis | Typed signals, events, trials, features, spikes, models, and spike sorting. |
 | Presentation | Native GLFW/OpenGL windows and input for built-in paradigms, included in the supported desktop wheel profile. |
 
-For exact platform and build support, see the [support matrix](SUPPORT.md).
+For supported platforms and capabilities, see [Support](SUPPORT.md).
 
 ## Install
 
-PyNeurale supports CPython 3.11 and 3.12. For CPU-heavy real-time pipelines, we recommend a oneMKL-enabled build when available. It provides optimized CPU kernels. Broader CUDA support is in development. See [Getting started](docs/getting_started/index.md) and the [support matrix](SUPPORT.md) for more install details.
+PyNeurale supports CPython 3.11 and 3.12. The Windows and Linux x86-64 release wheels include oneMKL, native experiment presentation, and the available CUDA kernels; CUDA acceleration for more algorithms is in development. See [Getting started](docs/getting_started/index.md) and [Support](SUPPORT.md) for details.
 
 ### Install a wheel
 
@@ -52,10 +52,10 @@ Install a compatible wheel from the package index:
 python -m pip install --only-binary=pyneurale "pyneurale[nrf,lsl]"
 ```
 
-The `nrf` and `lsl` extras add recording and LSL dependencies. Supported desktop
-wheel profiles include presentation; headless source builds can omit it. MKL,
-CUDA, and presentation are fixed when a wheel is built, so extras cannot enable
-them later.
+The `nrf` and `lsl` extras add recording and LSL dependencies. Release wheels
+include MKL, CUDA, and presentation; a compatible NVIDIA driver and GPU are
+needed only to use CUDA operations. Headless source builds can omit these
+capabilities. Extras cannot enable them after a wheel is built.
 
 ### Build from source
 

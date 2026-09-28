@@ -140,5 +140,5 @@ installed adapters and SDKs. The existing
 ``NativeFrameSource``/``NativeActuator`` boundary remains the integration point
 for device-specific implementations; their absence does not add a fallback or
 weaken the simulated-device contract. See the
-[release/support matrix](https://github.com/RanXingchen/pyneurale/blob/main/SUPPORT.md)
+[support information](https://github.com/RanXingchen/pyneurale/blob/main/SUPPORT.md)
 for the supported versus unavailable distinction.

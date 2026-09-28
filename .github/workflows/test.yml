@@ -15,7 +15,6 @@ on:
       - "examples/device_providers/**"
       - "pyproject.toml"
       - "pytest.ini"
-      - "SUPPORT.md"
   workflow_dispatch:
 
 permissions:
@@ -27,7 +26,7 @@ concurrency:
 
 jobs:
   release-matrix-contract:
-    name: Frozen release matrix contract
+    name: Package metadata contract
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
@@ -37,7 +36,6 @@ jobs:
       - name: Verify packaging and unavailable optional domains
         run: |
           python - <<'PY'
-          import re
           import tomllib
           from pathlib import Path
 
@@ -54,37 +52,6 @@ jobs:
           extras = project.get("optional-dependencies", {})
           assert set(extras) == {"nrf", "test", "docs", "dev", "lsl"}
           assert not Path("src/neurale/visualization").exists()
-
-          def normalize(cell: str) -> str:
-              return " ".join(cell.replace("**", "").replace("`", "").split()).casefold()
-
-          rows: dict[str, list[tuple[str, ...]]] = {}
-          for line in Path("SUPPORT.md").read_text(encoding="utf-8").splitlines():
-              if not line.lstrip().startswith("|"):
-                  continue
-              cells = tuple(cell.strip() for cell in line.strip().strip("|").split("|"))
-              if len(cells) < 3 or all(re.fullmatch(r":?-+:?", cell.replace(" ", "")) for cell in cells):
-                  continue
-              rows.setdefault(normalize(cells[0]), []).append(cells)
-
-          def require(area: str, status: str, *contract_terms: str) -> None:
-              matches = rows.get(normalize(area), [])
-              assert len(matches) == 1, (area, matches)
-              row = matches[0]
-              assert normalize(row[1]) == normalize(status), row
-              contract = normalize(row[2])
-              for term in contract_terms:
-                  assert normalize(term) in contract, (term, row)
-
-          require("Python", "Supported", "CPython", "3.11", "3.12")
-          require("Linux", "Supported", "Ubuntu 24.04", "x86-64", "GCC 13.3", "C++20")
-          require("Windows", "Supported", "Windows 11", "x86-64", "MSVC 19.51", "C++20")
-          require("Builtin CPU provider", "Supported", "MKL OFF", "CUDA OFF")
-          require("oneMKL", "Supported", "MKL ON", "LP64")
-          require("CUDA kernels", "Experimental")
-          require("Windows 11 x86-64 desktop OpenGL", "Supported", "OpenGL 3.3")
-          require("Ubuntu 24.04 x86-64 X11/Xvfb with Mesa", "Supported")
-          require("Visualization package", "Unavailable", "M10 has not passed")
           PY
 
   python-only:
@@ -148,12 +115,12 @@ jobs:
           auditwheel show dist/*.whl 2>&1 | tee build/wheel-evidence/core-audit.txt
       - name: Inspect core extension exports and direct dependencies
         run: >-
-          python tools/validate_native_binary.py --profile core --wheel-dir dist
+          python tools/artifacts/validate_native_binary.py --profile core --wheel-dir dist
           --audit-report build/wheel-evidence/core-audit.txt
           --report build/wheel-evidence/core-native-binary.json
       - name: Test core wheel in a clean environment
         run: >-
-          python tools/validate_clean_wheel.py --profile core --wheel-dir dist
+          python tools/artifacts/validate_clean_wheel.py --profile core --wheel-dir dist
           --report build/wheel-evidence/core-clean.json
       # The NRF v1 schemas are installed into the wheel straight from
       # specifications/nrf/v1, which is the only tracked copy. A build that
@@ -174,7 +141,7 @@ jobs:
       - name: Validate external device paths
         run: |
           python -m pip install "pylsl>=1.17,<2"
-          python tools/validate_device_providers.py
+          python tools/artifacts/validate_device_providers.py
           python -m pytest tests/unit/devices
       - name: Verify installed native extension
         run: python -c "import neurale._native as native; print(native.build_info())"
@@ -255,12 +222,12 @@ jobs:
           auditwheel show dist/*.whl 2>&1 | tee build/wheel-evidence/sdist-core-audit.txt
       - name: Inspect sdist-built extension exports and direct dependencies
         run: >-
-          python tools/validate_native_binary.py --profile core --wheel-dir dist
+          python tools/artifacts/validate_native_binary.py --profile core --wheel-dir dist
           --audit-report build/wheel-evidence/sdist-core-audit.txt
           --report build/wheel-evidence/sdist-core-native-binary.json
       - name: Test sdist-built wheel in a clean environment
         run: >-
-          python tools/validate_clean_wheel.py --profile core --wheel-dir dist
+          python tools/artifacts/validate_clean_wheel.py --profile core --wheel-dir dist
           --report build/wheel-evidence/sdist-core-clean.json
       - name: Install the wheel with test dependencies
         run: python -m pip install "$(ls dist/*.whl)[test]"
@@ -305,12 +272,12 @@ jobs:
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - name: Inspect core extension exports and direct dependencies
         run: >-
-          python tools/validate_native_binary.py --profile core --wheel-dir dist
+          python tools/artifacts/validate_native_binary.py --profile core --wheel-dir dist
           --audit-report build/wheel-evidence/core-audit.txt
           --report build/wheel-evidence/core-native-binary.json
       - name: Test core wheel in a clean environment
         run: >-
-          python tools/validate_clean_wheel.py --profile core --wheel-dir dist
+          python tools/artifacts/validate_clean_wheel.py --profile core --wheel-dir dist
           --report build/wheel-evidence/core-clean.json
       - name: Install built wheel with test dependencies
         run: python -m pip install "$((Get-ChildItem dist/*.whl)[0].FullName)[test]"
@@ -319,7 +286,7 @@ jobs:
       - name: Build standalone device packages against the installed wheel
         run: python -m pip install --no-build-isolation examples/device_providers/pull examples/device_providers/callback examples/device_providers/python
       - name: Validate external device paths
-        run: python tools/validate_device_providers.py
+        run: python tools/artifacts/validate_device_providers.py
       - name: Test device contracts
         run: |
           python -m pip install "pylsl>=1.17,<2"
@@ -360,12 +327,12 @@ jobs:
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - name: Inspect presentation extension exports and direct dependencies
         run: >-
-          python tools/validate_native_binary.py --profile presentation --wheel-dir dist
+          python tools/artifacts/validate_native_binary.py --profile presentation --wheel-dir dist
           --audit-report build/wheel-evidence/presentation-audit.txt
           --report build/wheel-evidence/presentation-native-binary.json
       - name: Test presentation wheel in a clean environment
         run: >-
-          python tools/validate_clean_wheel.py --profile presentation --wheel-dir dist
+          python tools/artifacts/validate_clean_wheel.py --profile presentation --wheel-dir dist
           --report build/wheel-evidence/presentation-clean.json
       - name: Install presentation-enabled wheel
         run: >-
@@ -463,7 +430,7 @@ jobs:
       - name: Build presentation-enabled wheel
         run: python -m pip wheel . --no-deps --wheel-dir dist
       - name: Test system-dependency presentation wheel in a clean environment
-        run: python tools/validate_clean_wheel.py --profile presentation --wheel-dir dist
+        run: python tools/artifacts/validate_clean_wheel.py --profile presentation --wheel-dir dist
       - name: Install presentation-enabled wheel
         run: python -m pip install "$(ls dist/*.whl)[test]"
       - name: Verify optional native module and lightweight core imports
@@ -528,7 +495,7 @@ jobs:
         run: python -m pip wheel . --no-deps --wheel-dir dist
       - name: Test bundled presentation wheel in a clean environment
         run: >-
-          python tools/validate_clean_wheel.py --profile presentation --wheel-dir dist
+          python tools/artifacts/validate_clean_wheel.py --profile presentation --wheel-dir dist
           --report build/presentation-clean.json
       - name: Install presentation-enabled wheel
         run: python -m pip install "$(ls dist/*.whl)[test]"
@@ -537,7 +504,7 @@ jobs:
           auditwheel show dist/*.whl 2>&1 | tee build/presentation-audit.txt
       - name: Inspect bundled extension exports and direct dependencies
         run: >-
-          python tools/validate_native_binary.py --profile presentation --wheel-dir dist
+          python tools/artifacts/validate_native_binary.py --profile presentation --wheel-dir dist
           --audit-report build/presentation-audit.txt
           --report build/presentation-native-binary.json
       - name: Verify optional native module and lightweight core imports

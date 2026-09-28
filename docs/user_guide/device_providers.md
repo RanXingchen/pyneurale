@@ -136,7 +136,7 @@ isolates the GIL, but does not guarantee deadlines inside a Python SDK or driver
 
 ## Validation
 
-Run `tools/validate_device_providers.py` in an environment containing an installed
+Run `tools/artifacts/validate_device_providers.py` in an environment containing an installed
 PyNeurale wheel and the three separately built example packages. It exercises
 public realtime runners, repeated sessions, checks exact values and ordered
 events through a research sink, and prints timings for each path. The timings

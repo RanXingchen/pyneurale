@@ -5,8 +5,8 @@ Notable public release changes are recorded in this file.
 ## Unreleased
 
 Initial public preview. PyNeurale is pre-alpha; public APIs may change before
-the first stable release. See [SUPPORT.md](SUPPORT.md) for the current platform
-and build support matrix.
+the first stable release. See [SUPPORT.md](SUPPORT.md) for supported platforms
+and capabilities.
 
 ### Added
 

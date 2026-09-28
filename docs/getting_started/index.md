@@ -4,8 +4,8 @@
 
 Use CPython 3.11 or 3.12 in a virtual environment. A source build requires a
 C++20 compiler and CMake. See the repository-root
-[support matrix](https://github.com/RanXingchen/pyneurale/blob/main/SUPPORT.md)
-for supported platforms and build profiles.
+[support information](https://github.com/RanXingchen/pyneurale/blob/main/SUPPORT.md)
+for supported platforms and capabilities.
 
 Clone the repository and create a virtual environment in its root:
 

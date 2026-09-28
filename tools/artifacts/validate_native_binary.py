@@ -16,40 +16,14 @@ import tempfile
 import zipfile
 from pathlib import Path
 
-_PROFILE_MODULES = {
-    "core": frozenset({"_native"}),
-    "presentation": frozenset({"_native"}),
-    "cuda": frozenset({"_native", "_native_cuda"}),
-}
-_FORBIDDEN_AUDIT_DEPENDENCIES = {
-    "core": (
-        "cudart",
-        "freetype",
-        "glfw",
-        "harfbuzz",
-        "iomp",
-        "libcuda",
-        "mkl",
-        "nvcuda",
-        "nvrtc",
-        "qt5",
-        "qt6",
-    ),
-    "presentation": (
-        "cudart",
-        "freetype",
-        "glfw",
-        "harfbuzz",
-        "iomp",
-        "libcuda",
-        "mkl",
-        "nvcuda",
-        "nvrtc",
-        "qt5",
-        "qt6",
-    ),
-    "cuda": ("freetype", "glfw", "harfbuzz", "iomp", "mkl", "qt5", "qt6"),
-}
+if __package__:
+    from .artifact_profiles import PROFILE_CAPABILITIES, PROFILE_MODULES
+else:
+    from artifact_profiles import PROFILE_CAPABILITIES, PROFILE_MODULES
+
+_BUNDLED_PRESENTATION_DEPENDENCIES = ("freetype", "glfw", "harfbuzz", "qt5", "qt6")
+_CUDA_DEPENDENCIES = ("cudart", "libcuda", "nvcuda", "nvrtc")
+_MKL_DEPENDENCIES = ("iomp", "mkl")
 _BINARY_SUFFIXES = (".pyd", ".so")
 _ELF_HOUSEKEEPING_EXPORTS = frozenset({"__bss_start", "_edata", "_end"})
 
@@ -80,6 +54,7 @@ _WINDOWS_PRESENTATION_DEPENDENCIES = (
     r"ws2_32\.dll",
 )
 _WINDOWS_CUDA_DEPENDENCIES = (r"cudart64_\d+\.dll",)
+_WINDOWS_MKL_DEPENDENCIES = (r"libiomp5md\.dll",)
 
 _LINUX_CORE_DEPENDENCIES = (
     r"ld-linux-[a-z0-9_.-]+\.so(?:\.\d+)*",
@@ -113,6 +88,7 @@ _LINUX_PRESENTATION_DEPENDENCIES = (
     r"libxrender\.so(?:\.\d+)*",
 )
 _LINUX_CUDA_DEPENDENCIES = (r"libcudart\.so(?:\.\d+)*",)
+_LINUX_MKL_DEPENDENCIES = (r"libiomp5(?:-[a-f0-9]+)?\.so(?:\.\d+)*",)
 
 
 class NativeBinaryValidationError(RuntimeError):
@@ -122,9 +98,14 @@ class NativeBinaryValidationError(RuntimeError):
 def validate_audit_report(report: str, profile: str) -> None:
     """Reject cross-profile dependencies in an auditwheel/delvewheel report."""
 
-    forbidden = _FORBIDDEN_AUDIT_DEPENDENCIES.get(profile)
-    if forbidden is None:
+    capabilities = PROFILE_CAPABILITIES.get(profile)
+    if capabilities is None:
         raise NativeBinaryValidationError(f"unknown artifact profile: {profile!r}")
+    forbidden = list(_BUNDLED_PRESENTATION_DEPENDENCIES)
+    if "cuda" not in capabilities:
+        forbidden.extend(_CUDA_DEPENDENCIES)
+    if "mkl" not in capabilities:
+        forbidden.extend(_MKL_DEPENDENCIES)
     lowered = report.casefold()
     found = [token for token in forbidden if token in lowered]
     if found:
@@ -147,13 +128,14 @@ def validate_binary_contract(
 ) -> None:
     """Validate one already-inspected extension module."""
 
-    expected_modules = _PROFILE_MODULES.get(profile)
+    expected_modules = PROFILE_MODULES.get(profile)
     if expected_modules is None:
         raise NativeBinaryValidationError(f"unknown artifact profile: {profile!r}")
     if module not in expected_modules:
         raise NativeBinaryValidationError(
             f"{module} does not belong to the {profile} artifact profile"
         )
+    capabilities = PROFILE_CAPABILITIES[profile]
 
     expected_export = f"PyInit_{module}"
     allowed_exports = {expected_export}
@@ -169,21 +151,30 @@ def validate_binary_contract(
 
     if platform == "windows":
         allowed_dependencies = list(_WINDOWS_CORE_DEPENDENCIES)
-        if profile == "presentation":
+        if "presentation" in capabilities and module == "_native":
             allowed_dependencies.extend(_WINDOWS_PRESENTATION_DEPENDENCIES)
-        if profile == "cuda":
+        if "cuda" in capabilities:
             allowed_dependencies.extend(_WINDOWS_CUDA_DEPENDENCIES)
+        if "mkl" in capabilities and module == "_native":
+            allowed_dependencies.extend(_WINDOWS_MKL_DEPENDENCIES)
     else:
         allowed_dependencies = list(_LINUX_CORE_DEPENDENCIES)
-        if profile == "presentation":
+        if "presentation" in capabilities and module == "_native":
             allowed_dependencies.extend(_LINUX_PRESENTATION_DEPENDENCIES)
-        if profile == "cuda":
+        if "cuda" in capabilities:
             allowed_dependencies.extend(_LINUX_CUDA_DEPENDENCIES)
+        if "mkl" in capabilities and module == "_native":
+            allowed_dependencies.extend(_LINUX_MKL_DEPENDENCIES)
 
     unexpected_dependencies = sorted(
         dependency
         for dependency in set(dependencies)
-        if not _matches_any(Path(dependency).name.casefold(), tuple(allowed_dependencies))
+        if not _matches_any(
+            re.sub(r"-[a-f0-9]{8}(?=\.so)", "", Path(dependency).name.casefold())
+            if "mkl" in capabilities and platform == "linux"
+            else Path(dependency).name.casefold(),
+            tuple(allowed_dependencies),
+        )
     )
     if unexpected_dependencies:
         raise NativeBinaryValidationError(
@@ -307,7 +298,7 @@ def _select_wheel(wheel: Path | None, wheel_dir: Path | None) -> Path:
 def inspect_wheel(wheel: Path, profile: str, platform: str) -> dict[str, object]:
     """Inspect all expected native modules in one wheel."""
 
-    expected = _PROFILE_MODULES.get(profile)
+    expected = PROFILE_MODULES.get(profile)
     if expected is None:
         raise NativeBinaryValidationError(f"unknown artifact profile: {profile!r}")
 
@@ -363,7 +354,7 @@ def inspect_wheel(wheel: Path, profile: str, platform: str) -> dict[str, object]
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--profile", choices=sorted(_PROFILE_MODULES), required=True)
+    parser.add_argument("--profile", choices=sorted(PROFILE_MODULES), required=True)
     source = parser.add_mutually_exclusive_group(required=True)
     source.add_argument("--wheel", type=Path)
     source.add_argument("--wheel-dir", type=Path)

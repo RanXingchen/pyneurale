@@ -207,9 +207,9 @@ at explicit execution boundaries.
   when requested.
 
 The repository-root
-[support matrix](https://github.com/RanXingchen/pyneurale/blob/main/SUPPORT.md)
-is the normative source for supported, tested, experimental, and unavailable
-artifact profiles. The current package does not provide physical/vendor device
+[support information](https://github.com/RanXingchen/pyneurale/blob/main/SUPPORT.md)
+summarizes supported platforms and capabilities. The current package does not
+provide physical/vendor device
 adapters, a scientific visualization package, user-defined realtime Python
 nodes, or an installed C++ SDK. The device-provider C ABI is the external
 plugin boundary; the C++ pipeline adapters remain private.

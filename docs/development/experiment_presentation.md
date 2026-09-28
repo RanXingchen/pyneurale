@@ -486,8 +486,8 @@ there is no generic presenter or renderer base class.
 
 Release support is narrower than successful dependency discovery. The current
 supported presentation profiles are Windows 11 x86-64 desktop OpenGL and
-Ubuntu 24.04 x86-64 X11/Xvfb with Mesa, as frozen in the repository-root
-[release/support matrix](https://github.com/RanXingchen/pyneurale/blob/main/SUPPORT.md).
+Ubuntu 24.04 x86-64 X11/Xvfb with Mesa, as summarized in the repository-root
+[support information](https://github.com/RanXingchen/pyneurale/blob/main/SUPPORT.md).
 Native Wayland, macOS/Cocoa, other window systems/GPUs, and physical display
 onset measurement are unavailable without executed release evidence.
 

@@ -16,10 +16,11 @@ threshold_spike_detection
 trial_alignment_contract
 valley_seeking_reference
 validation_matrix
+release
 ```
 
-For supported artifact profiles, see the repository-root
-[support matrix](https://github.com/RanXingchen/pyneurale/blob/main/SUPPORT.md).
+For supported platforms and capabilities, see the repository-root
+[support information](https://github.com/RanXingchen/pyneurale/blob/main/SUPPORT.md).
 
 ## Build locally
 

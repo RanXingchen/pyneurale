@@ -84,7 +84,7 @@ jobs:
       - name: Build CPU wheel
         run: python -m pip wheel . --no-deps --wheel-dir dist
       - name: Test core wheel in a clean environment
-        run: python tools/validate_clean_wheel.py --profile core --wheel-dir dist
+        run: python tools/artifacts/validate_clean_wheel.py --profile core --wheel-dir dist
       - name: Install built wheel
         run: >-
           python -c "from pathlib import Path; import subprocess,sys;

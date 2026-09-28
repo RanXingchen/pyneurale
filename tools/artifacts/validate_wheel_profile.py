@@ -12,7 +12,11 @@ import zipfile
 from email.parser import BytesParser
 from pathlib import Path, PurePosixPath
 
-_RUNTIME_REQUIREMENTS = frozenset({"numpy", "scipy"})
+if __package__:
+    from .artifact_profiles import PROFILE_MODULES, RUNTIME_REQUIREMENTS
+else:
+    from artifact_profiles import PROFILE_MODULES, RUNTIME_REQUIREMENTS
+
 _DECLARED_EXTRAS = frozenset({"dev", "docs", "lsl", "nrf", "test"})
 _FORBIDDEN_CAPABILITY_EXTRAS = frozenset(
     {
@@ -38,11 +42,6 @@ _FORBIDDEN_RUNTIME_REQUIREMENTS = frozenset(
         "uharfbuzz",
     }
 )
-_PROFILE_MODULES = {
-    "core": frozenset({"_native"}),
-    "presentation": frozenset({"_native"}),
-    "cuda": frozenset({"_native", "_native_cuda"}),
-}
 
 
 class WheelProfileError(ValueError):
@@ -75,7 +74,7 @@ def _native_modules(names: list[str]) -> frozenset[str]:
 def validate_wheel_profile(wheel: Path, profile: str) -> None:
     """Raise ``WheelProfileError`` unless *wheel* matches *profile*."""
 
-    if profile not in _PROFILE_MODULES:
+    if profile not in PROFILE_MODULES:
         raise WheelProfileError(f"unknown wheel profile: {profile!r}")
     if not wheel.is_file():
         raise WheelProfileError(f"wheel does not exist: {wheel}")
@@ -95,12 +94,34 @@ def validate_wheel_profile(wheel: Path, profile: str) -> None:
         raise WheelProfileError(f"unexpected distribution name: {distribution!r}")
 
     modules = _native_modules(names)
-    expected_modules = _PROFILE_MODULES[profile]
+    expected_modules = PROFILE_MODULES[profile]
     if modules != expected_modules:
         raise WheelProfileError(
             f"{profile} profile requires native modules {sorted(expected_modules)}, "
             f"found {sorted(modules)}"
         )
+    if profile == "release" and wheel.name.endswith("-win_amd64.whl"):
+        openmp_copies = [
+            name
+            for name in names
+            if re.fullmatch(r"libiomp5md(?:-[0-9a-f]+)?\.dll", Path(name).name.lower())
+        ]
+        if len(openmp_copies) != 1:
+            raise WheelProfileError(
+                f"release Windows wheel requires one Intel OpenMP runtime, found {len(openmp_copies)}"
+            )
+    if profile == "release" and "-manylinux_" in wheel.name:
+        bundled = [Path(name).name.lower() for name in names if name.startswith("pyneurale.libs/")]
+        for runtime in ("libiomp5", "libcudart"):
+            copies = [
+                name
+                for name in bundled
+                if re.fullmatch(rf"{runtime}-[0-9a-f]+\.so(?:\.\d+)*", name)
+            ]
+            if len(copies) != 1:
+                raise WheelProfileError(
+                    f"release Linux wheel requires one bundled {runtime} runtime, found {len(copies)}"
+                )
 
     requirements = metadata.get_all("Requires-Dist", [])
     runtime_requirements = frozenset(
@@ -113,9 +134,9 @@ def validate_wheel_profile(wheel: Path, profile: str) -> None:
         raise WheelProfileError(
             "forbidden core runtime requirements: " + ", ".join(sorted(forbidden_requirements))
         )
-    if runtime_requirements != _RUNTIME_REQUIREMENTS:
+    if runtime_requirements != RUNTIME_REQUIREMENTS:
         raise WheelProfileError(
-            f"runtime requirements must be {sorted(_RUNTIME_REQUIREMENTS)}, "
+            f"runtime requirements must be {sorted(RUNTIME_REQUIREMENTS)}, "
             f"found {sorted(runtime_requirements)}"
         )
 
@@ -155,7 +176,7 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("wheel", nargs="?", type=Path)
     parser.add_argument("--wheel-dir", type=Path)
-    parser.add_argument("--profile", choices=sorted(_PROFILE_MODULES), required=True)
+    parser.add_argument("--profile", choices=sorted(PROFILE_MODULES), required=True)
     args = parser.parse_args(argv)
     try:
         wheel = _select_wheel(args.wheel, args.wheel_dir)

@@ -20,5 +20,15 @@ fallback versions below from source; system package versions may differ.
   https://github.com/harfbuzz/harfbuzz/blob/14.3.1/COPYING
 
 An MKL-enabled native build statically links Intel oneMKL under the Intel
-Simplified Software License. Intel OpenMP may also be required at runtime.
+Simplified Software License. Release wheels also bundle the Intel OpenMP runtime.
 https://www.intel.com/content/www/us/en/developer/articles/tool/onemkl-license-faq.html
+
+CUDA-enabled Linux wheels bundle the CUDA runtime (`libcudart`), governed by
+the NVIDIA CUDA Toolkit license. The NVIDIA driver is not bundled.
+https://docs.nvidia.com/cuda/eula/
+
+Linux wheel repair may bundle the GLVND OpenGL dispatcher libraries; Windows
+wheel repair may bundle Microsoft Visual C++ runtime libraries. These retain
+their respective third-party terms.
+https://github.com/NVIDIA/libglvnd/blob/master/README.md
+https://learn.microsoft.com/en-us/visualstudio/releases/2026/redistribution
