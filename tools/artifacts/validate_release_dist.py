@@ -11,6 +11,7 @@ import sys
 import tarfile
 from pathlib import Path, PurePosixPath
 
+from artifact_profiles import LICENSE_FILES
 from packaging.utils import parse_sdist_filename, parse_wheel_filename
 from packaging.version import Version
 from validate_wheel_profile import validate_wheel_profile
@@ -25,12 +26,10 @@ def _validate_sdist(sdist: Path, version: Version) -> None:
     root = f"pyneurale-{version}"
     required = {
         "CMakeLists.txt",
-        "LICENSE",
-        "NOTICE.md",
         "PKG-INFO",
         "pyproject.toml",
         "tools/artifacts/artifact_profiles.py",
-    }
+    } | LICENSE_FILES
     found: set[str] = set()
     with tarfile.open(sdist, "r:gz") as archive:
         for member in archive:

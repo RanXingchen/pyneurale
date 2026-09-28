@@ -14,3 +14,10 @@ PROFILE_MODULES = {
     for profile, capabilities in PROFILE_CAPABILITIES.items()
 }
 RUNTIME_REQUIREMENTS = frozenset({"numpy", "scipy"})
+LICENSE_FILES = frozenset(
+    {
+        "LICENSE",
+        "NOTICE.md",
+        "LICENSES_bundled.txt",
+    }
+)

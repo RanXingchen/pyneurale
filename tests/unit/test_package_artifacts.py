@@ -32,6 +32,7 @@ _validate_clean_wheel = _load_tool("validate_clean_wheel")
 _validate_installed_artifact = _load_tool("validate_installed_artifact")
 _validate_release_dist = _load_tool("validate_release_dist")
 _validate_required_pytest = _load_tool("validate_required_pytest")
+LICENSE_FILES = _load_tool("artifact_profiles").LICENSE_FILES
 
 _clean_environment = _validate_clean_wheel._clean_environment
 _venv_python = _validate_clean_wheel._venv_python
@@ -59,6 +60,7 @@ def _write_wheel(
     modules: tuple[str, ...],
     requirements: tuple[str, ...] = ("numpy>=1.23", "scipy>=1.9"),
     extras: tuple[str, ...] = _EXTRAS,
+    include_licenses: bool = True,
 ) -> Path:
     metadata = [
         "Metadata-Version: 2.3",
@@ -71,6 +73,9 @@ def _write_wheel(
     ]
     with zipfile.ZipFile(path, "w") as archive:
         archive.writestr("pyneurale-1.0.dist-info/METADATA", "\n".join(metadata))
+        if include_licenses:
+            for license_file in LICENSE_FILES:
+                archive.writestr(f"pyneurale-1.0.dist-info/licenses/{license_file}", b"x")
         for module in modules:
             archive.writestr(f"neurale/{module}.cpython-312-x86_64-linux-gnu.so", b"")
     return path
@@ -112,6 +117,25 @@ def test_bundled_presentation_disables_optional_freetype_dependencies() -> None:
         assert f'set(FT_DISABLE_{option} ON CACHE BOOL "" FORCE)' in dependencies
 
 
+def test_bundled_license_texts_cover_native_dependencies() -> None:
+    bundle = (_ROOT / "LICENSES_bundled.txt").read_text(encoding="utf-8")
+    sections = bundle.split("\n===== ")[1:]
+    names = {section.partition(" =====")[0] for section in sections}
+
+    assert names == {
+        "pybind11-LICENSE",
+        "GLFW-LICENSE.md",
+        "FreeType-FTL.TXT",
+        "HarfBuzz-COPYING",
+        "Intel-oneMKL-license.txt",
+        "Intel-oneMKL-2026.0-third-party-programs.txt",
+        "Intel-oneMKL-2026.1-third-party-programs.txt",
+        "Intel-OpenMP-third-party-programs.txt",
+        "Intel-oneAPI-EULA.htm",
+    }
+    assert all("\nSource: " in section and len(section) > 200 for section in sections)
+
+
 @pytest.mark.parametrize(
     ("profile", "modules"),
     [
@@ -138,6 +162,15 @@ def test_profile_rejects_unexpected_native_module(tmp_path: Path) -> None:
     )
 
     with pytest.raises(WheelProfileError, match="core profile requires native modules"):
+        validate_wheel_profile(wheel, "core")
+
+
+def test_profile_requires_third_party_license_texts(tmp_path: Path) -> None:
+    wheel = _write_wheel(
+        tmp_path / "pyneurale.whl", modules=("_native",), include_licenses=False
+    )
+
+    with pytest.raises(WheelProfileError, match="wheel is missing license files"):
         validate_wheel_profile(wheel, "core")
 
 
@@ -181,11 +214,10 @@ def test_release_dist_requires_exactly_four_platform_wheels(
     with tarfile.open(sdist, "w:gz") as archive:
         for name in (
             "CMakeLists.txt",
-            "LICENSE",
-            "NOTICE.md",
             "PKG-INFO",
             "pyproject.toml",
             "tools/artifacts/artifact_profiles.py",
+            *sorted(LICENSE_FILES),
         ):
             info = tarfile.TarInfo(f"pyneurale-0.1.1/{name}")
             info.size = 1
@@ -206,11 +238,10 @@ def test_release_dist_requires_exactly_four_platform_wheels(
     with tarfile.open(sdist, "w:gz") as archive:
         for name in (
             "CMakeLists.txt",
-            "LICENSE",
-            "NOTICE.md",
             "PKG-INFO",
             "pyproject.toml",
             "tools/artifacts/artifact_profiles.py",
+            *sorted(LICENSE_FILES),
             "AGENTS.md",
         ):
             info = tarfile.TarInfo(f"pyneurale-0.1.1/{name}")
@@ -218,6 +249,24 @@ def test_release_dist_requires_exactly_four_platform_wheels(
             archive.addfile(info, BytesIO(b"x"))
     with pytest.raises(ValueError, match="local build file"):
         _validate_release_dist.validate_release_dist(tmp_path, "0.1.1")
+
+
+def test_release_sdist_requires_third_party_license_texts(tmp_path: Path) -> None:
+    sdist = tmp_path / "pyneurale-0.1.1.tar.gz"
+    with tarfile.open(sdist, "w:gz") as archive:
+        for name in (
+            "CMakeLists.txt",
+            "PKG-INFO",
+            "pyproject.toml",
+            "tools/artifacts/artifact_profiles.py",
+            *(LICENSE_FILES - {"LICENSES_bundled.txt"}),
+        ):
+            info = tarfile.TarInfo(f"pyneurale-0.1.1/{name}")
+            info.size = 1
+            archive.addfile(info, BytesIO(b"x"))
+
+    with pytest.raises(ValueError, match=r"LICENSES_bundled\.txt"):
+        _validate_release_dist._validate_sdist(sdist, Version("0.1.1"))
 
 
 def test_release_sdist_rejects_absolute_symlink(tmp_path: Path) -> None:

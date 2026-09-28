@@ -13,9 +13,9 @@ from email.parser import BytesParser
 from pathlib import Path, PurePosixPath
 
 if __package__:
-    from .artifact_profiles import PROFILE_MODULES, RUNTIME_REQUIREMENTS
+    from .artifact_profiles import LICENSE_FILES, PROFILE_MODULES, RUNTIME_REQUIREMENTS
 else:
-    from artifact_profiles import PROFILE_MODULES, RUNTIME_REQUIREMENTS
+    from artifact_profiles import LICENSE_FILES, PROFILE_MODULES, RUNTIME_REQUIREMENTS
 
 _DECLARED_EXTRAS = frozenset({"dev", "docs", "lsl", "nrf", "test"})
 _FORBIDDEN_CAPABILITY_EXTRAS = frozenset(
@@ -86,6 +86,14 @@ def validate_wheel_profile(wheel: Path, profile: str) -> None:
             if len(metadata_paths) != 1:
                 raise WheelProfileError("wheel must contain exactly one .dist-info/METADATA file")
             metadata = BytesParser().parsebytes(archive.read(metadata_paths[0]))
+            license_root = metadata_paths[0].removesuffix("METADATA") + "licenses/"
+            bundled_licenses = {
+                name.removeprefix(license_root)
+                for name in names
+                if name.startswith(license_root)
+            }
+            if missing := LICENSE_FILES - bundled_licenses:
+                raise WheelProfileError(f"wheel is missing license files: {sorted(missing)}")
     except zipfile.BadZipFile as exc:
         raise WheelProfileError(f"invalid wheel archive: {wheel}") from exc
 

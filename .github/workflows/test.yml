@@ -42,7 +42,7 @@ jobs:
           project = tomllib.loads(Path("pyproject.toml").read_text(encoding="utf-8"))["project"]
           assert project["requires-python"] == ">=3.11,<3.13"
           assert project["license"] == "MIT"
-          assert project["license-files"] == ["LICENSE", "NOTICE.md"]
+          assert project["license-files"] == ["LICENSE", "NOTICE.md", "LICENSES_bundled.txt"]
           assert not any(item.startswith("License ::") for item in project["classifiers"])
           classifiers = set(project["classifiers"])
           assert "Programming Language :: Python :: 3.11" in classifiers

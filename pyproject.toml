@@ -18,7 +18,7 @@ dependencies = [
     "scipy>=1.9",
 ]
 license = "MIT"
-license-files = ["LICENSE", "NOTICE.md"]
+license-files = ["LICENSE", "NOTICE.md", "LICENSES_bundled.txt"]
 authors = [
     { name = "Xingchen Ran", email = "xcran@cqu.edu.cn" },
 ]
