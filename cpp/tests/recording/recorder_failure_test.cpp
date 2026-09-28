@@ -1419,22 +1419,34 @@ int test_reclamation_is_deferred_under_producer()
     const auto start = std::chrono::steady_clock::now();
     const auto stopped = recorder.stop("shutdown past its bound");
     const auto elapsed = std::chrono::steady_clock::now() - start;
+    // Under sanitizers the worker can outlive both 1 us shutdown waits. In
+    // that case close() retires the queues once the worker exits; the producer
+    // must still be holding its claim so it performs the final release.
+    const auto worker_deadline = std::chrono::steady_clock::now() + std::chrono::seconds(5);
+    while (recorder.status().worker_running && std::chrono::steady_clock::now() < worker_deadline)
+    {
+        std::this_thread::yield();
+    }
+    const bool worker_stopped = !recorder.status().worker_running;
+    const auto closed = worker_stopped ? recorder.close() : RecorderStatusCode::drain_timed_out;
     const auto during = recorder.status();
 
     release_producer.store(true, std::memory_order_release);
     release_producer.notify_all();
     producer.join();
-    CHECK(producer_returned.load(std::memory_order_acquire));
 
     CHECK(stopped == RecorderStatusCode::drain_timed_out);
     // Bounded, even though a producer is still inside the recorder.
     CHECK(elapsed < std::chrono::seconds(5));
+    CHECK(worker_stopped);
+    CHECK(closed == RecorderStatusCode::ok);
     CHECK(during.queue_storage_release_deferred);
-    // The storage the producer is writing into was *not* freed. Under ASan the
-    // producer's memcpy is what would have reported it if it had been.
+    // The storage the producer was writing into was *not* freed. Under ASan
+    // the producer's memcpy is what would have reported it if it had been.
     CHECK(!during.queue_storage_released);
+    CHECK(producer_returned.load(std::memory_order_acquire));
 
-    // The last one out did the free, without the shutdown ever waiting for it.
+    // The last producer frees the retired queues without waiting for it in close().
     const auto after = recorder.status();
     CHECK(after.queue_storage_released);
     CHECK(after.queue_storage_release_deferred);
