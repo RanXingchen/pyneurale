@@ -88,9 +88,7 @@ def validate_wheel_profile(wheel: Path, profile: str) -> None:
             metadata = BytesParser().parsebytes(archive.read(metadata_paths[0]))
             license_root = metadata_paths[0].removesuffix("METADATA") + "licenses/"
             bundled_licenses = {
-                name.removeprefix(license_root)
-                for name in names
-                if name.startswith(license_root)
+                name.removeprefix(license_root) for name in names if name.startswith(license_root)
             }
             if missing := LICENSE_FILES - bundled_licenses:
                 raise WheelProfileError(f"wheel is missing license files: {sorted(missing)}")

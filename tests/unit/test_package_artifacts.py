@@ -166,9 +166,7 @@ def test_profile_rejects_unexpected_native_module(tmp_path: Path) -> None:
 
 
 def test_profile_requires_third_party_license_texts(tmp_path: Path) -> None:
-    wheel = _write_wheel(
-        tmp_path / "pyneurale.whl", modules=("_native",), include_licenses=False
-    )
+    wheel = _write_wheel(tmp_path / "pyneurale.whl", modules=("_native",), include_licenses=False)
 
     with pytest.raises(WheelProfileError, match="wheel is missing license files"):
         validate_wheel_profile(wheel, "core")

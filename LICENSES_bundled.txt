@@ -297,74 +297,74 @@ Intel Simplified Software License (Version October 2022)
 
 Intel® oneAPI Math Kernel Library (oneMKL): Copyright (C) 1985 Intel Corporation
 
-Use and Redistribution.  You may use and redistribute the software, which 
-is provided in binary form only, (the “Software”), without modification, 
+Use and Redistribution.  You may use and redistribute the software, which
+is provided in binary form only, (the “Software”), without modification,
 provided the following conditions are met:
 
-* Redistributions must reproduce the above copyright notice and these terms 
-  of use in the Software and in the documentation and/or other materials 
+* Redistributions must reproduce the above copyright notice and these terms
+  of use in the Software and in the documentation and/or other materials
   provided with the distribution.
-* Neither the name of Intel nor the names of its suppliers may be used to 
-  endorse or promote products derived from this Software without specific 
+* Neither the name of Intel nor the names of its suppliers may be used to
+  endorse or promote products derived from this Software without specific
   prior written permission.
-* No reverse engineering, decompilation, or disassembly of the Software is 
-  permitted, nor any modification or alteration of the Software or its 
+* No reverse engineering, decompilation, or disassembly of the Software is
+  permitted, nor any modification or alteration of the Software or its
   operation at any time, including during execution.
 
-No other licenses.  Except as provided in the preceding section, Intel grants no 
-licenses or other rights by implication, estoppel or otherwise to, patent, 
-copyright, trademark, trade name, service mark or other intellectual property 
+No other licenses.  Except as provided in the preceding section, Intel grants no
+licenses or other rights by implication, estoppel or otherwise to, patent,
+copyright, trademark, trade name, service mark or other intellectual property
 licenses or rights of Intel.
 
-Third party software.  “Third Party Software” means the files (if any) listed in 
-the “third-party-software.txt” or other similarly-named text file that may be 
-included with the Software. Third Party Software, even if included with the 
-distribution of the Software, may be governed by separate license terms, 
-including without limitation, third party license terms, open source software 
-notices and terms, and/or other Intel software license terms. These separate 
+Third party software.  “Third Party Software” means the files (if any) listed in
+the “third-party-software.txt” or other similarly-named text file that may be
+included with the Software. Third Party Software, even if included with the
+distribution of the Software, may be governed by separate license terms,
+including without limitation, third party license terms, open source software
+notices and terms, and/or other Intel software license terms. These separate
 license terms solely govern Your use of the Third Party Software.
 
-DISCLAIMER.  THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESS OR IMPLIED 
-WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT ARE 
-DISCLAIMED. THIS SOFTWARE IS NOT INTENDED FOR USE IN SYSTEMS OR APPLICATIONS 
-WHERE FAILURE OF THE SOFTWARE MAY CAUSE PERSONAL INJURY OR DEATH AND YOU AGREE 
-THAT YOU ARE FULLY RESPONSIBLE FOR ANY CLAIMS, COSTS, DAMAGES, EXPENSES, AND 
-ATTORNEYS’ FEES ARISING OUT OF ANY SUCH USE, EVEN IF ANY CLAIM ALLEGES THAT 
+DISCLAIMER.  THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESS OR IMPLIED
+WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT ARE
+DISCLAIMED. THIS SOFTWARE IS NOT INTENDED FOR USE IN SYSTEMS OR APPLICATIONS
+WHERE FAILURE OF THE SOFTWARE MAY CAUSE PERSONAL INJURY OR DEATH AND YOU AGREE
+THAT YOU ARE FULLY RESPONSIBLE FOR ANY CLAIMS, COSTS, DAMAGES, EXPENSES, AND
+ATTORNEYS’ FEES ARISING OUT OF ANY SUCH USE, EVEN IF ANY CLAIM ALLEGES THAT
 INTEL WAS NEGLIGENT REGARDING THE DESIGN OR MANUFACTURE OF THE SOFTWARE.
 
-LIMITATION OF LIABILITY. IN NO EVENT WILL INTEL BE LIABLE FOR ANY DIRECT, 
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, 
-BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, 
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF 
-LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE 
-OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+LIMITATION OF LIABILITY. IN NO EVENT WILL INTEL BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-No support.  Intel may make changes to the Software, at any time without notice, 
-and is not obligated to support, update or provide training for the Software. 
+No support.  Intel may make changes to the Software, at any time without notice,
+and is not obligated to support, update or provide training for the Software.
 
-Termination. Your right to use the Software is terminated in the event of your 
+Termination. Your right to use the Software is terminated in the event of your
 breach of this license.
 
-Feedback.  Should you provide Intel with comments, modifications, corrections, 
-enhancements or other input (“Feedback”) related to the Software, Intel will be 
-free to use, disclose, reproduce, license or otherwise distribute or exploit the 
-Feedback in its sole discretion without any obligations or restrictions of any 
-kind, including without limitation, intellectual property rights or licensing 
+Feedback.  Should you provide Intel with comments, modifications, corrections,
+enhancements or other input (“Feedback”) related to the Software, Intel will be
+free to use, disclose, reproduce, license or otherwise distribute or exploit the
+Feedback in its sole discretion without any obligations or restrictions of any
+kind, including without limitation, intellectual property rights or licensing
 obligations.
 
-Compliance with laws.  You agree to comply with all relevant laws and regulations 
-governing your use, transfer, import or export (or prohibition thereof) of the 
+Compliance with laws.  You agree to comply with all relevant laws and regulations
+governing your use, transfer, import or export (or prohibition thereof) of the
 Software.
 
-Governing law.  All disputes will be governed by the laws of the United States of 
-America and the State of Delaware without reference to conflict of law 
-principles and subject to the exclusive jurisdiction of the state or federal 
-courts sitting in the State of Delaware, and each party agrees that it submits 
-to the personal jurisdiction and venue of those courts and waives any 
-objections. THE UNITED NATIONS CONVENTION ON CONTRACTS FOR THE INTERNATIONAL 
-SALE OF GOODS (1980) IS SPECIFICALLY EXCLUDED AND WILL NOT APPLY TO THE 
+Governing law.  All disputes will be governed by the laws of the United States of
+America and the State of Delaware without reference to conflict of law
+principles and subject to the exclusive jurisdiction of the state or federal
+courts sitting in the State of Delaware, and each party agrees that it submits
+to the personal jurisdiction and venue of those courts and waives any
+objections. THE UNITED NATIONS CONVENTION ON CONTRACTS FOR THE INTERNATIONAL
+SALE OF GOODS (1980) IS SPECIFICALLY EXCLUDED AND WILL NOT APPLY TO THE
 SOFTWARE.
 
 
@@ -373,12 +373,12 @@ Source: Intel oneMKL 2026.0 Windows package, share/doc/mkl/licensing/third-party
 
 Intel(R) oneAPI Math Kernel Library (oneMKL) Third Party Programs File
 
-This file is the "third-party-programs.txt" file specified in the associated Intel end user license agreement for the Intel software you are licensing. 
+This file is the "third-party-programs.txt" file specified in the associated Intel end user license agreement for the Intel software you are licensing.
 
 Third party programs and their corresponding required notices and/or license terms are listed below.
 
 =====================================================================================
-1. HPCG: High Performance Conjugate Gradient Benchmark: 
+1. HPCG: High Performance Conjugate Gradient Benchmark:
    Copyright (c) 2013-2019, hpcg-benchmark
    All rights reserved.
 
@@ -408,7 +408,7 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 =====================================================================================---
-2. Mersenne Twister with improved initialization: 
+2. Mersenne Twister with improved initialization:
    Copyright (C) 1997 - 2002, Makoto Matsumoto and Takuji  Nishimura, All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -455,7 +455,7 @@ Redistribution and use in source and binary forms, with or without modification,
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
- =====================================================================================--  
+ =====================================================================================--
 5. The FEAST Eigenvalue Solver:
    Copyright (c) 2009-2012, The Regents of the University of  Massachusetts, Amherst. Developed by E. Polizzi. All rights reserved.
 
@@ -470,7 +470,7 @@ LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT(INCLUDING NEGLIGENCE O
 
 
 =====================================================================================---
-6. Intel(R) Instrumentation and Tracing Technology API: 
+6. Intel(R) Instrumentation and Tracing Technology API:
    Copyright(c) 2019, Intel Corporation, All rights reserved.
 
    LAPACK95
@@ -485,15 +485,15 @@ LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT(INCLUDING NEGLIGENCE O
    All rights reserved.
 
 
-Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met: 
-* Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer. 
-* Redistributions in binary form must reproduce the above copyright notice, his list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution. 
-* Neither the name of Intel Corporation nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission. 
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+* Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+* Redistributions in binary form must reproduce the above copyright notice, his list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+* Neither the name of Intel Corporation nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 =====================================================================================---
-7. Intel Open Source Technology Center Safe String Library: 
+7. Intel Open Source Technology Center Safe String Library:
          strcat_s.c
    October 2008, Bo Berry
    Copyright (c) 2008-2011 by Cisco Systems, Inc. All rights          reserved.
@@ -700,33 +700,33 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY
 
 =====================================================================================
 9.  HPL - High-Performance Linpack Benchmark:
-    HPL - 2.3 - December 2, 2018                        
-    Antoine P. Petitet                                                
-    University of Tennessee, Knoxville                                
-    Innovative Computing Laboratory                                 
-    (C) Copyright 2000-2008 All Rights Reserved  
+    HPL - 2.3 - December 2, 2018
+    Antoine P. Petitet
+    University of Tennessee, Knoxville
+    Innovative Computing Laboratory
+    (C) Copyright 2000-2008 All Rights Reserved
 
- Redistribution  and  use in  source and binary forms, with or without modification, are  permitted provided  that the following  conditions are met:                                                             
-                                                                      
- 1. Redistributions  of  source  code  must retain the above copyright notice, this list of conditions and the following disclaimer.        
-                                                                      
- 2. Redistributions in binary form must reproduce  the above copyright notice, this list of conditions,  and the following disclaimer in the documentation and/or other materials provided with the distribution. 
-                                                                      
- 3. All  advertising  materials  mentioning  features  or  use of this software must display the following acknowledgement:                 
-   This  product  includes  software  developed  at  the  University  of Tennessee, Knoxville, Innovative Computing Laboratory.             
-                                                                      
- 4. The name of the  University,  the name of the  Laboratory,  or the names  of  its  contributors  may  not  be used to endorse or promote products  derived   from   this  software  without  specific  written permission.                                                          
-                                                                      
- -- Disclaimer:                                                       
-                                                                      
+ Redistribution  and  use in  source and binary forms, with or without modification, are  permitted provided  that the following  conditions are met:
+
+ 1. Redistributions  of  source  code  must retain the above copyright notice, this list of conditions and the following disclaimer.
+
+ 2. Redistributions in binary form must reproduce  the above copyright notice, this list of conditions,  and the following disclaimer in the documentation and/or other materials provided with the distribution.
+
+ 3. All  advertising  materials  mentioning  features  or  use of this software must display the following acknowledgement:
+   This  product  includes  software  developed  at  the  University  of Tennessee, Knoxville, Innovative Computing Laboratory.
+
+ 4. The name of the  University,  the name of the  Laboratory,  or the names  of  its  contributors  may  not  be used to endorse or promote products  derived   from   this  software  without  specific  written permission.
+
+ -- Disclaimer:
+
 THIS  SOFTWARE  IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,  INCLUDING,  BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE UNIVERSITY OR  CONTRIBUTORS  BE  LIABLE FOR ANY  DIRECT,  INDIRECT,  INCIDENTAL, SPECIAL,  EXEMPLARY,  OR  CONSEQUENTIAL DAMAGES  (INCLUDING,  BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA OR PROFITS; OR BUSINESS INTERRUPTION)  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,  STRICT LIABILITY,  OR TORT(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA OR PROFITS; OR BUSINESS INTERRUPTION)  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,  STRICT LIABILITY,  OR TORT(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 =====================================================================================
-10. Intel(R) oneAPI Threading Building Blocks: 
+10. Intel(R) oneAPI Threading Building Blocks:
     Copyright 2005-2019 Intel Corporation. All Rights Reserved.
 
-    Intel(R) MPI Library: 
+    Intel(R) MPI Library:
     Copyright (C) 2009 Intel Corporation
 
     Intel(R) OpenMP* Runtime:
@@ -749,7 +749,7 @@ DISCLAIMER. THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESS OR IMPLIED WARRANT
 
 LIMITATION OF LIABILITY. IN NO EVENT WILL INTEL BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-No support.  Intel may make changes to the Software, at any time without notice, and is not obligated to support, update or provide training for the Software. 
+No support.  Intel may make changes to the Software, at any time without notice, and is not obligated to support, update or provide training for the Software.
 
 Termination. Your right to use the Software is terminated in the event of your breach of this license.
 
@@ -768,14 +768,14 @@ Governing law.  All disputes will be governed by the laws of the United States o
     Terms for Microsoft "Distributable Code."
 1.	License. This software package from Intel (the "Software Package") contains code from Microsoft (the "Distributable Code").  You are provided a non-transferable, non-exclusive, non-sublicensable, limited right and license only to use and redistribute the Distributable Code as part of this Software Package.  You are not allowed to copy, modify, remove the Distributable Code from the Software Package or redistribute the Distributable Code on a stand-alone basis.
 2.	Restrictions. The Distributable Code is licensed, not sold. You are only provided the above rights to use the Distributable Code.  Intel and Microsoft reserve all other rights. Unless applicable law gives you more rights, you may use the Distributable Code only as expressly permitted in these terms. In using the Distributable Code, you must comply with any technical limitations in the Distributable Code that only allow you to use it in certain ways. You may not:
-*	work around any technical limitations in the Distributable Code; 
-*	reverse engineer, decompile or disassemble the software, or otherwise attempt to derive the source code for the Distributable Code, except and to the extent required by third party licensing terms governing use of certain open source components that may be included in the Distributable Code; 
-*	remove, minimize, block or modify any notices of Intel, Microsoft or its suppliers in the Distributable Code; 
+*	work around any technical limitations in the Distributable Code;
+*	reverse engineer, decompile or disassemble the software, or otherwise attempt to derive the source code for the Distributable Code, except and to the extent required by third party licensing terms governing use of certain open source components that may be included in the Distributable Code;
+*	remove, minimize, block or modify any notices of Intel, Microsoft or its suppliers in the Distributable Code;
 *	use the Distributable Code in any way that is against the law; or
-*	share, publish, rent or lease the software, or provide the Distributable Code as a stand-alone offering for others to use. 
-3.	NO WARRANTY.  THE  DISTRIBUTABLE CODE IS PROVIDED "AS IS" WITHOUT ANY EXPRESS OR IMPLIED WARRANTY OF ANY KIND INCLUDING WARRANTIES OF MERCHANTABILITY, NONINFRINGEMENT, OR FITNESS FOR A PARTICULAR PURPOSE.  
-4.	LIMITATION ON AND EXCLUSION OF DAMAGES. YOU CAN RECOVER FROM INTEL, MICROSOFT OR THEIR SUPPLIERS ONLY DIRECT DAMAGES UP TO $5.00. YOU CANNOT RECOVER ANY OTHER DAMAGES, INCLUDING CONSEQUENTIAL, LOST PROFITS, SPECIAL, INDIRECT OR INCIDENTAL DAMAGES. 
-This limitation applies to (a) anything related to the Distributable Code; and (b) claims for breach of contract, breach of warranty, guarantee or condition, strict liability, negligence, or other tort to the extent permitted by applicable law.  It also applies even if Intel or Microsoft knew or should have known about the possibility of the damages. The above limitation or exclusion may not apply to you because your state or country may not allow the exclusion or limitation of incidental, consequential or other damages. 
+*	share, publish, rent or lease the software, or provide the Distributable Code as a stand-alone offering for others to use.
+3.	NO WARRANTY.  THE  DISTRIBUTABLE CODE IS PROVIDED "AS IS" WITHOUT ANY EXPRESS OR IMPLIED WARRANTY OF ANY KIND INCLUDING WARRANTIES OF MERCHANTABILITY, NONINFRINGEMENT, OR FITNESS FOR A PARTICULAR PURPOSE.
+4.	LIMITATION ON AND EXCLUSION OF DAMAGES. YOU CAN RECOVER FROM INTEL, MICROSOFT OR THEIR SUPPLIERS ONLY DIRECT DAMAGES UP TO $5.00. YOU CANNOT RECOVER ANY OTHER DAMAGES, INCLUDING CONSEQUENTIAL, LOST PROFITS, SPECIAL, INDIRECT OR INCIDENTAL DAMAGES.
+This limitation applies to (a) anything related to the Distributable Code; and (b) claims for breach of contract, breach of warranty, guarantee or condition, strict liability, negligence, or other tort to the extent permitted by applicable law.  It also applies even if Intel or Microsoft knew or should have known about the possibility of the damages. The above limitation or exclusion may not apply to you because your state or country may not allow the exclusion or limitation of incidental, consequential or other damages.
 5.	Export Restrictions. You must comply with all domestic and international export laws and regulations that apply to the software, which include restrictions on destinations, end users, and end use. For further information on export restrictions, visit www.microsoft.com/exporting.
 
 
@@ -867,9 +867,9 @@ The above copyright and patent license is granted only if the following conditio
 Software Disclaimer
 The research software provided on this web site ("software") is provided by NIST as a public service. You may use, copy and distribute copies of the software in any medium, provided that you keep intact this entire notice. You may improve, modify and create derivative works of the software or any portion of the software, and you may copy and distribute such modifications or works. Modified works should carry a notice stating that you changed the software and should note the date and nature of any such change. Please explicitly acknowledge the National Institute of Standards and Technology as the source of the software.
 
-The software is expressly provided "AS IS." NIST MAKES NO WARRANTY OF ANY KIND, EXPRESS, IMPLIED, IN FACT OR ARISING BY OPERATION OF LAW, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTY OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT AND DATA ACCURACY. NIST NEITHER REPRESENTS NOR WARRANTS THAT THE OPERATION OF THE SOFTWARE WILL BE UNINTERRUPTED OR ERROR-FREE, OR THAT ANY DEFECTS WILL BE CORRECTED. NIST DOES NOT WARRANT OR MAKE ANY REPRESENTATIONS REGARDING THE USE OF THE SOFTWARE OR THE RESULTS THEREOF, INCLUDING BUT NOT LIMITED TO THE CORRECTNESS, ACCURACY, RELIABILITY, OR USEFULNESS OF THE SOFTWARE. 
+The software is expressly provided "AS IS." NIST MAKES NO WARRANTY OF ANY KIND, EXPRESS, IMPLIED, IN FACT OR ARISING BY OPERATION OF LAW, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTY OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT AND DATA ACCURACY. NIST NEITHER REPRESENTS NOR WARRANTS THAT THE OPERATION OF THE SOFTWARE WILL BE UNINTERRUPTED OR ERROR-FREE, OR THAT ANY DEFECTS WILL BE CORRECTED. NIST DOES NOT WARRANT OR MAKE ANY REPRESENTATIONS REGARDING THE USE OF THE SOFTWARE OR THE RESULTS THEREOF, INCLUDING BUT NOT LIMITED TO THE CORRECTNESS, ACCURACY, RELIABILITY, OR USEFULNESS OF THE SOFTWARE.
 
-You are solely responsible for determining the appropriateness of using and distributing the software and you assume all risks associated with its use, including but not limited to the risks and costs of program errors, compliance with applicable laws, damage to or loss of data, programs or equipment, and the unavailability or interruption of operation. This software is not intended to be used in any situation where a failure could cause risk of injury or damage to property.  The software was developed by NIST employees. NIST employee contributions are not subject to copyright protection within the United States. 
+You are solely responsible for determining the appropriateness of using and distributing the software and you assume all risks associated with its use, including but not limited to the risks and costs of program errors, compliance with applicable laws, damage to or loss of data, programs or equipment, and the unavailability or interruption of operation. This software is not intended to be used in any situation where a failure could cause risk of injury or damage to property.  The software was developed by NIST employees. NIST employee contributions are not subject to copyright protection within the United States.
 
 =====================================================================================
 17. LAPACK - Linear Algebra PACKage
@@ -1315,12 +1315,12 @@ Source: Intel oneMKL 2026.1 Linux package, share/doc/mkl/licensing/third-party-p
 
 Intel(R) oneAPI Math Kernel Library (oneMKL) Third Party Programs File
 
-This file is the "third-party-programs.txt" file specified in the associated Intel end user license agreement for the Intel software you are licensing. 
+This file is the "third-party-programs.txt" file specified in the associated Intel end user license agreement for the Intel software you are licensing.
 
 Third party programs and their corresponding required notices and/or license terms are listed below.
 
 =====================================================================================
-1. HPCG: High Performance Conjugate Gradient Benchmark: 
+1. HPCG: High Performance Conjugate Gradient Benchmark:
    Copyright (c) 2013-2019, hpcg-benchmark
    All rights reserved.
 
@@ -1350,7 +1350,7 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 =====================================================================================---
-2. Mersenne Twister with improved initialization: 
+2. Mersenne Twister with improved initialization:
    Copyright (C) 1997 - 2002, Makoto Matsumoto and Takuji  Nishimura, All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -1397,7 +1397,7 @@ Redistribution and use in source and binary forms, with or without modification,
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
- =====================================================================================--  
+ =====================================================================================--
 5. The FEAST Eigenvalue Solver:
    Copyright (c) 2009-2012, The Regents of the University of  Massachusetts, Amherst. Developed by E. Polizzi. All rights reserved.
 
@@ -1412,7 +1412,7 @@ LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT(INCLUDING NEGLIGENCE O
 
 
 =====================================================================================---
-6. Intel(R) Instrumentation and Tracing Technology API: 
+6. Intel(R) Instrumentation and Tracing Technology API:
    Copyright(c) 2019, Intel Corporation, All rights reserved.
 
    LAPACK95
@@ -1427,15 +1427,15 @@ LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT(INCLUDING NEGLIGENCE O
    All rights reserved.
 
 
-Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met: 
-* Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer. 
-* Redistributions in binary form must reproduce the above copyright notice, his list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution. 
-* Neither the name of Intel Corporation nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission. 
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+* Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+* Redistributions in binary form must reproduce the above copyright notice, his list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+* Neither the name of Intel Corporation nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 =====================================================================================---
-7. Intel Open Source Technology Center Safe String Library: 
+7. Intel Open Source Technology Center Safe String Library:
          strcat_s.c
    October 2008, Bo Berry
    Copyright (c) 2008-2011 by Cisco Systems, Inc. All rights          reserved.
@@ -1642,33 +1642,33 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY
 
 =====================================================================================
 9.  HPL - High-Performance Linpack Benchmark:
-    HPL - 2.3 - December 2, 2018                        
-    Antoine P. Petitet                                                
-    University of Tennessee, Knoxville                                
-    Innovative Computing Laboratory                                 
-    (C) Copyright 2000-2008 All Rights Reserved  
+    HPL - 2.3 - December 2, 2018
+    Antoine P. Petitet
+    University of Tennessee, Knoxville
+    Innovative Computing Laboratory
+    (C) Copyright 2000-2008 All Rights Reserved
 
- Redistribution  and  use in  source and binary forms, with or without modification, are  permitted provided  that the following  conditions are met:                                                             
-                                                                      
- 1. Redistributions  of  source  code  must retain the above copyright notice, this list of conditions and the following disclaimer.        
-                                                                      
- 2. Redistributions in binary form must reproduce  the above copyright notice, this list of conditions,  and the following disclaimer in the documentation and/or other materials provided with the distribution. 
-                                                                      
- 3. All  advertising  materials  mentioning  features  or  use of this software must display the following acknowledgement:                 
-   This  product  includes  software  developed  at  the  University  of Tennessee, Knoxville, Innovative Computing Laboratory.             
-                                                                      
- 4. The name of the  University,  the name of the  Laboratory,  or the names  of  its  contributors  may  not  be used to endorse or promote products  derived   from   this  software  without  specific  written permission.                                                          
-                                                                      
- -- Disclaimer:                                                       
-                                                                      
+ Redistribution  and  use in  source and binary forms, with or without modification, are  permitted provided  that the following  conditions are met:
+
+ 1. Redistributions  of  source  code  must retain the above copyright notice, this list of conditions and the following disclaimer.
+
+ 2. Redistributions in binary form must reproduce  the above copyright notice, this list of conditions,  and the following disclaimer in the documentation and/or other materials provided with the distribution.
+
+ 3. All  advertising  materials  mentioning  features  or  use of this software must display the following acknowledgement:
+   This  product  includes  software  developed  at  the  University  of Tennessee, Knoxville, Innovative Computing Laboratory.
+
+ 4. The name of the  University,  the name of the  Laboratory,  or the names  of  its  contributors  may  not  be used to endorse or promote products  derived   from   this  software  without  specific  written permission.
+
+ -- Disclaimer:
+
 THIS  SOFTWARE  IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,  INCLUDING,  BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE UNIVERSITY OR  CONTRIBUTORS  BE  LIABLE FOR ANY  DIRECT,  INDIRECT,  INCIDENTAL, SPECIAL,  EXEMPLARY,  OR  CONSEQUENTIAL DAMAGES  (INCLUDING,  BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA OR PROFITS; OR BUSINESS INTERRUPTION)  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,  STRICT LIABILITY,  OR TORT(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA OR PROFITS; OR BUSINESS INTERRUPTION)  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,  STRICT LIABILITY,  OR TORT(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 =====================================================================================
-10. Intel(R) oneAPI Threading Building Blocks: 
+10. Intel(R) oneAPI Threading Building Blocks:
     Copyright 2005-2019 Intel Corporation. All Rights Reserved.
 
-    Intel(R) MPI Library: 
+    Intel(R) MPI Library:
     Copyright (C) 2009 Intel Corporation
 
     Intel(R) OpenMP* Runtime:
@@ -1691,7 +1691,7 @@ DISCLAIMER. THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESS OR IMPLIED WARRANT
 
 LIMITATION OF LIABILITY. IN NO EVENT WILL INTEL BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-No support.  Intel may make changes to the Software, at any time without notice, and is not obligated to support, update or provide training for the Software. 
+No support.  Intel may make changes to the Software, at any time without notice, and is not obligated to support, update or provide training for the Software.
 
 Termination. Your right to use the Software is terminated in the event of your breach of this license.
 
@@ -1710,14 +1710,14 @@ Governing law.  All disputes will be governed by the laws of the United States o
     Terms for Microsoft "Distributable Code."
 1.	License. This software package from Intel (the "Software Package") contains code from Microsoft (the "Distributable Code").  You are provided a non-transferable, non-exclusive, non-sublicensable, limited right and license only to use and redistribute the Distributable Code as part of this Software Package.  You are not allowed to copy, modify, remove the Distributable Code from the Software Package or redistribute the Distributable Code on a stand-alone basis.
 2.	Restrictions. The Distributable Code is licensed, not sold. You are only provided the above rights to use the Distributable Code.  Intel and Microsoft reserve all other rights. Unless applicable law gives you more rights, you may use the Distributable Code only as expressly permitted in these terms. In using the Distributable Code, you must comply with any technical limitations in the Distributable Code that only allow you to use it in certain ways. You may not:
-*	work around any technical limitations in the Distributable Code; 
-*	reverse engineer, decompile or disassemble the software, or otherwise attempt to derive the source code for the Distributable Code, except and to the extent required by third party licensing terms governing use of certain open source components that may be included in the Distributable Code; 
-*	remove, minimize, block or modify any notices of Intel, Microsoft or its suppliers in the Distributable Code; 
+*	work around any technical limitations in the Distributable Code;
+*	reverse engineer, decompile or disassemble the software, or otherwise attempt to derive the source code for the Distributable Code, except and to the extent required by third party licensing terms governing use of certain open source components that may be included in the Distributable Code;
+*	remove, minimize, block or modify any notices of Intel, Microsoft or its suppliers in the Distributable Code;
 *	use the Distributable Code in any way that is against the law; or
-*	share, publish, rent or lease the software, or provide the Distributable Code as a stand-alone offering for others to use. 
-3.	NO WARRANTY.  THE  DISTRIBUTABLE CODE IS PROVIDED "AS IS" WITHOUT ANY EXPRESS OR IMPLIED WARRANTY OF ANY KIND INCLUDING WARRANTIES OF MERCHANTABILITY, NONINFRINGEMENT, OR FITNESS FOR A PARTICULAR PURPOSE.  
-4.	LIMITATION ON AND EXCLUSION OF DAMAGES. YOU CAN RECOVER FROM INTEL, MICROSOFT OR THEIR SUPPLIERS ONLY DIRECT DAMAGES UP TO $5.00. YOU CANNOT RECOVER ANY OTHER DAMAGES, INCLUDING CONSEQUENTIAL, LOST PROFITS, SPECIAL, INDIRECT OR INCIDENTAL DAMAGES. 
-This limitation applies to (a) anything related to the Distributable Code; and (b) claims for breach of contract, breach of warranty, guarantee or condition, strict liability, negligence, or other tort to the extent permitted by applicable law.  It also applies even if Intel or Microsoft knew or should have known about the possibility of the damages. The above limitation or exclusion may not apply to you because your state or country may not allow the exclusion or limitation of incidental, consequential or other damages. 
+*	share, publish, rent or lease the software, or provide the Distributable Code as a stand-alone offering for others to use.
+3.	NO WARRANTY.  THE  DISTRIBUTABLE CODE IS PROVIDED "AS IS" WITHOUT ANY EXPRESS OR IMPLIED WARRANTY OF ANY KIND INCLUDING WARRANTIES OF MERCHANTABILITY, NONINFRINGEMENT, OR FITNESS FOR A PARTICULAR PURPOSE.
+4.	LIMITATION ON AND EXCLUSION OF DAMAGES. YOU CAN RECOVER FROM INTEL, MICROSOFT OR THEIR SUPPLIERS ONLY DIRECT DAMAGES UP TO $5.00. YOU CANNOT RECOVER ANY OTHER DAMAGES, INCLUDING CONSEQUENTIAL, LOST PROFITS, SPECIAL, INDIRECT OR INCIDENTAL DAMAGES.
+This limitation applies to (a) anything related to the Distributable Code; and (b) claims for breach of contract, breach of warranty, guarantee or condition, strict liability, negligence, or other tort to the extent permitted by applicable law.  It also applies even if Intel or Microsoft knew or should have known about the possibility of the damages. The above limitation or exclusion may not apply to you because your state or country may not allow the exclusion or limitation of incidental, consequential or other damages.
 5.	Export Restrictions. You must comply with all domestic and international export laws and regulations that apply to the software, which include restrictions on destinations, end users, and end use. For further information on export restrictions, visit www.microsoft.com/exporting.
 
 
@@ -1779,9 +1779,9 @@ The above copyright and patent license is granted only if the following conditio
 Software Disclaimer
 The research software provided on this web site ("software") is provided by NIST as a public service. You may use, copy and distribute copies of the software in any medium, provided that you keep intact this entire notice. You may improve, modify and create derivative works of the software or any portion of the software, and you may copy and distribute such modifications or works. Modified works should carry a notice stating that you changed the software and should note the date and nature of any such change. Please explicitly acknowledge the National Institute of Standards and Technology as the source of the software.
 
-The software is expressly provided "AS IS." NIST MAKES NO WARRANTY OF ANY KIND, EXPRESS, IMPLIED, IN FACT OR ARISING BY OPERATION OF LAW, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTY OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT AND DATA ACCURACY. NIST NEITHER REPRESENTS NOR WARRANTS THAT THE OPERATION OF THE SOFTWARE WILL BE UNINTERRUPTED OR ERROR-FREE, OR THAT ANY DEFECTS WILL BE CORRECTED. NIST DOES NOT WARRANT OR MAKE ANY REPRESENTATIONS REGARDING THE USE OF THE SOFTWARE OR THE RESULTS THEREOF, INCLUDING BUT NOT LIMITED TO THE CORRECTNESS, ACCURACY, RELIABILITY, OR USEFULNESS OF THE SOFTWARE. 
+The software is expressly provided "AS IS." NIST MAKES NO WARRANTY OF ANY KIND, EXPRESS, IMPLIED, IN FACT OR ARISING BY OPERATION OF LAW, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTY OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT AND DATA ACCURACY. NIST NEITHER REPRESENTS NOR WARRANTS THAT THE OPERATION OF THE SOFTWARE WILL BE UNINTERRUPTED OR ERROR-FREE, OR THAT ANY DEFECTS WILL BE CORRECTED. NIST DOES NOT WARRANT OR MAKE ANY REPRESENTATIONS REGARDING THE USE OF THE SOFTWARE OR THE RESULTS THEREOF, INCLUDING BUT NOT LIMITED TO THE CORRECTNESS, ACCURACY, RELIABILITY, OR USEFULNESS OF THE SOFTWARE.
 
-You are solely responsible for determining the appropriateness of using and distributing the software and you assume all risks associated with its use, including but not limited to the risks and costs of program errors, compliance with applicable laws, damage to or loss of data, programs or equipment, and the unavailability or interruption of operation. This software is not intended to be used in any situation where a failure could cause risk of injury or damage to property.  The software was developed by NIST employees. NIST employee contributions are not subject to copyright protection within the United States. 
+You are solely responsible for determining the appropriateness of using and distributing the software and you assume all risks associated with its use, including but not limited to the risks and costs of program errors, compliance with applicable laws, damage to or loss of data, programs or equipment, and the unavailability or interruption of operation. This software is not intended to be used in any situation where a failure could cause risk of injury or damage to property.  The software was developed by NIST employees. NIST employee contributions are not subject to copyright protection within the United States.
 
 =====================================================================================
 16. LAPACK - Linear Algebra PACKage
@@ -2286,7 +2286,7 @@ terms are listed below.
    Copyright (c) 2015-2016 Intel, Inc.  All rights reserved.
    See COPYING in top-level directory.
 
-   BSD 3-clause "New" or "Revised" License   
+   BSD 3-clause "New" or "Revised" License
 
    Redistribution and use in source and binary forms, with or without
    modification, are permitted provided that the following conditions
@@ -2853,16 +2853,16 @@ div.WordSection1
 <p class=MsoPlainText><span style='font-size:10.0pt;font-family:"Arial",sans-serif'>
 <p align="center"><b>Licensing Information for Intel(R) Software Development Tools</b></p>
 <br>
-The following list of Intel(R) Software Development Tools and associated licenses 
-is for reference only. The controlling license for your Intel(R) Software 
+The following list of Intel(R) Software Development Tools and associated licenses
+is for reference only. The controlling license for your Intel(R) Software
 Development Tools will be bundled with the distribution of the tool.<br>
 <br>
-Additionally, third party software, even if included with the distribution of 
-the Intel(R) Software Development Tools, may be governed by separate license 
-terms, including without limitation, third party license terms, open source 
-software notices and terms, and/or other Intel software license terms. These 
-separate license terms solely govern your use of the third party software. 
-Additional information on third party software can be found in the Section 
+Additionally, third party software, even if included with the distribution of
+the Intel(R) Software Development Tools, may be governed by separate license
+terms, including without limitation, third party license terms, open source
+software notices and terms, and/or other Intel software license terms. These
+separate license terms solely govern your use of the third party software.
+Additional information on third party software can be found in the Section
 entitled 'Toolkits for oneAPI and Associated Third Party Program Files.'<br>
 <br>
 <br>
@@ -2875,7 +2875,7 @@ entitled 'Toolkits for oneAPI and Associated Third Party Program Files.'<br>
  <li>Intel(R) Advisor</li>
  <li>Intel(R) Graphics Offline Compiler for OpenCL(TM) Code</li>
 </ul>
-<p><b>Intel(R) Software Development Tools Licensed under the Intel Simplified Software 
+<p><b>Intel(R) Software Development Tools Licensed under the Intel Simplified Software
 License (Version October 2022)</b></p>
 <ul>
  <li>Intel(R) Distribution for Python*</li>
@@ -2886,7 +2886,7 @@ License (Version October 2022)</b></p>
  <li>Intel(R) oneAPI Data Analytics Library (oneDAL)</li>
  <li>Intel(R) oneAPI Threading Building Blocks (oneTBB)  (also available under Apache 2.0)</li>
 </ul>
-<p><b>Intel(R) Software Development Tools Licensed under Open Source Licenses Apache 
+<p><b>Intel(R) Software Development Tools Licensed under Open Source Licenses Apache
 License, Version 2.0</b></p>
 <ul>
  <li>Intel(R) oneAPI Deep Neural Network Library (oneDNN)</li>
@@ -3011,7 +3011,7 @@ privacy practices, please visit
 <br>
 6.1 <b><u>No Warranty.</u> Disclaimer. Intel disclaims all warranties of any kind and the terms and remedies provided in this Agreement are instead of any other warranty or condition, express, implied or statutory, including those regarding merchantability, fitness for any particular purpose, non-infringement or any warranty arising out of any course of dealing, usage of trade, proposal, specification or sample. Intel does not assume (and does not authorize any person to assume on its behalf) any liability.</b><br>
 <br>
-6.2 <b><u>No Support; Priority Support.</u></b> Intel may make changes to the Materials, or to items referenced therein, at any time without notice, but is not obligated to support, update or provide training for the Materials under the terms of this Agreement. Intel offers free community and paid priority support options. More information on these support options can be found at: 
+6.2 <b><u>No Support; Priority Support.</u></b> Intel may make changes to the Materials, or to items referenced therein, at any time without notice, but is not obligated to support, update or provide training for the Materials under the terms of this Agreement. Intel offers free community and paid priority support options. More information on these support options can be found at:
 <a href="https://www.intel.com/content/www/us/en/developer/get-help/priority-support.html">
 https://www.intel.com/content/www/us/en/developer/get-help/priority-support.html</a>.<br>
 <br>
@@ -3066,7 +3066,7 @@ Feedback.<span style='mso-spacerun:yes'> </span>Should you provide Intel with co
 Compliance with laws.<span style='mso-spacerun:yes'> </span>You agree to comply with all relevant laws and regulations governing your use, transfer, import or export (or prohibition thereof) of the Software.<br>
 <br>
 Governing law.<span style='mso-spacerun:yes'> </span>All disputes will be governed by the laws of the United States of America and the State of Delaware without reference to conflict of law principles and subject to the exclusive jurisdiction of the state or federal courts sitting in the State of Delaware, and each party agrees that it submits to the personal jurisdiction and venue of those courts and waives any objections. THE UNITED NATIONS CONVENTION ON CONTRACTS FOR THE INTERNATIONAL SALE OF GOODS (1980) IS SPECIFICALLY EXCLUDED AND WILL NOT APPLY TO THE SOFTWARE.<br>
-<br>                     
+<br>
 <br>
 <p><b>Apache License</b><br>
 <br>
@@ -3272,17 +3272,17 @@ TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION<br>
 <br>
 <br>
 <p><b>LLVM Exceptions to the Apache 2.0 License</b></p>
-As an exception, if, as a result of your compiling your source code, portions of 
-this Software are embedded into an Object form of such source code, you may 
-redistribute such embedded portions in such Object form without complying with 
+As an exception, if, as a result of your compiling your source code, portions of
+this Software are embedded into an Object form of such source code, you may
+redistribute such embedded portions in such Object form without complying with
 the conditions of Sections 4(a), 4(b) and 4(d) of the License.<br>
 <br>
-In addition, if you combine or link compiled forms of this Software with 
-software that is licensed under the GPLv2 ("Combined Software") and if a court 
-of competent jurisdiction determines that the patent provision (Section 3), the 
-indemnity provision (Section 9) or other Section of the License conflicts with 
-the conditions of the GPLv2, you may retroactively and prospectively choose to 
-deem waived or otherwise exclude such Section(s) of the License, but only in 
+In addition, if you combine or link compiled forms of this Software with
+software that is licensed under the GPLv2 ("Combined Software") and if a court
+of competent jurisdiction determines that the patent provision (Section 3), the
+indemnity provision (Section 9) or other Section of the License conflicts with
+the conditions of the GPLv2, you may retroactively and prospectively choose to
+deem waived or otherwise exclude such Section(s) of the License, but only in
 their entirety and only with respect to the Combined Software.<br>
 <br>
 <br>
@@ -4038,16 +4038,16 @@ Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the &quot;Software&quot;),
 to deal in the Software without restriction, including without limitation the
 rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is furnished 
+copies of the Software, and to permit persons to whom the Software is furnished
 to do so, subject to the following conditions:<br>
 <br>
 The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.<br>
 <br>
 THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF 
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO 
-EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR 
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO
+EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR
 OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.<br>
@@ -4055,7 +4055,7 @@ THE SOFTWARE.<br>
 <br>
 
 <p><b>Toolkits and sub-bundles for oneAPI and Associated Third Party Program File Locations</b></p>
-<p><i><u>Note</u></i>: All paths are relative to the Intel(R) oneAPI Toolkits and sub-bundles installation 
+<p><i><u>Note</u></i>: All paths are relative to the Intel(R) oneAPI Toolkits and sub-bundles installation
 directory, which defaults to: C:\Program Files (x86)\Intel\oneAPI\</p>
 
 
@@ -4083,7 +4083,7 @@ directory, which defaults to: C:\Program Files (x86)\Intel\oneAPI\</p>
 <ul>
  <li>Intel(R) oneAPI DPC++/C++ Compiler &lt;install_dir&gt;\share\doc\compiler\licensing\c\third-party-programs.txt</li>
  <li>Intel(R) oneAPI DPC++ Library (oneDPL) &lt;install_dir&gt;\share\doc\dpl\licensing\third-party-programs.txt</li>
- <li>Intel(R) oneAPI Math Kernel Library (oneMKL) &lt;install_dir&gt;\share\doc\mkl\licensing\third-party-programs.txt</li> 
+ <li>Intel(R) oneAPI Math Kernel Library (oneMKL) &lt;install_dir&gt;\share\doc\mkl\licensing\third-party-programs.txt</li>
  <li>Intel(R) Profiling Tools Interface (Intel(R) PTI) &lt;install_dir&gt;\share\doc\pti\third-party-programs.txt</li>
  <li>Intel(R) Graphics Offline Compiler for OpenCL(TM) Code &lt;install_dir&gt;\share\doc\ocloc\licensing\third-party-programs.txt</li>
  <li>Intel(R) Dev Utilities &lt;install_dir&gt;\share\doc\dev-utilities\licensing\third-party-programs.txt</li>
@@ -4096,4 +4096,3 @@ directory, which defaults to: C:\Program Files (x86)\Intel\oneAPI\</p>
 </body>
 
 </html>
-
