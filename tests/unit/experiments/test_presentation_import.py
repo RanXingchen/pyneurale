@@ -216,6 +216,7 @@ def test_center_out_presentation_resolves_task_geometry_and_private_runtime_fiel
     assert resolved.logical_space.left + resolved.logical_space.width > 0.5
     assert resolved.style.target_radius == pytest.approx(0.08)
     assert resolved.style.cursor_radius == pytest.approx(0.025)
+    assert resolved.style.circle_segments == 96
     assert resolved.style.cursor.red == pytest.approx(0.2)
     assert (resolved.window_size.width, resolved.window_size.height) == (1024, 768)
     assert resolved.monitor_idx == 2

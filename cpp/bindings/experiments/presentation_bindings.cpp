@@ -381,7 +381,7 @@ void bind_center_out_presentation(py::module_& module)
                      value.cursor = cursor;
                      return value;
                  }),
-             py::arg("target_radius"), py::arg("cursor_radius"), py::arg("circle_segments") = 48,
+             py::arg("target_radius"), py::arg("cursor_radius"), py::arg("circle_segments") = 96,
              py::arg("background") = ep::Color{0.0F, 0.0F, 0.0F, 1.0F},
              py::arg("center_target") = ep::Color{0.35F, 0.35F, 0.35F, 1.0F},
              py::arg("outward_target") = ep::Color{0.25F, 0.25F, 0.25F, 1.0F},

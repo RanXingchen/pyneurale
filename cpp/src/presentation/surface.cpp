@@ -79,6 +79,9 @@
 #ifndef GL_RED
 #define GL_RED 0x1903
 #endif
+#ifndef GL_MULTISAMPLE
+#define GL_MULTISAMPLE 0x809D
+#endif
 
 namespace neurale::experiment_presentation
 {
@@ -414,6 +417,7 @@ class PresentationSurface::Impl
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+        glfwWindowHint(GLFW_SAMPLES, 4);
 #if defined(__APPLE__)
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
 #endif
@@ -1223,6 +1227,7 @@ class PresentationSurface::Impl
             gl_.uniform_1i(sampler, 0);
         }
         gl_.enable(GL_BLEND);
+        gl_.enable(GL_MULTISAMPLE);
         gl_.blend_func(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         if (gl_.get_error() != GL_NO_ERROR)
         {

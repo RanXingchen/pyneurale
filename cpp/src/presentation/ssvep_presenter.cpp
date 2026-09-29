@@ -10,7 +10,7 @@ namespace neurale::experiment_presentation
 namespace ss = experiments::ssvep;
 namespace
 {
-constexpr std::size_t kCircleSegments = 24;
+constexpr std::size_t kCircleSegments = 96;
 constexpr std::size_t kBurstParticles = 8;
 constexpr experiments::DurationNs kBurstDurationNs = 400'000'000;
 

@@ -549,6 +549,7 @@ int test_window()
 
 int main(int argc, char** argv)
 {
+    CHECK(ep::CenterOutPresentationStyle{}.circle_segments == 96);
     if (const auto result = test_render_plan_geometry_and_styles(); result != 0)
     {
         return result;

@@ -54,7 +54,7 @@ struct CenterOutPresentationStyle
     // GeometryUnit as the task and the logical space.
     double target_radius{};
     double cursor_radius{};
-    std::size_t circle_segments{48};
+    std::size_t circle_segments{96};
 };
 
 struct CenterOutRenderCircle
